@@ -1,0 +1,29 @@
+[build]
+  functions = "netlify/functions"
+  # Git-based deploys: regenerate the 1,000+ SEO pages and fetch the yt-dlp
+  # binaries (neither is stored in the repo). Drag-and-drop deploys ignore
+  # this command — they publish the files as-is.
+  command = "python3 scripts/gen-sites.py && bash scripts/fetch-ytdlp.sh"
+
+[functions]
+  # The yt-dlp binaries MUST be listed here: the esbuild bundler only ships
+  # traced JS by default — extra files in a function's folder are NOT included
+  # automatically. Without this, the functions run but cannot find the binary.
+  included_files = ["netlify/functions/formats/yt-dlp", "netlify/functions/download/yt-dlp"]
+  node_bundler = "esbuild"
+  # Deep scans (web client + EJS solver) need up to ~25s; default is 10s.
+  # timeout is a per-function map, not a plain number.
+  [functions.timeout]
+    formats = 26
+    download = 26
+
+# Pretty API paths: /api/formats -> /.netlify/functions/formats
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
