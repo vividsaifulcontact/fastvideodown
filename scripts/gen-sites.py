@@ -22,6 +22,7 @@ PAGE = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23e11d48'/%3E%3Cstop offset='1' stop-color='%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath fill='%23fff' d='M32 14a2 2 0 0 1 2 2v14.6l5.3-5.3a2 2 0 1 1 2.8 2.8l-8.7 8.7a2 2 0 0 1-2.8 0l-8.7-8.7a2 2 0 1 1 2.8-2.8l5.3 5.3V16a2 2 0 0 1 2-2z'/%3E%3Crect x='14' y='46' width='36' height='4' rx='2' fill='%23fff'/%3E%3C/svg%3E">
 <title>{name} Video Downloader &ndash; Download {name} Videos Free | FastVideoDown</title>
 <meta name="description" content="Download {name} videos in HD &amp; MP3 for free with FastVideoDown. Paste any {name} link, pick your quality, and save the video in seconds. No sign-up, no watermark.">
 <meta name="keywords" content="{name} video downloader, download {name} videos, {name} to mp4, {name} to mp3, free video downloader">
@@ -35,7 +36,7 @@ PAGE = """<!DOCTYPE html>
 *{{box-sizing:border-box;margin:0;padding:0}}body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#1f2937;line-height:1.6}}
 a{{color:#2563eb;text-decoration:none}}a:hover{{text-decoration:underline}}
 header{{background:#111827;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}}
-.logo{{font-size:22px;font-weight:800;color:#fff}}.logo span{{color:#f59e0b}}
+.logo{{font-size:22px;font-weight:800;color:#fff;text-decoration:none;display:flex;align-items:center;gap:9px}}.logo-mark{{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#e11d48,#7c3aed);flex:none}}.logo-mark svg{{display:block}}.logo-accent{{background:linear-gradient(90deg,#fda4af,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent}}
 nav a{{color:#d1d5db;margin-left:16px;font-size:14px}}
 .hero{{background:#111827;color:#fff;text-align:center;padding:44px 20px 36px}}
 .hero h1{{font-size:30px;margin-bottom:10px}}.hero p{{color:#d1d5db;max-width:640px;margin:0 auto 22px}}
@@ -58,7 +59,7 @@ footer a{{color:#d1d5db;margin:0 8px}}
 </script>
 </head>
 <body>
-<header><a class="logo" href="/">Fast<span>VideoDown</span></a><nav><a href="/">Home</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/sites/">All Downloaders</a><a href="/blog/how-to-download-youtube-videos/">Blog</a></nav></header>
+<header><a class="logo" href="/"><span class="logo-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#fff" d="M12 3a1 1 0 0 1 1 1v8.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0l-4.4-4.4a1 1 0 1 1 1.4-1.4l2.7 2.7V4a1 1 0 0 1 1-1z"/><path fill="#fff" d="M4 20a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1z"/></svg></span> Fast<span class="logo-accent">VideoDown</span></a><nav><a href="/">Home</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/sites/">All Downloaders</a><a href="/blog/how-to-download-youtube-videos/">Blog</a></nav></header>
 <section class="hero"><h1>{name} Video Downloader</h1><p>Download {name} videos in HD &amp; MP3 for free. Paste any {name} link, pick your quality, and save it in seconds. No sign-up, no watermark.</p><a class="btn" href="/">Download a {name} Video &rarr;</a></section>
 <main>
 <h2>How to Download {name} Videos in 3 Steps</h2>
@@ -101,7 +102,7 @@ idx = ['<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="v
 '<meta name="robots" content="index, follow">',
 f'<link rel="canonical" href="{BASE}/sites/">',
 '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#1f2937;line-height:1.6}a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}header{background:#111827;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:22px;font-weight:800;color:#fff}.logo span{color:#f59e0b}nav a{color:#d1d5db;margin-left:16px;font-size:14px}main{max-width:900px;margin:0 auto;padding:32px 20px}h1{font-size:28px;margin-bottom:8px}h2{font-size:20px;margin:26px 0 10px;border-bottom:1px solid #e5e7eb;padding-bottom:6px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px 18px;font-size:15px}.letters{margin:16px 0}.letters a{margin-right:10px;font-weight:600}footer{background:#111827;color:#9ca3af;padding:28px 20px;text-align:center;font-size:14px}footer a{color:#d1d5db;margin:0 8px}</style></head><body>',
-'<header><a class="logo" href="/">Fast<span>VideoDown</span></a><nav><a href="/">Home</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/blog/how-to-download-youtube-videos/">Blog</a></nav></header><main>',
+'<header><a class="logo" href="/"><span class="logo-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#fff" d="M12 3a1 1 0 0 1 1 1v8.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0l-4.4-4.4a1 1 0 1 1 1.4-1.4l2.7 2.7V4a1 1 0 0 1 1-1z"/><path fill="#fff" d="M4 20a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1z"/></svg></span> Fast<span class="logo-accent">VideoDown</span></a><nav><a href="/">Home</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/blog/how-to-download-youtube-videos/">Blog</a></nav></header><main>',
 f'<h1>All Video Downloaders &ndash; {len(sites)+8} Sites</h1>',
 '<p>Every site FastVideoDown can download from. Pick a site, paste its video link on the <a href="/">homepage</a>, and save the video in HD or MP3 &mdash; free, no sign-up.</p>',
 '<div class="letters">' + ' '.join(f'<a href="#{L}">{L}</a>' for L in sorted(letters)) + '</div>']
