@@ -3,7 +3,7 @@
   # Git-based deploys: regenerate the 1,000+ SEO pages and fetch the yt-dlp
   # binaries (neither is stored in the repo). Drag-and-drop deploys ignore
   # this command — they publish the files as-is.
-  command = "python3 scripts/gen-sites.py && bash scripts/fetch-ytdlp.sh"
+  command = "python3 scripts/gen-sites.py && bash scripts/fetch-ytdlp.sh && npm install --prefix netlify/functions --no-audit --no-fund"
 
 [functions]
   # The yt-dlp binaries MUST be listed here: the esbuild bundler only ships
