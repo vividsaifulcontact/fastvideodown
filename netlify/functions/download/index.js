@@ -147,8 +147,12 @@ exports.handler = async (event) => {
   // clicking "Audio only" would get a video mislabeled as audio. Keep it
   // strict — the attempt loop tries several clients for bestaudio, and if
   // none has it, we return a clear error instead of the wrong file.
-  if (formatId === 'bestaudio') formatId = 'bestaudio';
-  if (!/^[a-zA-Z0-9_\-\+\/]+$/.test(formatId)) {
+  // The [vcodec=none] filter makes it truly audio-only: plain 'bestaudio'
+  // still picks the combined 360p format (itag 18) when no audio-only
+  // format is listed, because that format "has audio".
+  const isAudio = formatId === 'bestaudio';
+  if (isAudio) formatId = 'bestaudio[vcodec=none]';
+  if (!/^[a-zA-Z0-9_\-\+\/\[\]=]+$/.test(formatId)) {
     return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'Invalid format.' }) };
   }
   const ext = String(body.ext || 'mp4').replace(/[^a-z0-9]/gi, '') || 'mp4';
@@ -162,15 +166,24 @@ exports.handler = async (event) => {
   // Fast path first: android client answers in ~3s; web scan is slower.
   // X/Twitter: fall back to the public syndication (embed) endpoint.
   // Per-attempt timeouts sum to <=25s (Netlify function limit is 26s).
+  // EXCEPTION — audio: the android client returns only the combined 360p
+  // format (itag 18) for many videos, so bestaudio must try the WEB client
+  // first (it lists real audio-only streams like itag 140). Otherwise the
+  // android attempt "succeeds" with the video file and the loop never
+  // reaches the web client.
   const mk = (extra) => ['-g', '-f', formatId, '--no-playlist', '--no-warnings',
     '--socket-timeout', '8', '--retries', '1', ...extra, ...proxyArgs, url];
-  const attempts = [
-    { a: mk(['--extractor-args', 'youtube:player_client=android']), t: 8000 },
-    isX
-      ? { a: mk(['--extractor-args', 'twitter:api=syndication']), t: 9000 }
-      : { a: mk(['--js-runtimes', 'node', '--remote-components', 'ejs:github', '--extractor-args', 'youtube:player_client=web,android']), t: 12000 },
-    { a: mk(['--no-check-certificates', '--extractor-args', 'youtube:player_client=android']), t: 5000 },
-  ];
+  const webAttempt = { a: mk(['--js-runtimes', 'node', '--remote-components', 'ejs:github', '--extractor-args', 'youtube:player_client=web,android']), t: 12000 };
+  const androidAttempt = { a: mk(['--extractor-args', 'youtube:player_client=android']), t: 8000 };
+  const attempts = isAudio
+    ? [webAttempt, androidAttempt, { a: mk(['--no-check-certificates', '--extractor-args', 'youtube:player_client=android']), t: 5000 }]
+    : [
+      androidAttempt,
+      isX
+        ? { a: mk(['--extractor-args', 'twitter:api=syndication']), t: 9000 }
+        : webAttempt,
+      { a: mk(['--no-check-certificates', '--extractor-args', 'youtube:player_client=android']), t: 5000 },
+    ];
   let direct = '';
   let stderr = '';
   for (const { a, t } of attempts) {
