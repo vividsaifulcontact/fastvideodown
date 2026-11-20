@@ -101,6 +101,9 @@ border-radius:50%;display:inline-block;vertical-align:-3px;animation:spin .8s li
 @keyframes spin{to{transform:rotate(360deg)}}
 #result{margin-top:18px;display:none;text-align:left}
 .media{display:flex;gap:16px;flex-wrap:wrap}
+.preview{margin:14px 0 4px;position:relative;width:100%;max-width:640px;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden}
+.preview iframe,.preview video{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.preview .pnote{position:absolute;left:10px;bottom:8px;background:rgba(0,0,0,.65);color:#fff;font-size:12px;padding:3px 8px;border-radius:20px}
 .thumb{width:240px;max-width:100%;border-radius:12px;overflow:hidden;flex:none;background:#0f172a}
 .thumb img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover}
 .meta{flex:1;min-width:220px}
@@ -493,6 +496,22 @@ function renderResult(d){
     qualityHtml += qualityRow(h, ws, vo);
   }
   const bestSound = withSound.length ? withSound[0].label : null;
+  // Video preview: let the user WATCH the video first, so they can check
+  // it is the right one before downloading.
+  // - YouTube: embedded player (reliable, plays the full video in-page).
+  // - Other platforms: HTML5 player on the best with-sound direct link.
+  let previewHtml = '';
+  const pageUrl = (d.webpage_url || current.url || '');
+  const ytId = (pageUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?[^#]*v=|shorts\/|embed\/|v\/))([\w-]{6,})/) || [])[1] || '';
+  const isYT = /youtu\.?be/i.test(pageUrl) || (d.extractor || '') === 'youtube';
+  if (isYT && ytId) {
+    previewHtml = `<div class="preview"><iframe src="https://www.youtube.com/embed/${esc(ytId)}" title="Video preview" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe><span class="pnote">▶ Preview — watch before you download</span></div>`;
+  } else {
+    const pv = withSound.find(f => f.url) || videos.find(f => f.url);
+    if (pv && pv.url) {
+      previewHtml = `<div class="preview"><video controls preload="metadata" playsinline src="${esc(pv.url)}"${d.thumbnail ? ` poster="${esc(d.thumbnail)}"` : ''}></video><span class="pnote">▶ Preview — watch before you download</span></div>`;
+    }
+  }
   let html = `<div class="media">
     ${d.thumbnail ? `<div class="thumb"><img src="${esc(d.thumbnail)}" alt="Video thumbnail" loading="lazy"></div>` : ''}
     <div class="meta">
@@ -503,7 +522,7 @@ function renderResult(d){
       <span class="badge">✓ ${esc(d.formats.video.length + d.formats.audio.length)} options found</span>
       ${d.thumbnail ? `<button class="btn small" style="margin-top:10px" onclick="downloadThumbnail()">🖼️ Download Thumbnail</button>` : ''}
     </div>
-  </div>`;
+  </div>${previewHtml}`;
   if (qualityHtml) html += `<div class="group"><h4>🎬 Video — every quality, with sound &amp; without sound${bestSound ? ` <span class="tag">Best with sound: ${esc(bestSound)}</span>` : ''}</h4>${qualityHtml}</div>`;
   if (audio.length) html += `<div class="group"><h4>🎵 Audio only</h4>${audio.map(f=>fmtRow(f,'audio')).join('')}</div>`;
   html += `<div class="hint">💡 Downloads save straight to your Downloads folder. Every quality offers both “with sound” and “without sound”. For 1080p and above, “with sound” is merged on the server (video + audio), so it takes a little longer — keep the tab open until the download starts. Use “Download Thumbnail” to save the video's cover image.</div>`;
