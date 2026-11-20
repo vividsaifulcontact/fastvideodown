@@ -46,6 +46,11 @@ export default async (request) => {
     const headers = new Headers();
     headers.set('Content-Type', res.headers.get('content-type') || 'video/mp4');
     headers.set('Content-Disposition', 'attachment; filename="' + filename + '"');
+    // CORS: the site now runs on Cloudflare Pages while this API runs on
+    // Netlify, so the frontend's stream pre-check is cross-origin. Without
+    // this header the browser blocks the pre-check (CORS), the check fails
+    // and the download falls back to opening the direct link in a new tab.
+    headers.set('Access-Control-Allow-Origin', '*');
     const len = res.headers.get('content-length');
     if (len) headers.set('Content-Length', len);
     return new Response(res.body, { status: 200, headers });
