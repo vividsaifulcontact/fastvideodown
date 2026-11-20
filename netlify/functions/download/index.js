@@ -190,7 +190,15 @@ exports.handler = async (event) => {
     const r = await runYtDlp(a, t);
     stderr = r.stderr || stderr;
     direct = (r.stdout || '').trim().split('\n')[0] || '';
-    if (/^https?:\/\//.test(direct)) break;
+    if (/^https?:\/\//.test(direct)) {
+      // Audio-only guard: never hand a VIDEO file to an "Audio only"
+      // download. YouTube's googlevideo URLs carry mime=video/mp4 for
+      // combined/video formats and mime=audio/... for real audio. If this
+      // attempt returned a video, discard it and try the next client
+      // (the web client lists real audio-only streams).
+      if (isAudio && /[?&]mime=video%2F/i.test(direct)) { direct = ''; continue; }
+      break;
+    }
   }
   if (!/^https?:\/\//.test(direct)) {
     const s = (stderr || '').toLowerCase();

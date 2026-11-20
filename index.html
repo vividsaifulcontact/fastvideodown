@@ -117,6 +117,7 @@ border-radius:12px;padding:11px 14px;margin-bottom:8px}
 .fmt .q{font-weight:800;font-size:16px;min-width:74px}
 .fmt .d{color:var(--muted);font-size:13px;flex:1}
 .fmt .d b{color:var(--ink)}
+.fmt .qbtns{display:flex;gap:8px;flex-wrap:wrap}
 .hint{margin-top:14px;font-size:13.5px;color:var(--muted);line-height:1.7;
 background:#fffbeb;border:1px solid #fde68a;padding:12px 14px;border-radius:12px}
 .trust{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:22px}
@@ -431,10 +432,29 @@ function fmtRow(f, kind){
   </div>`;
 }
 
+// One row per quality: "with sound" and "without sound" side by side, so
+// every quality clearly offers both. (YouTube only ships pre-merged
+// with-sound files at 360p and 720p; 1080p+ with sound needs a merge, which
+// no free server here can do — so 1080p shows "without sound" only, with
+// a note pointing to the highest with-sound option.)
+function qualityRow(h, withSoundFmt, videoOnlyFmt){
+  const btn = (f, suffix) => `<button class="btn small" onclick="downloadFormat('${esc(f.format_id)}','${esc(f.ext||'mp4')}','video')">${esc(h + 'p ' + suffix)}</button>`;
+  const withBtn = withSoundFmt ? btn(withSoundFmt, 'with sound') : '';
+  const withoutBtn = videoOnlyFmt ? btn(videoOnlyFmt, 'without sound') : '';
+  const size = (withSoundFmt || videoOnlyFmt).filesize ? ' • ' + fmtSize((withSoundFmt || videoOnlyFmt).filesize) : '';
+  const ext = ((withSoundFmt || videoOnlyFmt).ext || 'mp4').toUpperCase();
+  return `<div class="fmt">
+    <span class="q">${esc(h + 'p')}</span>
+    <span class="d"><b>${esc(ext)}</b>${esc(size)}</span>
+    <span class="qbtns">${withBtn}${withoutBtn}</span>
+  </div>`;
+}
+
 function renderResult(d){
-  const withSound = d.formats.video.filter(f => f.hasAudio);
-  const videoOnly = d.formats.video.filter(f => !f.hasAudio);
-  const audio = d.formats.audio;
+  const videos = d.formats.video || [];
+  const withSound = videos.filter(f => f.hasAudio);
+  const videoOnly = videos.filter(f => !f.hasAudio);
+  const audio = d.formats.audio || [];
   // No audio-only format was listed but the video HAS sound (e.g. YouTube's
   // android client often returns only the combined 360p file). Offer a
   // "best audio" download anyway — the server resolves the audio URL on
@@ -442,6 +462,15 @@ function renderResult(d){
   if (!audio.length && withSound.length) {
     audio.push({ format_id: 'bestaudio', label: 'Best audio', ext: 'm4a', abr: null, filesize: null, url: null });
   }
+  // Group video by quality (height), highest first.
+  const heights = [...new Set(videos.map(f => f.height).filter(h => h > 0))].sort((a, b) => b - a);
+  let qualityHtml = '';
+  for (const h of heights) {
+    const ws = withSound.find(f => f.height === h);
+    const vo = videoOnly.find(f => f.height === h);
+    qualityHtml += qualityRow(h, ws, vo);
+  }
+  const bestSound = withSound.length ? withSound[0].label : null;
   let html = `<div class="media">
     ${d.thumbnail ? `<div class="thumb"><img src="${esc(d.thumbnail)}" alt="Video thumbnail" loading="lazy"></div>` : ''}
     <div class="meta">
@@ -453,10 +482,9 @@ function renderResult(d){
       ${d.thumbnail ? `<button class="btn small" style="margin-top:10px" onclick="downloadThumbnail()">🖼️ Download Thumbnail</button>` : ''}
     </div>
   </div>`;
-  if (withSound.length) html += `<div class="group"><h4>🎬 Video with sound <span class="tag">Best: ${esc(withSound[0].label)}</span></h4>${withSound.map(f=>fmtRow(f,'video')).join('')}</div>`;
-  if (videoOnly.length) html += `<div class="group"><h4>🎥 Video only (no sound)</h4>${videoOnly.map(f=>fmtRow(f,'video')).join('')}</div>`;
+  if (qualityHtml) html += `<div class="group"><h4>🎬 Video — every quality, with sound &amp; without sound${bestSound ? ` <span class="tag">Best with sound: ${esc(bestSound)}</span>` : ''}</h4>${qualityHtml}</div>`;
   if (audio.length) html += `<div class="group"><h4>🎵 Audio only</h4>${audio.map(f=>fmtRow(f,'audio')).join('')}</div>`;
-  html += `<div class="hint">💡 Downloads save straight to your Downloads folder. 1080p+ video often comes without sound; for sound, pick the highest “Video with sound” option. Use “Download Thumbnail” to save the video's cover image.</div>`;
+  html += `<div class="hint">💡 Downloads save straight to your Downloads folder. YouTube only provides video WITH sound up to 720p — 1080p and above come as video without sound (YouTube does not ship a merged 1080p file). Use “Download Thumbnail” to save the video's cover image.</div>`;
   resultEl.innerHTML = html;
   resultEl.style.display = 'block';
   resultEl.scrollIntoView({ behavior:'smooth', block:'start' });

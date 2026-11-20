@@ -225,9 +225,12 @@ exports.handler = async (event) => {
       // Fast path: usable formats found — return now, don't wait for slower scans.
       const f = buildFormats(data.formats);
       if (f.video.length || f.audio.length) {
-        // Deep YouTube scan: don't stop at the low 360p-only fallback — a
-        // later client (tv/ios) may return the high qualities.
-        const onlyLow = deep && isYT && !f.video.some(v => (v.height || 0) > 360) && !f.audio.length;
+        // YouTube: don't stop at the low 360p-only fallback — a later
+        // client (web/tv) may return the high qualities (720p with sound,
+        // 1080p video-only, real audio-only). The android client alone only
+        // ever returns itag 18 (360p), so without this the user never sees
+        // 720p/1080p or a working audio-only option.
+        const onlyLow = isYT && !f.video.some(v => (v.height || 0) > 360) && !f.audio.length;
         if (onlyLow) {
           const n = f.video.length + f.audio.length;
           if (n > bestCount) { bestCount = n; bestData = data; }
