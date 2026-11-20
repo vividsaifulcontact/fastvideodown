@@ -468,7 +468,15 @@ async function downloadFormat(formatId, ext, kind){
   const fmt = [...(current.formats.video||[]), ...(current.formats.audio||[])].find(f => f.format_id === formatId);
   const label = fmt?.label || (fmt?.height ? fmt.height + 'p' : (ext||'mp4').toUpperCase());
   const fname = ((current.title || 'video').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'video') + '.' + (fmt?.ext || ext || 'mp4');
-  const streamUrl = (directUrl) => '/api/stream?url=' + encodeURIComponent(directUrl) + '&filename=' + encodeURIComponent(fname);
+  const streamUrl = (directUrl) => {
+    // YouTube's CDN URL is IP-locked to the proxy IP yt-dlp used
+    // (ip=<proxy ip>, often without ipbypass=yes). Pass that IP so the
+    // server fetches through the matching proxy and the download works
+    // instead of opening in a new tab.
+    const m = directUrl.match(/[?&]ip=([\d.]+)/);
+    const pip = m ? '&proxyIp=' + m[1] : '';
+    return '/api/stream?url=' + encodeURIComponent(directUrl) + '&filename=' + encodeURIComponent(fname) + pip;
+  };
 
   // Download via the server stream LINK. /api/stream returns
   // Content-Disposition: attachment, which forces a real download on

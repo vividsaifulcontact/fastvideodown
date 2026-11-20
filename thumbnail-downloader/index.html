@@ -135,7 +135,8 @@ async function downloadThumb(){
   const m = current.thumbnail.match(/\.(jpg|jpeg|png|webp)(\?|$)/i);
   const ext = m ? m[1].toLowerCase().replace('jpeg','jpg') : 'jpg';
   const fname = ((current.title || 'thumbnail').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'thumbnail') + '-thumbnail.' + ext;
-  const sUrl = '/api/stream?url=' + encodeURIComponent(current.thumbnail) + '&filename=' + encodeURIComponent(fname);
+  const ipm = current.thumbnail.match(/[?&]ip=([\d.]+)/);
+  const sUrl = '/api/stream?url=' + encodeURIComponent(current.thumbnail) + '&filename=' + encodeURIComponent(fname) + (ipm ? '&proxyIp=' + ipm[1] : '');
   $('#status').innerHTML = '<div class="info">Downloading thumbnail…</div>';
   try {
     const ctrl = new AbortController();

@@ -1,0 +1,1 @@
+{"dependencies":{"undici":"^6.19.8"},"description":"Dependencies for FastVideoDown Netlify functions (stream.mjs uses undici ProxyAgent to fetch IP-locked CDN URLs through the matching Webshare proxy).","name":"fastvideodown-functions","private":true}
