@@ -119,6 +119,7 @@ print('sites index written')
 urls = ['', 'youtube-video-downloader/', 'tiktok-video-downloader/', 'facebook-video-downloader/',
         'instagram-video-downloader/', 'twitter-video-downloader/', 'reddit-video-downloader/',
         'vimeo-video-downloader/', 'dailymotion-video-downloader/', 'sites/',
+        'thumbnail-downloader/',
         'privacy.html', 'terms.html', 'contact.html', 'blog/how-to-download-youtube-videos/']
 for n in sites:
     urls.append(slug(n) + '/')

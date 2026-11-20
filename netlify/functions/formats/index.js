@@ -78,6 +78,11 @@ function classifyError(stderr) {
     return { code: 'engine_error', error: 'Download engine is not available on the server right now.' };
   if (s.includes('ip address is blocked') || s.includes('blocked from accessing'))
     return { code: 'ip_blocked', error: 'This platform blocked the server (IP blocked). Try another link or try again later.' };
+  // YouTube's anti-bot screen ("Sign in to confirm you're not a bot") is NOT
+  // a private video — the video is public, YouTube is just refusing the
+  // server's IP. Say so plainly instead of claiming it needs a login.
+  if (s.includes('not a bot') || s.includes('sign in to confirm') || s.includes('confirm you'))
+    return { code: 'bot_check', error: 'YouTube blocked this request from our server (it asked to sign in to prove it is not a bot). The video itself is public — please try again later, or try a different video.' };
   if (s.includes('login required') || s.includes('log in') || s.includes('cookies') || s.includes('sign in to confirm'))
     return { code: 'login_required', error: 'This link needs a logged-in account (private / login-only content).' };
   if (s.includes('unsupported url') || s.includes('no video') || s.includes('not a valid url'))

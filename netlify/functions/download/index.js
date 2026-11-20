@@ -178,6 +178,7 @@ exports.handler = async (event) => {
     const s = (stderr || '').toLowerCase();
     const error = s.includes('binary_not_found') || s.includes('binary_prepare_failed')
       ? 'Download engine is not available on the server right now.'
+      : s.includes('not a bot') || s.includes('sign in to confirm') ? 'YouTube blocked this request from our server (bot check). The video itself is public — please try again later, or try a different video.'
       : s.includes('blocked') ? 'This platform blocked the server. Try again later.'
       : s.includes('login') || s.includes('cookies') ? 'This link needs a logged-in account.'
       : 'Could not get a download link for this format. Please try again.';

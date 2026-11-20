@@ -174,6 +174,7 @@ footer .copy{margin-top:26px;font-size:13px;border-top:1px solid #1e293b;padding
       <a href="/facebook-video-downloader/">Facebook</a>
       <a href="/instagram-video-downloader/">Instagram</a>
       <a href="/twitter-video-downloader/">X</a>
+      <a href="/thumbnail-downloader/">Thumbnail</a>
       <a href="/blog/how-to-download-youtube-videos/">Blog</a>
     </nav>
   </div>
@@ -260,6 +261,11 @@ footer .copy{margin-top:26px;font-size:13px;border-top:1px solid #1e293b;padding
     <p>TikTok links work the same way: paste, pick a quality, download. Because TikTok sometimes blocks server-side downloads, a failed link usually works if you try again a little later.</p>
     <h3>Facebook, Instagram, X &amp; Reddit</h3>
     <p>Facebook videos and Reels, Instagram Reels and video posts, X (Twitter) videos and GIFs, Reddit videos with sound — FastVideoDown handles them all from the same box. One tool, every platform, no extra apps.</p>
+  </section>
+
+  <section id="thumbnail">
+    <h2>Thumbnail Downloader — Save Any Video's Cover Image</h2>
+    <p>Every video has a thumbnail — the cover image you see before it plays. FastVideoDown's <a href="/thumbnail-downloader/">Thumbnail Downloader</a> saves that image in full quality. Paste any YouTube, TikTok, Instagram, Facebook or X video link and you get the thumbnail with a one-click download, right next to the video itself. Use the <b>Download Thumbnail</b> button on any video result, or open the dedicated <a href="/thumbnail-downloader/">Thumbnail Downloader</a> page.</p>
   </section>
 
   <section id="legal">
@@ -444,12 +450,13 @@ function renderResult(d){
       ${d.uploader ? 'Channel: ' + esc(d.uploader) + '<br>' : ''}
       Source: ${esc(d.extractor || '')}</div>
       <span class="badge">✓ ${esc(d.formats.video.length + d.formats.audio.length)} options found</span>
+      ${d.thumbnail ? `<button class="btn small" style="margin-top:10px" onclick="downloadThumbnail()">🖼️ Download Thumbnail</button>` : ''}
     </div>
   </div>`;
   if (withSound.length) html += `<div class="group"><h4>🎬 Video with sound <span class="tag">Best: ${esc(withSound[0].label)}</span></h4>${withSound.map(f=>fmtRow(f,'video')).join('')}</div>`;
   if (videoOnly.length) html += `<div class="group"><h4>🎥 Video only (no sound)</h4>${videoOnly.map(f=>fmtRow(f,'video')).join('')}</div>`;
   if (audio.length) html += `<div class="group"><h4>🎵 Audio only</h4>${audio.map(f=>fmtRow(f,'audio')).join('')}</div>`;
-  html += `<div class="hint">💡 Clicking Download opens a direct high-speed link from the platform's own servers in a new tab — save it from your browser menu (⋮) → Save / Download. 1080p+ video often comes without sound; for sound, pick the highest “Video with sound” option.</div>`;
+  html += `<div class="hint">💡 Downloads save straight to your Downloads folder. 1080p+ video often comes without sound; for sound, pick the highest “Video with sound” option. Use “Download Thumbnail” to save the video's cover image.</div>`;
   resultEl.innerHTML = html;
   resultEl.style.display = 'block';
   resultEl.scrollIntoView({ behavior:'smooth', block:'start' });
@@ -458,11 +465,46 @@ function renderResult(d){
 async function downloadFormat(formatId, ext, kind){
   if (!current) return;
   // The formats call already fetched the direct link for every option.
-  // Audio and small files (<=5.5MB) go through the server so the browser is
-  // FORCED to save them; big videos open instantly from the direct link.
+  // Audio and small files (<=5.5MB) go through the v1 server proxy so the
+  // browser is FORCED to save them. Large videos go through the server
+  // STREAM so they download directly instead of opening a player tab.
   const fmt = [...(current.formats.video||[]), ...(current.formats.audio||[])].find(f => f.format_id === formatId);
+  const fname = ((current.title || 'video').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'video') + '.' + (fmt?.ext || ext || 'mp4');
   const useProxy = !!fmt && (kind === 'audio' || (fmt.filesize && fmt.filesize <= 5500000));
-  if (fmt && fmt.url && !useProxy) { openDirect(fmt.url, fmt.ext || ext); return; }
+  if (fmt && fmt.url && !useProxy) {
+    statusEl.innerHTML = `<div class="info"><span class="spinner"></span>Starting your download…</div>`;
+    try {
+      const res = await fetch('/api/stream?url=' + encodeURIComponent(fmt.url) + '&filename=' + encodeURIComponent(fname));
+      const ct = res.headers.get('content-type') || '';
+      if (res.ok && !ct.includes('application/json')) {
+        // Real file stream: save it straight to disk (Chrome/Edge) or via Blob.
+        let saved = false;
+        if (window.showSaveFilePicker) {
+          try {
+            const handle = await window.showSaveFilePicker({ suggestedName: fname });
+            const w = await handle.createWritable();
+            await res.body.pipeTo(w);
+            saved = true;
+          } catch (e) { /* user cancelled or gesture expired — fall to Blob */ }
+        }
+        if (!saved) {
+          if (fmt.filesize && fmt.filesize > 100000000) { openDirect(fmt.url, fmt.ext || ext); return; }
+          const blob = await res.blob();
+          const burl = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = burl; a.download = fname;
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(() => URL.revokeObjectURL(burl), 5000);
+        }
+        statusEl.innerHTML = `<div class="ok">✓ Download started — check your Downloads folder.</div>`;
+        saveHistory(current);
+        return;
+      }
+      // Stream endpoint returned an error — fall through to the direct link.
+    } catch (e) { /* fall through to direct link */ }
+    openDirect(fmt.url, fmt.ext || ext);
+    return;
+  }
   statusEl.innerHTML = `<div class="info"><span class="spinner"></span>Preparing your high-speed download link…</div>`;
   try {
     const res = await fetch('/api/download', {
@@ -498,6 +540,34 @@ function openDirect(url, ext, filename){
   a.download = filename || ((current.title || 'video').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'video') + '.' + (ext || 'mp4');
   document.body.appendChild(a); a.click(); a.remove();
   saveHistory(current);
+}
+
+// Download the video's thumbnail (cover image) as a file.
+async function downloadThumbnail(){
+  if (!current || !current.thumbnail) return;
+  const m = current.thumbnail.match(/\.(jpg|jpeg|png|webp)(\?|$)/i);
+  const ext = m ? m[1].toLowerCase().replace('jpeg','jpg') : 'jpg';
+  const fname = ((current.title || 'thumbnail').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'thumbnail') + '-thumbnail.' + ext;
+  statusEl.innerHTML = `<div class="info"><span class="spinner"></span>Downloading thumbnail…</div>`;
+  try {
+    const res = await fetch('/api/stream?url=' + encodeURIComponent(current.thumbnail) + '&filename=' + encodeURIComponent(fname));
+    const ct = res.headers.get('content-type') || '';
+    if (res.ok && !ct.includes('application/json')) {
+      const blob = await res.blob();
+      const burl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = burl; a.download = fname;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(burl), 5000);
+      statusEl.innerHTML = `<div class="ok">✓ Thumbnail downloaded.</div>`;
+      return;
+    }
+    window.open(current.thumbnail, '_blank');
+    statusEl.innerHTML = `<div class="ok">✓ Thumbnail opened in a new tab — right-click it and choose Save image.</div>`;
+  } catch (e) {
+    window.open(current.thumbnail, '_blank');
+    statusEl.innerHTML = `<div class="ok">✓ Thumbnail opened in a new tab — right-click it and choose Save image.</div>`;
+  }
 }
 
 function copyLink(url, btn){

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thumbnail Downloader – Download Video Thumbnails Free | FastVideoDown</title>
+<meta name="description" content="Free Thumbnail Downloader: paste any YouTube, TikTok, Instagram, Facebook or X video link and download its thumbnail image in full quality. No sign-up, no watermark, works on any device.">
+<meta name="keywords" content="thumbnail downloader, download thumbnail, youtube thumbnail downloader, tiktok thumbnail downloader, instagram thumbnail downloader, video thumbnail downloader, free thumbnail downloader, thumbnail grabber">
+<link rel="canonical" href="https://fastvideodown.com/thumbnail-downloader/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Thumbnail Downloader – Download Video Thumbnails Free | FastVideoDown">
+<meta property="og:description" content="Paste any video link and download its thumbnail in full quality. Free, no sign-up, no watermark.">
+<meta property="og:url" content="https://fastvideodown.com/thumbnail-downloader/">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"FastVideoDown Thumbnail Downloader","url":"https://fastvideodown.com/thumbnail-downloader/","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Download video thumbnails in full quality from YouTube, TikTok, Instagram, Facebook and X."}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What is a thumbnail downloader?","acceptedAnswer":{"@type":"Answer","text":"A thumbnail downloader saves the cover image (thumbnail) of a video. Paste a video link from YouTube, TikTok, Instagram, Facebook or X and FastVideoDown shows the thumbnail in full quality so you can download it."}},
+{"@type":"Question","name":"Is the thumbnail downloader free?","acceptedAnswer":{"@type":"Answer","text":"Yes, it is completely free. There is no sign-up, no watermark and no limit on how many thumbnails you download."}},
+{"@type":"Question","name":"What quality are the thumbnails?","acceptedAnswer":{"@type":"Answer","text":"FastVideoDown returns the highest-quality thumbnail the platform provides, usually the full-resolution cover image (for YouTube up to 1280x720 and higher when available)."}},
+{"@type":"Question","name":"Can I download thumbnails from TikTok and Instagram too?","acceptedAnswer":{"@type":"Answer","text":"Yes. Paste a link from YouTube, TikTok, Instagram, Facebook, X (Twitter) or any of the 1,000+ supported sites and the thumbnail will appear with a download button."}}
+]}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:#111;background:#fff;line-height:1.6}
+header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e7eb;z-index:10}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:56px}
+.logo{font-size:20px;font-weight:800;color:#111;text-decoration:none}
+.logo-mark{color:#2563eb}
+nav a{color:#374151;text-decoration:none;margin-left:16px;font-size:14px}
+nav a:hover{color:#2563eb}
+.hero{background:linear-gradient(180deg,#0f172a,#1e293b);color:#fff;padding:56px 0 44px;text-align:center}
+.hero h1{font-size:36px;line-height:1.2;margin-bottom:12px}
+.hero p{color:#cbd5e1;font-size:17px;max-width:640px;margin:0 auto}
+.tool{max-width:720px;margin:-24px auto 0;background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.tool input{width:100%;padding:13px 14px;font-size:16px;border:2px solid #d1d5db;border-radius:10px;outline:none}
+.tool input:focus{border-color:#2563eb}
+.tool .row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.btn{background:#2563eb;color:#fff;border:0;padding:12px 22px;font-size:16px;font-weight:700;border-radius:10px;cursor:pointer}
+.btn:hover{background:#1d4ed8}
+.btn.ghost{background:#f3f4f6;color:#111}
+#status{margin-top:14px}
+.info{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;padding:10px 14px;border-radius:8px}
+.err{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;padding:10px 14px;border-radius:8px}
+.ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;padding:10px 14px;border-radius:8px}
+#thumbResult{display:none;margin-top:18px;text-align:center}
+#thumbResult img{max-width:100%;border-radius:10px;border:1px solid #e5e7eb}
+#thumbResult h3{font-size:17px;margin:12px 0 4px}
+#thumbResult .sub{color:#6b7280;font-size:14px;margin-bottom:12px}
+main{max-width:760px;margin:0 auto;padding:44px 16px}
+main h2{font-size:26px;margin:32px 0 12px}
+main h3{font-size:19px;margin:22px 0 8px}
+main p,main li{color:#374151}
+main ul{margin-left:20px}
+.step{display:flex;gap:12px;margin:14px 0}
+.step .n{background:#2563eb;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.faq{border:1px solid #e5e7eb;border-radius:10px;padding:16px 18px;margin:12px 0}
+.faq b{display:block;margin-bottom:4px}
+.cta{text-align:center;margin:36px 0}
+.cta a{background:#2563eb;color:#fff;padding:14px 28px;border-radius:10px;text-decoration:none;font-weight:700;font-size:17px}
+footer{border-top:1px solid #e5e7eb;padding:28px 0;text-align:center;color:#6b7280;font-size:14px}
+footer a{color:#2563eb;text-decoration:none;margin:0 8px}
+@media(max-width:640px){.hero h1{font-size:28px}nav a{margin-left:10px;font-size:13px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="/"><span class="logo-mark">⬇</span> FastVideoDown</a><nav><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/instagram-video-downloader/">Instagram</a><a href="/">Video Downloader</a></nav></div></header>
+<section class="hero"><div class="wrap">
+<h1>Thumbnail Downloader</h1>
+<p>Download any video's thumbnail in full quality. Paste a YouTube, TikTok, Instagram, Facebook or X link below — free, no sign-up, no watermark.</p>
+</div></section>
+<div class="wrap"><div class="tool">
+<input id="urlInput" type="url" placeholder="Paste a video link here… e.g. https://www.youtube.com/watch?v=..." autocomplete="off">
+<div class="row"><button class="btn" id="getBtn" onclick="getThumb()">Get Thumbnail</button><button class="btn ghost" onclick="pasteLink()">📋 Paste</button></div>
+<div id="status"></div>
+<div id="thumbResult"></div>
+</div></div>
+<main>
+<h2>How to download a thumbnail</h2>
+<div class="step"><div class="n">1</div><div><b>Copy the video link</b><p>Open the video on YouTube, TikTok, Instagram, Facebook or X and copy its link.</p></div></div>
+<div class="step"><div class="n">2</div><div><b>Paste it above</b><p>Paste the link into the box and click <b>Get Thumbnail</b>. FastVideoDown finds the video in a few seconds.</p></div></div>
+<div class="step"><div class="n">3</div><div><b>Download the thumbnail</b><p>The full-quality cover image appears below. Click <b>Download Thumbnail</b> and it saves straight to your Downloads folder.</p></div></div>
+
+<h2>Why use FastVideoDown's thumbnail downloader?</h2>
+<ul>
+<li><b>Full quality</b> — you get the highest-resolution thumbnail the platform provides, not a small preview.</li>
+<li><b>Every platform</b> — YouTube, TikTok, Instagram, Facebook, X and 1,000+ more sites.</li>
+<li><b>Free forever</b> — no sign-up, no watermark, no limits.</li>
+<li><b>Fast</b> — the thumbnail appears in seconds, and the download starts immediately.</li>
+<li><b>Works on any device</b> — phone, tablet or computer, nothing to install.</li>
+</ul>
+
+<h2>What is a video thumbnail?</h2>
+<p>A thumbnail is the cover image shown before a video plays. Creators, designers and marketers often need that image for a blog post, a presentation, a social-media post or a video of their own. A thumbnail downloader saves that image as a file (JPG or PNG) so you can use it wherever you need it. Download only thumbnails you own or have permission to use.</p>
+
+<h2>Frequently asked questions</h2>
+<div class="faq"><b>What is a thumbnail downloader?</b>A thumbnail downloader saves the cover image of a video. Paste a video link and FastVideoDown shows the thumbnail in full quality so you can download it.</div>
+<div class="faq"><b>Is the thumbnail downloader free?</b>Yes, it is completely free. No sign-up, no watermark and no limit on how many thumbnails you download.</div>
+<div class="faq"><b>What quality are the thumbnails?</b>FastVideoDown returns the highest-quality thumbnail the platform provides, usually the full-resolution cover image.</div>
+<div class="faq"><b>Can I download thumbnails from TikTok and Instagram too?</b>Yes. Paste a link from YouTube, TikTok, Instagram, Facebook, X or any of the 1,000+ supported sites.</div>
+
+<div class="cta"><a href="/">Download videos too →</a></div>
+<p style="text-align:center;color:#6b7280;font-size:14px">FastVideoDown is not affiliated with YouTube, TikTok, Instagram, Facebook or X. Download only content you own or have permission to save.</p>
+</main>
+<footer><a href="/">FastVideoDown</a><a href="/sites/">All Downloaders</a><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Use</a><a href="/contact.html">Contact</a><a href="/sitemap.xml">Sitemap</a><br><br>FastVideoDown is not affiliated with any platform. Download only content you own or have permission to save.</footer>
+<script>
+const $ = s => document.querySelector(s);
+let current = null;
+async function pasteLink(){
+  try { const t = await navigator.clipboard.readText(); if (t) $('#urlInput').value = t.trim(); } catch(e){ $('#urlInput').focus(); }
+}
+function esc(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+async function getThumb(){
+  const url = $('#urlInput').value.trim();
+  const statusEl = $('#status'), resEl = $('#thumbResult');
+  resEl.style.display = 'none'; resEl.innerHTML = '';
+  if (!url) { statusEl.innerHTML = '<div class="err">Please paste a video link first.</div>'; return; }
+  statusEl.innerHTML = '<div class="info">Finding the thumbnail…</div>';
+  try {
+    const res = await fetch('/api/formats', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ url }) });
+    const d = await res.json();
+    if (!d.ok || !d.thumbnail) { statusEl.innerHTML = '<div class="err">' + esc(d.error || 'Could not find a thumbnail for this link.') + '</div>'; return; }
+    current = d;
+    statusEl.innerHTML = '';
+    resEl.innerHTML = '<img src="' + esc(d.thumbnail) + '" alt="Video thumbnail"><h3>' + esc(d.title || 'Video thumbnail') + '</h3><div class="sub">' + esc(d.uploader || '') + '</div><button class="btn" onclick="downloadThumb()">🖼️ Download Thumbnail</button>';
+    resEl.style.display = 'block';
+  } catch(e){ statusEl.innerHTML = '<div class="err">Could not reach the server. Please try again.</div>'; }
+}
+async function downloadThumb(){
+  if (!current || !current.thumbnail) return;
+  const m = current.thumbnail.match(/\.(jpg|jpeg|png|webp)(\?|$)/i);
+  const ext = m ? m[1].toLowerCase().replace('jpeg','jpg') : 'jpg';
+  const fname = ((current.title || 'thumbnail').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'thumbnail') + '-thumbnail.' + ext;
+  $('#status').innerHTML = '<div class="info">Downloading thumbnail…</div>';
+  try {
+    const res = await fetch('/api/stream?url=' + encodeURIComponent(current.thumbnail) + '&filename=' + encodeURIComponent(fname));
+    const ct = res.headers.get('content-type') || '';
+    if (res.ok && !ct.includes('application/json')) {
+      const blob = await res.blob();
+      const burl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = burl; a.download = fname;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(burl), 5000);
+      $('#status').innerHTML = '<div class="ok">✓ Thumbnail downloaded.</div>';
+      return;
+    }
+    window.open(current.thumbnail, '_blank');
+    $('#status').innerHTML = '<div class="ok">✓ Thumbnail opened in a new tab — right-click it and choose Save image.</div>';
+  } catch(e) {
+    window.open(current.thumbnail, '_blank');
+    $('#status').innerHTML = '<div class="ok">✓ Thumbnail opened in a new tab — right-click it and choose Save image.</div>';
+  }
+}
+$('#urlInput').addEventListener('keydown', e => { if (e.key === 'Enter') getThumb(); });
+</script>
+</body>
+</html>
