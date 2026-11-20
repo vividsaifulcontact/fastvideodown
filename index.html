@@ -433,13 +433,20 @@ function fmtRow(f, kind){
 }
 
 // One row per quality: "with sound" and "without sound" side by side, so
-// every quality clearly offers both. (YouTube only ships pre-merged
-// with-sound files at 360p and 720p; 1080p+ with sound needs a merge, which
-// no free server here can do — so 1080p shows "without sound" only, with
-// a note pointing to the highest with-sound option.)
+// every quality clearly offers both.
+// - 360p/720p with sound: YouTube ships a pre-merged file (itag 18/22),
+//   so it downloads straight from the CDN like any other format.
+// - 1080p+ with sound: YouTube ships NO pre-merged file, so the server
+//   MERGES the video-only stream + the audio stream with ffmpeg
+//   (/api/merge) and sends the merged MP4. It takes longer (the server
+//   downloads both streams and muxes them), so the button warns the user.
 function qualityRow(h, withSoundFmt, videoOnlyFmt){
   const btn = (f, suffix) => `<button class="btn small" onclick="downloadFormat('${esc(f.format_id)}','${esc(f.ext||'mp4')}','video')">${esc(h + 'p ' + suffix)}</button>`;
-  const withBtn = withSoundFmt ? btn(withSoundFmt, 'with sound') : '';
+  const withBtn = withSoundFmt
+    ? btn(withSoundFmt, 'with sound')
+    : (videoOnlyFmt && h > 720
+      ? `<button class="btn small" onclick="downloadMerged(${h})">${esc(h + 'p with sound')}</button>`
+      : '');
   const withoutBtn = videoOnlyFmt ? btn(videoOnlyFmt, 'without sound') : '';
   const size = (withSoundFmt || videoOnlyFmt).filesize ? ' • ' + fmtSize((withSoundFmt || videoOnlyFmt).filesize) : '';
   const ext = ((withSoundFmt || videoOnlyFmt).ext || 'mp4').toUpperCase();
@@ -448,6 +455,21 @@ function qualityRow(h, withSoundFmt, videoOnlyFmt){
     <span class="d"><b>${esc(ext)}</b>${esc(size)}</span>
     <span class="qbtns">${withBtn}${withoutBtn}</span>
   </div>`;
+}
+
+// High-quality WITH sound via server-side merge: the server downloads the
+// video-only stream + the audio stream, merges them with ffmpeg, and sends
+// the merged MP4. Slower than a direct download (a few minutes for a long
+// video), so warn the user first.
+async function downloadMerged(height){
+  if (!current) return;
+  const fname = ((current.title || 'video').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'video') + '-' + height + 'p.mp4';
+  const mUrl = API_BASE + '/api/merge?url=' + encodeURIComponent(current.url) + '&height=' + height + '&filename=' + encodeURIComponent(fname);
+  statusEl.innerHTML = `<div class="info"><span class="spinner"></span>Preparing ${height}p with sound… the server is merging video + audio (this takes a while for long videos). Please keep this tab open.</div>`;
+  const a = document.createElement('a');
+  a.href = mUrl; a.download = fname;
+  document.body.appendChild(a); a.click(); a.remove();
+  statusEl.innerHTML = `<div class="ok">✓ ${height}p with sound is being prepared — your download will start shortly. Check your Downloads folder.</div>`;
 }
 
 function renderResult(d){
@@ -484,7 +506,7 @@ function renderResult(d){
   </div>`;
   if (qualityHtml) html += `<div class="group"><h4>🎬 Video — every quality, with sound &amp; without sound${bestSound ? ` <span class="tag">Best with sound: ${esc(bestSound)}</span>` : ''}</h4>${qualityHtml}</div>`;
   if (audio.length) html += `<div class="group"><h4>🎵 Audio only</h4>${audio.map(f=>fmtRow(f,'audio')).join('')}</div>`;
-  html += `<div class="hint">💡 Downloads save straight to your Downloads folder. YouTube only provides video WITH sound up to 720p — 1080p and above come as video without sound (YouTube does not ship a merged 1080p file). Use “Download Thumbnail” to save the video's cover image.</div>`;
+  html += `<div class="hint">💡 Downloads save straight to your Downloads folder. Every quality offers both “with sound” and “without sound”. For 1080p and above, “with sound” is merged on the server (video + audio), so it takes a little longer — keep the tab open until the download starts. Use “Download Thumbnail” to save the video's cover image.</div>`;
   resultEl.innerHTML = html;
   resultEl.style.display = 'block';
   resultEl.scrollIntoView({ behavior:'smooth', block:'start' });
