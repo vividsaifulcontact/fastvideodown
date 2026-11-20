@@ -142,7 +142,12 @@ exports.handler = async (event) => {
   if (!/^https?:\/\/.+/i.test(url)) {
     return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'Invalid link.' }) };
   }
-  if (formatId === 'bestaudio') formatId = 'bestaudio/best';
+  // 'bestaudio' must stay WITHOUT a /best fallback: with 'bestaudio/best',
+  // a missing audio-only format silently returns the VIDEO file, so a user
+  // clicking "Audio only" would get a video mislabeled as audio. Keep it
+  // strict — the attempt loop tries several clients for bestaudio, and if
+  // none has it, we return a clear error instead of the wrong file.
+  if (formatId === 'bestaudio') formatId = 'bestaudio';
   if (!/^[a-zA-Z0-9_\-\+\/]+$/.test(formatId)) {
     return { statusCode: 400, headers, body: JSON.stringify({ ok: false, error: 'Invalid format.' }) };
   }
