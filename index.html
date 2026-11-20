@@ -434,7 +434,7 @@ function fmtRow(f, kind){
   return `<div class="fmt">
     <span class="q">${esc(f.label)}</span>
     <span class="d"><b>${esc((f.ext||'').toUpperCase())}</b>${esc(size)}${esc(tag)}${f.fps ? ' • '+f.fps+'fps' : ''}</span>
-    <button class="btn small" onclick="downloadFormat('${esc(f.format_id)}','${esc(f.ext||'mp4')}','${kind}')">Download</button>
+    <button class="btn small" onclick="downloadFormat('${esc(f.format_id)}','${esc(f.ext||'mp4')}','${kind}')">Download ${esc(f.label)}</button>
   </div>`;
 }
 
@@ -464,69 +464,72 @@ function renderResult(d){
 
 async function downloadFormat(formatId, ext, kind){
   if (!current) return;
-  // The formats call already fetched the direct link for every option.
-  // Audio and small files (<=5.5MB) go through the v1 server proxy so the
-  // browser is FORCED to save them. Large videos go through the server
-  // STREAM so they download directly instead of opening a player tab.
   const fmt = [...(current.formats.video||[]), ...(current.formats.audio||[])].find(f => f.format_id === formatId);
+  const label = fmt?.label || (fmt?.height ? fmt.height + 'p' : (ext||'mp4').toUpperCase());
   const fname = ((current.title || 'video').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'video') + '.' + (fmt?.ext || ext || 'mp4');
-  const useProxy = !!fmt && (kind === 'audio' || (fmt.filesize && fmt.filesize <= 5500000));
-  if (fmt && fmt.url && !useProxy) {
-    statusEl.innerHTML = `<div class="info"><span class="spinner"></span>Starting your download…</div>`;
+  const streamUrl = (directUrl) => '/api/stream?url=' + encodeURIComponent(directUrl) + '&filename=' + encodeURIComponent(fname);
+
+  // Download via the server stream LINK. /api/stream returns
+  // Content-Disposition: attachment, which forces a real download on
+  // phones too. (The old fetch+Blob way opened a player tab on mobile
+  // because the download attribute is ignored there.)
+  async function downloadViaStream(directUrl){
+    const sUrl = streamUrl(directUrl);
+    statusEl.innerHTML = `<div class="info"><span class="spinner"></span>Downloading ${esc(label)}…</div>`;
+    // Header-only check: does the stream work? Abort before the body so
+    // we don't download the file twice. (TikTok's CDN rejects the stream
+    // with 403 — then we fall back to opening the direct link.)
     try {
-      const res = await fetch('/api/stream?url=' + encodeURIComponent(fmt.url) + '&filename=' + encodeURIComponent(fname));
-      const ct = res.headers.get('content-type') || '';
-      if (res.ok && !ct.includes('application/json')) {
-        // Real file stream: save it straight to disk (Chrome/Edge) or via Blob.
-        let saved = false;
-        if (window.showSaveFilePicker) {
-          try {
-            const handle = await window.showSaveFilePicker({ suggestedName: fname });
-            const w = await handle.createWritable();
-            await res.body.pipeTo(w);
-            saved = true;
-          } catch (e) { /* user cancelled or gesture expired — fall to Blob */ }
-        }
-        if (!saved) {
-          if (fmt.filesize && fmt.filesize > 100000000) { openDirect(fmt.url, fmt.ext || ext); return; }
-          const blob = await res.blob();
-          const burl = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = burl; a.download = fname;
-          document.body.appendChild(a); a.click(); a.remove();
-          setTimeout(() => URL.revokeObjectURL(burl), 5000);
-        }
-        statusEl.innerHTML = `<div class="ok">✓ Download started — check your Downloads folder.</div>`;
+      const ctrl = new AbortController();
+      const check = await fetch(sUrl, { signal: ctrl.signal });
+      const ct = check.headers.get('content-type') || '';
+      ctrl.abort();
+      if (check.ok && !ct.includes('application/json')) {
+        const a = document.createElement('a');
+        a.href = sUrl; a.download = fname;
+        document.body.appendChild(a); a.click(); a.remove();
+        statusEl.innerHTML = `<div class="ok">✓ ${esc(label)} download started — check your Downloads folder.</div>`;
         saveHistory(current);
-        return;
+        return true;
       }
-      // Stream endpoint returned an error — fall through to the direct link.
-    } catch (e) { /* fall through to direct link */ }
+    } catch (e) { /* fall through to the direct link */ }
+    return false;
+  }
+
+  // The formats call already fetched the direct link for every option.
+  if (fmt && fmt.url) {
+    if (await downloadViaStream(fmt.url)) return;
     openDirect(fmt.url, fmt.ext || ext);
     return;
   }
-  statusEl.innerHTML = `<div class="info"><span class="spinner"></span>Preparing your high-speed download link…</div>`;
+  // No direct link yet — ask the server to resolve one for this quality.
+  statusEl.innerHTML = `<div class="info"><span class="spinner"></span>Preparing your ${esc(label)} download…</div>`;
   try {
     const res = await fetch('/api/download', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ url: current.url, formatId, ext, title: current.title, proxy: useProxy })
+      body: JSON.stringify({ url: current.url, formatId, ext, title: current.title, proxy: false })
     });
     const ct = res.headers.get('content-type') || '';
     if (ct.includes('application/json')) {
       const data = await res.json();
       if (!data.ok) { statusEl.innerHTML = `<div class="err">${esc(data.error || 'Could not get a download link. Please try again.')}</div>`; return; }
-      openDirect(data.url, ext, data.filename);
+      if (data.url) {
+        if (await downloadViaStream(data.url)) return;
+        openDirect(data.url, ext, data.filename);
+        return;
+      }
+      statusEl.innerHTML = `<div class="err">Could not get a download link. Please try again.</div>`;
       return;
     }
-    // Binary file from the server: true force-download via a same-origin Blob.
+    // Binary file from the server: save it.
     const blob = await res.blob();
     const burl = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = burl;
-    a.download = ((current.title || 'video').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'video') + '.' + (ext || 'mp4');
+    a.download = fname;
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(burl), 5000);
-    statusEl.innerHTML = `<div class="ok">✓ Download started — check your Downloads folder.</div>`;
+    statusEl.innerHTML = `<div class="ok">✓ ${esc(label)} download started — check your Downloads folder.</div>`;
     saveHistory(current);
   } catch (e) {
     statusEl.innerHTML = `<div class="err">Could not get a download link. Please try again.</div>`;
@@ -548,26 +551,23 @@ async function downloadThumbnail(){
   const m = current.thumbnail.match(/\.(jpg|jpeg|png|webp)(\?|$)/i);
   const ext = m ? m[1].toLowerCase().replace('jpeg','jpg') : 'jpg';
   const fname = ((current.title || 'thumbnail').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'thumbnail') + '-thumbnail.' + ext;
+  const sUrl = '/api/stream?url=' + encodeURIComponent(current.thumbnail) + '&filename=' + encodeURIComponent(fname);
   statusEl.innerHTML = `<div class="info"><span class="spinner"></span>Downloading thumbnail…</div>`;
   try {
-    const res = await fetch('/api/stream?url=' + encodeURIComponent(current.thumbnail) + '&filename=' + encodeURIComponent(fname));
-    const ct = res.headers.get('content-type') || '';
-    if (res.ok && !ct.includes('application/json')) {
-      const blob = await res.blob();
-      const burl = URL.createObjectURL(blob);
+    const ctrl = new AbortController();
+    const check = await fetch(sUrl, { signal: ctrl.signal });
+    const ct = check.headers.get('content-type') || '';
+    ctrl.abort();
+    if (check.ok && !ct.includes('application/json')) {
       const a = document.createElement('a');
-      a.href = burl; a.download = fname;
+      a.href = sUrl; a.download = fname;
       document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(burl), 5000);
       statusEl.innerHTML = `<div class="ok">✓ Thumbnail downloaded.</div>`;
       return;
     }
-    window.open(current.thumbnail, '_blank');
-    statusEl.innerHTML = `<div class="ok">✓ Thumbnail opened in a new tab — right-click it and choose Save image.</div>`;
-  } catch (e) {
-    window.open(current.thumbnail, '_blank');
-    statusEl.innerHTML = `<div class="ok">✓ Thumbnail opened in a new tab — right-click it and choose Save image.</div>`;
-  }
+  } catch (e) { /* fall through to opening the image */ }
+  window.open(current.thumbnail, '_blank');
+  statusEl.innerHTML = `<div class="ok">✓ Thumbnail opened in a new tab — right-click it and choose Save image.</div>`;
 }
 
 function copyLink(url, btn){

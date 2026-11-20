@@ -135,26 +135,23 @@ async function downloadThumb(){
   const m = current.thumbnail.match(/\.(jpg|jpeg|png|webp)(\?|$)/i);
   const ext = m ? m[1].toLowerCase().replace('jpeg','jpg') : 'jpg';
   const fname = ((current.title || 'thumbnail').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'thumbnail') + '-thumbnail.' + ext;
+  const sUrl = '/api/stream?url=' + encodeURIComponent(current.thumbnail) + '&filename=' + encodeURIComponent(fname);
   $('#status').innerHTML = '<div class="info">Downloading thumbnail…</div>';
   try {
-    const res = await fetch('/api/stream?url=' + encodeURIComponent(current.thumbnail) + '&filename=' + encodeURIComponent(fname));
-    const ct = res.headers.get('content-type') || '';
-    if (res.ok && !ct.includes('application/json')) {
-      const blob = await res.blob();
-      const burl = URL.createObjectURL(blob);
+    const ctrl = new AbortController();
+    const check = await fetch(sUrl, { signal: ctrl.signal });
+    const ct = check.headers.get('content-type') || '';
+    ctrl.abort();
+    if (check.ok && !ct.includes('application/json')) {
       const a = document.createElement('a');
-      a.href = burl; a.download = fname;
+      a.href = sUrl; a.download = fname;
       document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(burl), 5000);
       $('#status').innerHTML = '<div class="ok">✓ Thumbnail downloaded.</div>';
       return;
     }
-    window.open(current.thumbnail, '_blank');
-    $('#status').innerHTML = '<div class="ok">✓ Thumbnail opened in a new tab — right-click it and choose Save image.</div>';
-  } catch(e) {
-    window.open(current.thumbnail, '_blank');
-    $('#status').innerHTML = '<div class="ok">✓ Thumbnail opened in a new tab — right-click it and choose Save image.</div>';
-  }
+  } catch(e) { /* fall through to opening the image */ }
+  window.open(current.thumbnail, '_blank');
+  $('#status').innerHTML = '<div class="ok">✓ Thumbnail opened in a new tab — right-click it and choose Save image.</div>';
 }
 $('#urlInput').addEventListener('keydown', e => { if (e.key === 'Enter') getThumb(); });
 </script>
