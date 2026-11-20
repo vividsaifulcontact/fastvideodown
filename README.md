@@ -2,7 +2,7 @@
 
 Free online video downloader for 1,000+ sites. Paste any video link, pick a quality, and save the video in HD or MP3 — no sign-up, no watermark.
 
-**Live site:** https://stately-pavlova-7c69c9.netlify.app (will move to fastvideodown.com once the domain is bought and connected)
+**Live site:** https://fastvideodown.jo3.org (Cloudflare Pages; API on Cloady)
 
 ## How it works
 
