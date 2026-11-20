@@ -443,6 +443,13 @@ function renderResult(d){
   const withSound = d.formats.video.filter(f => f.hasAudio);
   const videoOnly = d.formats.video.filter(f => !f.hasAudio);
   const audio = d.formats.audio;
+  // No audio-only format was listed but the video HAS sound (e.g. YouTube's
+  // android client often returns only the combined 360p file). Offer a
+  // "best audio" download anyway — the server resolves the audio URL on
+  // demand when the user clicks it, so the option is always there.
+  if (!audio.length && withSound.length) {
+    audio.push({ format_id: 'bestaudio', label: 'Best audio', ext: 'm4a', abr: null, filesize: null, url: null });
+  }
   let html = `<div class="media">
     ${d.thumbnail ? `<div class="thumb"><img src="${esc(d.thumbnail)}" alt="Video thumbnail" loading="lazy"></div>` : ''}
     <div class="meta">
