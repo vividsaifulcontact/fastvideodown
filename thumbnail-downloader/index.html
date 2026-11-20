@@ -109,6 +109,7 @@ footer a{color:#2563eb;text-decoration:none;margin:0 8px}
 </main>
 <footer><a href="/">FastVideoDown</a><a href="/sites/">All Downloaders</a><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Use</a><a href="/contact.html">Contact</a><a href="/sitemap.xml">Sitemap</a><br><br>FastVideoDown is not affiliated with any platform. Download only content you own or have permission to save.</footer>
 <script>
+const API_BASE = 'https://stately-pavlova-7c69c9.netlify.app'; // Download API runs on Netlify Functions (hidden); the site itself is on Cloudflare Pages.
 const $ = s => document.querySelector(s);
 let current = null;
 async function pasteLink(){
@@ -122,7 +123,7 @@ async function getThumb(){
   if (!url) { statusEl.innerHTML = '<div class="err">Please paste a video link first.</div>'; return; }
   statusEl.innerHTML = '<div class="info">Finding the thumbnail…</div>';
   try {
-    const res = await fetch('/api/formats', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ url }) });
+    const res = await fetch(API_BASE + '/api/formats', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ url }) });
     const d = await res.json();
     if (!d.ok || !d.thumbnail) { statusEl.innerHTML = '<div class="err">' + esc(d.error || 'Could not find a thumbnail for this link.') + '</div>'; return; }
     current = d;
@@ -137,7 +138,7 @@ async function downloadThumb(){
   const ext = m ? m[1].toLowerCase().replace('jpeg','jpg') : 'jpg';
   const fname = ((current.title || 'thumbnail').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'thumbnail') + '-thumbnail.' + ext;
   const ipm = current.thumbnail.match(/[?&]ip=([\d.]+)/);
-  const sUrl = '/api/stream?url=' + encodeURIComponent(current.thumbnail) + '&filename=' + encodeURIComponent(fname) + (ipm ? '&proxyIp=' + ipm[1] : '');
+  const sUrl = API_BASE + '/api/stream?url=' + encodeURIComponent(current.thumbnail) + '&filename=' + encodeURIComponent(fname) + (ipm ? '&proxyIp=' + ipm[1] : '');
   $('#status').innerHTML = '<div class="info">Downloading thumbnail…</div>';
   try {
     const ctrl = new AbortController();

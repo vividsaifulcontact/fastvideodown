@@ -320,6 +320,7 @@ footer .copy{margin-top:26px;font-size:13px;border-top:1px solid #1e293b;padding
 </footer>
 
 <script>
+const API_BASE = 'https://stately-pavlova-7c69c9.netlify.app'; // Download API runs on Netlify Functions (hidden); the site itself is on Cloudflare Pages.
 const PLATFORMS = [
   { id:'youtube',   label:'YouTube',   match:/(youtube\.com|youtu\.be)/ },
   { id:'tiktok',    label:'TikTok',    match:/tiktok\.com/ },
@@ -370,7 +371,7 @@ function esc(s){
 let current = null;
 
 async function fetchFormats(url, deep){
-  const res = await fetch('/api/formats', {
+  const res = await fetch(API_BASE + '/api/formats', {
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({ url, deep: !!deep })
   });
@@ -473,7 +474,7 @@ async function downloadFormat(formatId, ext, kind){
     // instead of opening in a new tab.
     const m = directUrl.match(/[?&]ip=([\d.]+)/);
     const pip = m ? '&proxyIp=' + m[1] : '';
-    return '/api/stream?url=' + encodeURIComponent(directUrl) + '&filename=' + encodeURIComponent(fname) + pip;
+    return API_BASE + '/api/stream?url=' + encodeURIComponent(directUrl) + '&filename=' + encodeURIComponent(fname) + pip;
   };
 
   // Download via the server stream LINK. /api/stream returns
@@ -511,7 +512,7 @@ async function downloadFormat(formatId, ext, kind){
   // No direct link yet — ask the server to resolve one for this quality.
   statusEl.innerHTML = `<div class="info"><span class="spinner"></span>Preparing your ${esc(label)} download…</div>`;
   try {
-    const res = await fetch('/api/download', {
+    const res = await fetch(API_BASE + '/api/download', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ url: current.url, formatId, ext, title: current.title, proxy: false })
     });
@@ -555,7 +556,7 @@ async function downloadThumbnail(){
   const m = current.thumbnail.match(/\.(jpg|jpeg|png|webp)(\?|$)/i);
   const ext = m ? m[1].toLowerCase().replace('jpeg','jpg') : 'jpg';
   const fname = ((current.title || 'thumbnail').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'thumbnail') + '-thumbnail.' + ext;
-  const sUrl = '/api/stream?url=' + encodeURIComponent(current.thumbnail) + '&filename=' + encodeURIComponent(fname);
+  const sUrl = API_BASE + '/api/stream?url=' + encodeURIComponent(current.thumbnail) + '&filename=' + encodeURIComponent(fname);
   statusEl.innerHTML = `<div class="info"><span class="spinner"></span>Downloading thumbnail…</div>`;
   try {
     const ctrl = new AbortController();
