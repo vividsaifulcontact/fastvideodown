@@ -155,13 +155,6 @@ function buildFormats(list) {
   return { video, audio };
 }
 
-// Short in-memory cache (same warm container only): a repeat lookup of the
-// same link within 5 minutes returns instantly instead of re-running yt-dlp.
-// This is what makes a viral video cheap — the platform is asked once, not
-// once per visitor hitting the same container.
-const formatCache = new Map();
-const CACHE_TTL_MS = 5 * 60 * 1000;
-
 exports.handler = async (event) => {
   const headers = {
     'Content-Type': 'application/json',
@@ -205,11 +198,7 @@ exports.handler = async (event) => {
   // Per-attempt timeouts sum to <=25s (Netlify function limit is 26s).
   let deep = false;
   try { deep = !!JSON.parse(event.body || '{}').deep; } catch (e) { /* ignore */ }
-  const cacheKey = url + '|' + (deep ? '1' : '0');
-  const cached = formatCache.get(cacheKey);
-  if (cached && Date.now() - cached.ts < CACHE_TTL_MS) {
-    return { statusCode: 200, headers, body: cached.body };
-  }
+  // No cache: every lookup runs yt-dlp fresh, so nothing is stored.
   const isYT = /https?:\/\/(www\.)?(youtube\.com|youtu\.be)\//i.test(url);
   // YouTube deep scan: web first (full formats with the EJS solver), then the
   // TV client — from server IPs it sometimes returns the high qualities the
@@ -272,7 +261,5 @@ exports.handler = async (event) => {
     webpage_url: data.webpage_url || url,
     formats,
   });
-  formatCache.set(cacheKey, { body, ts: Date.now() });
-  if (formatCache.size > 200) formatCache.delete(formatCache.keys().next().value);
   return { statusCode: 200, headers, body };
 };

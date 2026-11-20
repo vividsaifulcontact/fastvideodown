@@ -144,12 +144,6 @@ font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));
 padding:14px 16px;margin-bottom:10px}
 .faq summary{font-weight:700;cursor:pointer;font-size:15.5px}
 .faq p{margin:8px 0 0;font-size:14.5px}
-.history{margin-top:26px}
-.history h4{font-size:14px;color:var(--muted);margin-bottom:10px}
-.history button{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--line);
-color:var(--ink);padding:10px 14px;border-radius:10px;margin-bottom:7px;cursor:pointer;font-size:13.5px}
-.history button span{color:var(--muted);font-size:12px;display:block;margin-top:3px;
-white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 footer{background:#0f172a;color:#94a3b8;margin-top:56px;padding:36px 0}
 footer a{color:#cbd5e1}
 footer .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:22px}
@@ -202,11 +196,6 @@ footer .copy{margin-top:26px;font-size:13px;border-top:1px solid #1e293b;padding
 </div>
 
 <main class="wrap">
-  <div class="history" id="historyBox" style="display:none">
-    <h4>Recent downloads</h4>
-    <div id="historyList"></div>
-  </div>
-
   <section id="how-to">
     <h2>How to Download a Video in 3 Steps</h2>
     <div class="steps">
@@ -400,7 +389,6 @@ async function fetchVideo(){
     current = { url, ...data };
     statusEl.innerHTML = '';
     renderResult(data);
-    saveHistory(data);
     // Background deep scan: find more qualities without making the user wait.
     if (data.formats.video.length <= 1) {
       fetchFormats(url, true).then(deep => {
@@ -505,7 +493,6 @@ async function downloadFormat(formatId, ext, kind){
         a.href = sUrl; a.download = fname;
         document.body.appendChild(a); a.click(); a.remove();
         statusEl.innerHTML = `<div class="ok">✓ ${esc(label)} download started — check your Downloads folder.</div>`;
-        saveHistory(current);
         return true;
       }
     } catch (e) { /* fall through to the direct link */ }
@@ -546,7 +533,6 @@ async function downloadFormat(formatId, ext, kind){
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(burl), 5000);
     statusEl.innerHTML = `<div class="ok">✓ ${esc(label)} download started — check your Downloads folder.</div>`;
-    saveHistory(current);
   } catch (e) {
     statusEl.innerHTML = `<div class="err">Could not get a download link. Please try again.</div>`;
   }
@@ -558,7 +544,6 @@ function openDirect(url, ext, filename){
   a.href = url; a.target = '_blank'; a.rel = 'noopener';
   a.download = filename || ((current.title || 'video').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'video') + '.' + (ext || 'mp4');
   document.body.appendChild(a); a.click(); a.remove();
-  saveHistory(current);
 }
 
 // Download the video's thumbnail (cover image) as a file.
@@ -593,25 +578,7 @@ function copyLink(url, btn){
   });
 }
 
-function saveHistory(d){
-  try {
-    const h = JSON.parse(localStorage.getItem('fastvideodown_history') || '[]');
-    h.unshift({ title: d.title, url: current.url, time: Date.now() });
-    localStorage.setItem('fastvideodown_history', JSON.stringify(h.slice(0, 8)));
-    renderHistory();
-  } catch (e) { /* ignore */ }
-}
-function renderHistory(){
-  let h = [];
-  try { h = JSON.parse(localStorage.getItem('fastvideodown_history') || '[]'); } catch (e) {}
-  if (!h.length) { $('#historyBox').style.display = 'none'; return; }
-  $('#historyBox').style.display = 'block';
-  $('#historyList').innerHTML = h.map(item =>
-    `<button onclick="document.querySelector('#urlInput').value='${esc(item.url)}';fetchVideo()">${esc(item.title)}<span>${esc(item.url)}</span></button>`).join('');
-}
-
 renderPlatforms('');
-renderHistory();
 </script>
 </body>
 </html>
