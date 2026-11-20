@@ -4,7 +4,7 @@ all-sites index and sitemap.xml. Run at build time (Netlify) and locally.
 Usage: python3 scripts/gen-sites.py"""
 import re, os, html
 
-BASE = 'https://fastvideodown.com'
+BASE = 'https://stately-pavlova-7c69c9.netlify.app'
 OUT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 with open(os.path.join(OUT, 'sites.txt')) as f:
