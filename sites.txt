@@ -1080,3 +1080,17 @@ zhihu
 zingmp3
 zoom
 zype
+whatsapp
+threads
+mastodon
+odysee
+clapper
+triller
+kwai
+josh
+sharechat
+chingari
+snackvideo
+lemon8
+trovo
+nimo
