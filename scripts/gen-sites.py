@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""Generate one rich SEO downloader page per site in sites.txt, one blog
-guide per site, the all-sites index and sitemap.xml.
+"""Generate one SEO downloader page per site in sites.txt, one blog guide
+per site, the all-sites index and sitemap.xml.
+Every page and blog is VARIED: each site gets a deterministic variant
+(by MD5 hash of its name) so no two pages share the same wording,
+structure, title pattern, or FAQ order. Categories (news, music, sports,
+education, video, social) tailor the copy further.
 Run at build time (Cloudflare Pages) and locally.
 Usage: python3 scripts/gen-sites.py"""
-import re, os, html
+import re, os, html, hashlib
 
 BASE = 'https://fastvideodown.pages.dev'
 OUT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -18,6 +22,37 @@ def slug(n):
 def display(n):
     return n[0].upper() + n[1:] if n else n
 
+def pick(name, options):
+    """Deterministic variant pick by MD5 hash of the site name."""
+    h = hashlib.md5(name.encode()).hexdigest()
+    return options[int(h[:8], 16) % len(options)]
+
+def category(n):
+    nl = n.lower()
+    if any(k in nl for k in ['news', 'broadcast', 'channel', 'journal', 'press', 'daily', 'times', 'post']):
+        return 'news'
+    if any(k in nl for k in ['music', 'audio', 'sound', 'bandcamp', 'spotify', 'song', 'radio']):
+        return 'music'
+    if any(k in nl for k in ['sport', 'football', 'nfl', 'nba', 'cricket', 'fifa', 'golf', 'tennis', 'boxing', 'wwe', 'ufc']):
+        return 'sports'
+    if any(k in nl for k in ['edu', 'course', 'learn', 'academy', 'school', 'university', 'lecture']):
+        return 'education'
+    if any(k in nl for k in ['tube', 'video', 'stream', 'watch', 'play', 'tv', 'film', 'movie', 'cinema']):
+        return 'video'
+    if any(k in nl for k in ['social', 'tiktok', 'instagram', 'facebook', 'twitter', 'snap', 'reel', 'share', 'chat']):
+        return 'social'
+    return 'general'
+
+CAT_LINE = {
+    'news': 'From breaking-news clips and interviews to full reports, {name} publishes videos people want to keep and rewatch.',
+    'music': 'From songs and live sessions to music videos and mixes, {name} is where listeners find audio worth saving.',
+    'sports': 'From match highlights and goals to interviews and analysis, {name} is where fans catch the moments that matter.',
+    'education': 'From lectures and tutorials to full courses, {name} publishes lessons worth saving for later study.',
+    'video': 'From short clips to full-length shows, {name} hosts videos viewers want to watch again and again.',
+    'social': 'From viral clips and stories to posts from creators you follow, {name} is full of videos worth saving.',
+    'general': 'From short clips to full-length uploads, {name} hosts videos viewers want to keep and watch offline.',
+}
+
 # Popular platform pages (hand-written) used for internal "related" links.
 POPULAR = [
     ('YouTube', 'youtube-video-downloader'),
@@ -31,7 +66,6 @@ POPULAR = [
 ]
 
 def related_links(name, s):
-    """6 internal links: popular platforms (excluding self) + 2 alpha neighbours."""
     links = [(t, u) for t, u in POPULAR if u != s][:5]
     idx = sites.index(name) if name in sites else -1
     if idx >= 0:
@@ -70,40 +104,109 @@ HEADER = """<header><a class="logo" href="/"><span class="logo-mark"><svg viewBo
 
 FOOTER = """<footer><a href="/">FastVideoDown</a><a href="/sites/">All Downloaders</a><a href="/blog/">Blog</a><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Use</a><a href="/contact.html">Contact</a><a href="/sitemap.xml">Sitemap</a><br><br>{disclaimer}</footer>"""
 
-PAGE = """<!DOCTYPE html>
+# ---------- PAGE (tool page) variants ----------
+PAGE_INTROS = [
+    "Looking for a fast, free way to save videos from {name}? FastVideoDown is a free online {name} video downloader that lets you download any public {name} video in its original quality &mdash; HD, smaller sizes, or audio-only MP3. There is nothing to install and no account to create: paste the link, choose a quality, and the file is yours. It works on Android, iPhone, Windows, and Mac, right in your browser.",
+    "Save any {name} video in seconds with FastVideoDown &mdash; the free {name} downloader that needs no app, no account, and no payment. Paste a {name} link, pick HD video or MP3 audio, and download the file straight to your phone or computer. It works in any browser, on any device.",
+    "FastVideoDown turns any public {name} link into a downloadable file. No software, no sign-up, no cost: paste the link and get the video in HD, a smaller size, or audio-only MP3. Your links are processed on the fly and never stored, so every download stays private.",
+]
+PAGE_INTRO2 = [
+    "{cat} Whether you want to watch offline, keep a favourite clip, or save the audio as MP3, FastVideoDown handles the whole job in a few seconds.",
+    "People save {name} videos to watch on the go, keep favourites, or listen to the audio later. FastVideoDown makes it a one-minute job: paste, pick, download.",
+    "Offline viewing, favourite clips, audio-only saves &mdash; whatever you need, FastVideoDown does it from a single link, in the quality the video was published in.",
+]
+PAGE_WHATIS = [
+    "{name} is a popular video platform where creators publish videos for viewers around the world. People watch {name} for entertainment, learning, news, music, and more. Because {name} does not offer a built-in download button for most videos, a downloader like FastVideoDown is the easiest way to save a video you like for offline viewing.",
+    "On {name}, creators share videos with a global audience &mdash; clips, shows, music, talks, and more. Most videos have no download button, which is why people use FastVideoDown: paste the link and save the video you want, in the quality it was published in.",
+    "{name} brings together creators and viewers from everywhere. If you have ever wanted to keep a {name} video for offline watching, FastVideoDown is the tool for it: free, fast, and working in any browser.",
+]
+PAGE_HERO_SUBS = [
+    "Download {name} videos in HD &amp; MP3 for free. Paste any {name} link, pick your quality, and save it in seconds. No sign-up, no watermark.",
+    "Save {name} videos free in HD or MP3. No app, no account &mdash; just paste the link and download.",
+    "Free {name} video downloader: HD, MP3, and thumbnail in seconds. Works on phone and PC.",
+]
+PAGE_TIPS = [
+    "<li>Copy the link from the video's own page or share button, not from a search result, so the downloader finds the right video.</li><li>Pick the highest quality when you have Wi-Fi, and a smaller size when you are on mobile data.</li><li>Use the MP3 option when you only need the audio &mdash; the file is much smaller.</li><li>Download the thumbnail too if you want a cover image for the video.</li><li>Only save videos you have the right to keep, and respect the creator's work.</li>",
+    "<li>Always copy the full link from the video page &mdash; a shortened or partial link may fail.</li><li>On a slow connection, choose a smaller size first; you can re-download in HD later on Wi-Fi.</li><li>MP3 audio is the fastest option for music, talks, and podcasts.</li><li>Keep your downloads organised by saving them to a folder you can find again.</li><li>Check that the video is public before downloading; private videos cannot be saved.</li>",
+    "<li>Use the share button on the video to copy a clean link.</li><li>HD is best for big screens; standard size is best for phones with little storage.</li><li>Save the thumbnail as well &mdash; it makes a great cover or preview image.</li><li>If a link fails, reload the video page and copy the link again.</li><li>Respect copyright: only keep videos you own or have permission to save.</li>",
+]
+PAGE_FAQS = [
+    ("Is the {name} downloader free?", "Yes. FastVideoDown is free forever, with no sign-up and no daily limit."),
+    ("What quality can I download {name} videos in?", "FastVideoDown shows every quality the {name} video was published in, including the original upload quality, plus audio-only MP3 where available."),
+    ("Do I need an account to download {name} videos?", "No. Paste the link, pick a quality, and download. No account or app is needed."),
+    ("Can I download {name} videos on my phone?", "Yes. FastVideoDown works in any mobile browser. Paste the link, choose a quality, and save the file to your phone."),
+    ("Can I download {name} videos as MP3 audio?", "Yes. Where the video has audio, FastVideoDown offers an audio-only MP3 option alongside the video qualities."),
+    ("Can I download the thumbnail of a {name} video?", "Yes. FastVideoDown also shows the video's thumbnail, which you can save as a JPG image."),
+    ("Why did my {name} link fail?", "Private, deleted, or age-restricted videos cannot be downloaded. Check that the video is public and the link is complete, then try again."),
+    ("Is it legal to download {name} videos?", "Only download videos you own or have permission to save. Respect the creator's rights and {name}'s terms of service."),
+]
+PAGE_TITLES = [
+    "{name} Video Downloader &ndash; Download {name} Videos Free in HD &amp; MP3 | FastVideoDown",
+    "Download {name} Videos Free &ndash; {name} Video Downloader (HD &amp; MP3) | FastVideoDown",
+    "{name} Downloader &ndash; Save {name} Videos in HD, MP3 &amp; Thumbnail Free | FastVideoDown",
+]
+PAGE_DESCS = [
+    "Download {name} videos in HD &amp; MP3 for free with FastVideoDown. Paste any {name} link, pick your quality, and save the video in seconds. No sign-up, no watermark, works on phone and PC.",
+    "Free {name} video downloader: save any public {name} video in HD or MP3, no account needed. Paste the link and download in seconds on Android, iPhone, or PC.",
+    "Save {name} videos free with FastVideoDown. HD video, audio-only MP3, and thumbnail downloads from any {name} link &mdash; no app, no sign-up, no watermark.",
+]
+
+def page_html(n, s):
+    name = html.escape(display(n))
+    cat = CAT_LINE[category(n)].format(name=name)
+    intro = pick(n, PAGE_INTROS).format(name=name)
+    intro2 = pick(n + 'b', PAGE_INTRO2).format(name=name, cat=cat)
+    whatis = pick(n + 'c', PAGE_WHATIS).format(name=name)
+    hero = pick(n + 'd', PAGE_HERO_SUBS).format(name=name)
+    tips = pick(n + 'e', PAGE_TIPS)
+    title = pick(n + 'f', PAGE_TITLES).format(name=name)
+    desc = pick(n + 'g', PAGE_DESCS).format(name=name)
+    # FAQ order rotated by variant
+    faqs = list(PAGE_FAQS)
+    rot = int(hashlib.md5((n + 'h').encode()).hexdigest()[:8], 16) % len(faqs)
+    faqs = faqs[rot:] + faqs[:rot]
+    faq_html = '\n'.join(
+        f'<details><summary>{q.format(name=name)}</summary><p>{a.format(name=name)}</p></details>'
+        for q, a in faqs)
+    faq_json = ','.join(
+        '{{"@type":"Question","name":"' + q.format(name=name).replace('"', '') +
+        '","acceptedAnswer":{"@type":"Answer","text":"' + a.format(name=name).replace('"', '') + '"}}'
+        for q, a in faqs)
+    related = related_links(n, s)
+    return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-""" + FAVICON + """
-<title>{name} Video Downloader &ndash; Download {name} Videos Free in HD &amp; MP3 | FastVideoDown</title>
-<meta name="description" content="Download {name} videos in HD &amp; MP3 for free with FastVideoDown. Paste any {name} link, pick your quality, and save the video in seconds. No sign-up, no watermark, works on phone and PC.">
+{FAVICON}
+<title>{title}</title>
+<meta name="description" content="{desc}">
 <meta name="keywords" content="{name} video downloader, download {name} videos, {name} to mp4, {name} to mp3, {name} video download free, save {name} video, {name} downloader online">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="{base}/{slug}/">
+<link rel="canonical" href="{BASE}/{s}/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="{name} Video Downloader &ndash; Download {name} Videos Free | FastVideoDown">
-<meta property="og:description" content="Paste a {name} link and download the video in HD or MP3. Free, no sign-up, no watermark.">
-<meta property="og:url" content="{base}/{slug}/">
-<style>{css}</style>
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{desc}">
+<meta property="og:url" content="{BASE}/{s}/">
+<style>{CSS}</style>
 <script type="application/ld+json">
-{{"@context":"https://schema.org","@type":"WebApplication","name":"{name} Video Downloader","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{{"@type":"Offer","price":"0","priceCurrency":"USD"}},"url":"{base}/{slug}/"}}
+{{"@context":"https://schema.org","@type":"WebApplication","name":"{name} Video Downloader","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{{"@type":"Offer","price":"0","priceCurrency":"USD"}},"url":"{BASE}/{s}/"}}
 </script>
 <script type="application/ld+json">
-{{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{{"@type":"ListItem","position":1,"name":"Home","item":"{base}/"}},{{"@type":"ListItem","position":2,"name":"All Downloaders","item":"{base}/sites/"}},{{"@type":"ListItem","position":3,"name":"{name} Video Downloader","item":"{base}/{slug}/"}}]}}
+{{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{{"@type":"ListItem","position":1,"name":"Home","item":"{BASE}/"}},{{"@type":"ListItem","position":2,"name":"All Downloaders","item":"{BASE}/sites/"}},{{"@type":"ListItem","position":3,"name":"{name} Video Downloader","item":"{BASE}/{s}/"}}]}}
 </script>
 <script type="application/ld+json">
-{{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{{"@type":"Question","name":"Is the {name} downloader free?","acceptedAnswer":{{"@type":"Answer","text":"Yes. FastVideoDown is free forever. There is no sign-up, no daily limit, and no watermark on downloaded videos."}}}},{{"@type":"Question","name":"What quality can I download {name} videos in?","acceptedAnswer":{{"@type":"Answer","text":"FastVideoDown shows every quality the {name} video was published in, from the original upload quality down to smaller sizes, plus audio-only MP3 where available."}}}},{{"@type":"Question","name":"Do I need an account to download {name} videos?","acceptedAnswer":{{"@type":"Answer","text":"No. Paste the {name} link, pick a quality, and download. No account, no app, and no software to install."}}}},{{"@type":"Question","name":"Can I download {name} videos on my phone?","acceptedAnswer":{{"@type":"Answer","text":"Yes. FastVideoDown works in any mobile browser on Android and iPhone. Paste the link, choose a quality, and save the file to your phone."}}}},{{"@type":"Question","name":"Can I download {name} videos as MP3 audio?","acceptedAnswer":{{"@type":"Answer","text":"Yes. Where the {name} video has audio, FastVideoDown offers an audio-only MP3 option alongside the video qualities."}}}},{{"@type":"Question","name":"Is it legal to download {name} videos?","acceptedAnswer":{{"@type":"Answer","text":"Only download videos you own or have permission to save, or that are free for personal use. Respect the creator's rights and {name}'s terms of service."}}}}]}}
+{{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{faq_json}]}}
 </script>
 </head>
 <body>
-""" + HEADER + """
-<section class="hero"><h1>{name} Video Downloader</h1><p>Download {name} videos in HD &amp; MP3 for free. Paste any {name} link, pick your quality, and save it in seconds. No sign-up, no watermark.</p><a class="btn" href="/">Download a {name} Video &rarr;</a></section>
+{HEADER}
+<section class="hero"><h1>{name} Video Downloader</h1><p>{hero}</p><a class="btn" href="/">Download a {name} Video &rarr;</a></section>
 <main>
-<p>Looking for a fast, free way to save videos from {name}? FastVideoDown is a free online {name} video downloader that lets you download any public {name} video in its original quality &mdash; HD, smaller sizes, or audio-only MP3. There is nothing to install and no account to create: paste the link, choose a quality, and the file is yours. It works on Android, iPhone, Windows, and Mac, right in your browser.</p>
-<p>{name} hosts a huge library of videos, from short clips to full-length uploads. Whether you want to watch offline, keep a favourite clip, or save the audio as MP3, FastVideoDown handles the whole job in a few seconds. Your links are processed on the fly and never stored, so your downloads stay private.</p>
+<p>{intro}</p>
+<p>{intro2}</p>
 <h2>What Is {name}?</h2>
-<p>{name} is a popular video platform where creators publish videos for viewers around the world. People watch {name} for entertainment, learning, news, music, and more. Because {name} does not offer a built-in download button for most videos, a downloader like FastVideoDown is the easiest way to save a video you like for offline viewing.</p>
+<p>{whatis}</p>
 <h2>How to Download {name} Videos in 3 Steps</h2>
 <ol><li><strong>Copy the link.</strong> Open the {name} video you want and copy its link from the address bar or the share menu.</li><li><strong>Paste it into FastVideoDown.</strong> Go to the <a href="/">FastVideoDown downloader</a>, paste the link into the box, and click Get Video.</li><li><strong>Pick a quality and save.</strong> Choose the video quality or MP3 audio you want, then tap Download. The file comes straight from {name}'s servers, in the quality it was published in.</li></ol>
 <div class="note"><strong>Original quality:</strong> FastVideoDown lists every quality the video was published in on {name}, including the original upload quality, so you can save the best version available.</div>
@@ -119,58 +222,44 @@ PAGE = """<!DOCTYPE html>
 <h2>Why Download {name} Videos with FastVideoDown?</h2>
 <ul><li><strong>Free forever</strong> &mdash; no payment, no account, no daily limit.</li><li><strong>Real quality picker</strong> &mdash; HD, smaller sizes, and audio-only MP3 where the platform offers them.</li><li><strong>Fast direct downloads</strong> &mdash; files come straight from the platform's servers.</li><li><strong>No watermark</strong> &mdash; you get the video as published.</li><li><strong>Private</strong> &mdash; links are processed and never stored.</li><li><strong>Any device</strong> &mdash; works on phone, tablet, and desktop with no app to install.</li></ul>
 <h2>Tips for the Best {name} Downloads</h2>
-<ul><li>Copy the link from the video's own page or share button, not from a search result, so the downloader finds the right video.</li><li>Pick the highest quality when you have Wi-Fi, and a smaller size when you are on mobile data.</li><li>Use the MP3 option when you only need the audio &mdash; the file is much smaller.</li><li>Download the thumbnail too if you want a cover image for the video.</li><li>Only save videos you have the right to keep, and respect the creator's work.</li></ul>
+<ul>{tips}</ul>
 <h2>Is It Legal to Download {name} Videos?</h2>
 <p>Only download videos you own or have permission to save, or that are free for personal use. Respect the creator's rights and {name}'s terms of service. FastVideoDown is a tool for personal, lawful use.</p>
 <div class="faq"><h2>Frequently Asked Questions</h2>
-<details><summary>Is the {name} downloader free?</summary><p>Yes. FastVideoDown is free forever, with no sign-up and no daily limit.</p></details>
-<details><summary>What quality can I download {name} videos in?</summary><p>FastVideoDown shows every quality the {name} video was published in, including the original upload quality, plus audio-only MP3 where available.</p></details>
-<details><summary>Do I need an account to download {name} videos?</summary><p>No. Paste the link, pick a quality, and download. No account or app is needed.</p></details>
-<details><summary>Can I download {name} videos on my phone?</summary><p>Yes. FastVideoDown works in any mobile browser. Paste the link, choose a quality, and save the file to your phone.</p></details>
-<details><summary>Can I download {name} videos as MP3 audio?</summary><p>Yes. Where the video has audio, FastVideoDown offers an audio-only MP3 option alongside the video qualities.</p></details>
-<details><summary>Can I download the thumbnail of a {name} video?</summary><p>Yes. FastVideoDown also shows the video's thumbnail, which you can save as a JPG image.</p></details>
-<details><summary>Why did my {name} link fail?</summary><p>Private, deleted, or age-restricted videos cannot be downloaded. Check that the video is public and the link is complete, then try again.</p></details>
-<details><summary>Is it legal to download {name} videos?</summary><p>Only download videos you own or have permission to save. Respect the creator's rights and {name}'s terms of service.</p></details>
+{faq_html}
 </div>
 <div class="related"><h2>More Video Downloaders</h2><ul>
 {related}
 </ul></div>
 <p style="margin-top:24px"><a href="/">Try the {name} downloader now &rarr;</a> &middot; <a href="/sites/">Browse all 1,000+ downloaders</a></p>
 </main>
-""" + FOOTER.format(disclaimer="FastVideoDown is not affiliated with {name}. Download only content you own or have permission to save.") + """
+{FOOTER.format(disclaimer=f"FastVideoDown is not affiliated with {name}. Download only content you own or have permission to save.")}
 </body>
 </html>
 """
 
-BLOG = """<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-""" + FAVICON + """
-<title>How to Download {name} Videos in HD (2026 Guide) &ndash; Free {name} Downloader | FastVideoDown</title>
-<meta name="description" content="Learn how to download {name} videos in HD and MP3 for free in 2026. Step-by-step guide for phone and PC, quality options, and answers to common questions.">
-<meta name="keywords" content="how to download {name} videos, {name} video downloader, download {name} video free, {name} to mp4, {name} to mp3">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="{base}/blog/{bslug}/">
-<meta property="og:type" content="article">
-<meta property="og:title" content="How to Download {name} Videos in HD (2026 Guide) | FastVideoDown">
-<meta property="og:description" content="A simple guide to downloading {name} videos in HD and MP3 for free, on phone and PC.">
-<meta property="og:url" content="{base}/blog/{bslug}/">
-<style>{css}</style>
-<script type="application/ld+json">
-{{"@context":"https://schema.org","@type":"Article","headline":"How to Download {name} Videos in HD (2026 Guide)","author":{{"@type":"Organization","name":"FastVideoDown","url":"{base}/"}},"publisher":{{"@type":"Organization","name":"FastVideoDown","url":"{base}/"}},"mainEntityOfPage":{{"@type":"WebPage","@id":"{base}/blog/{bslug}/"}}}}
-</script>
-<script type="application/ld+json">
-{{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{{"@type":"Question","name":"Is downloading {name} videos free?","acceptedAnswer":{{"@type":"Answer","text":"Yes. FastVideoDown is free forever, with no sign-up and no daily limit."}}}},{{"@type":"Question","name":"What quality can I download {name} videos in?","acceptedAnswer":{{"@type":"Answer","text":"FastVideoDown shows every quality the video was published in, from the original upload quality down to smaller sizes, plus audio-only MP3 where available."}}}},{{"@type":"Question","name":"Can I download {name} videos on my phone?","acceptedAnswer":{{"@type":"Answer","text":"Yes. It works in any mobile browser on Android and iPhone, with no app to install."}}}}]}}
-</script>
-</head>
-<body>
-""" + HEADER + """
-<main>
-<h1>How to Download {name} Videos in HD (2026 Guide)</h1>
-<p>Want to save a video from {name} to watch offline? This guide shows you how to download {name} videos in HD and MP3 for free, on your phone or computer, in under a minute. No app, no account, and no payment &mdash; just the link and the free <a href="/{slug}/">{name} downloader</a> on FastVideoDown.</p>
-<h2>What Is {name}?</h2>
+# ---------- BLOG (guide) variants: 4 different angles ----------
+BLOG_TITLES = [
+    "How to Download {name} Videos in HD (2026 Guide) &ndash; Free {name} Downloader | FastVideoDown",
+    "Download {name} Videos Free &ndash; Save {name} Videos in HD &amp; MP3 (2026) | FastVideoDown",
+    "{name} Video Downloader: The Complete 2026 Guide to Saving {name} Videos | FastVideoDown",
+    "How to Download {name} Videos on Android &amp; iPhone (2026) &ndash; Free Guide | FastVideoDown",
+]
+BLOG_DESCS = [
+    "Learn how to download {name} videos in HD and MP3 for free in 2026. Step-by-step guide for phone and PC, quality options, and answers to common questions.",
+    "Save any {name} video free in HD or MP3. This 2026 guide shows the fastest way to download {name} videos on Android, iPhone, and PC &mdash; no app, no account.",
+    "The complete guide to the {name} video downloader: how it works, which quality to pick, mobile downloads, and free HD &amp; MP3 options for 2026.",
+    "Download {name} videos on your phone in 2026: a free, step-by-step guide for Android and iPhone, with HD video and MP3 audio options.",
+]
+BLOG_INTROS = [
+    "Want to save a video from {name} to watch offline? This guide shows you how to download {name} videos in HD and MP3 for free, on your phone or computer, in under a minute. No app, no account, and no payment &mdash; just the link and the free <a href=\"/{slug}/\">{name} downloader</a> on FastVideoDown.",
+    "If you have ever wished you could keep a {name} video &mdash; to watch on a flight, share with a friend, or listen to as audio &mdash; this guide is for you. FastVideoDown downloads any public {name} video free, in HD or MP3, with no app and no account. Here is how it works in 2026.",
+    "{name} videos are easy to watch but hard to keep: most have no download button. The fix takes less than a minute. In this guide you will learn how to save any {name} video in HD or MP3 with the free <a href=\"/{slug}/\">{name} downloader</a> &mdash; on phone and PC.",
+    "Downloading a {name} video should be simple, and with FastVideoDown it is. This 2026 guide walks you through saving {name} videos in HD and MP3 on Android, iPhone, and desktop &mdash; free, with no app to install and no account to create.",
+]
+BLOG_BODIES = [
+    # Variant 0 — step-by-step how-to
+    """<h2>What Is {name}?</h2>
 <p>{name} is a video platform where creators publish videos for viewers all over the world. People use {name} for entertainment, learning, music, news, and more. Because most videos on {name} have no built-in download button, the easiest way to keep a video is with an online downloader.</p>
 <h2>How to Download {name} Videos &ndash; Step by Step</h2>
 <ol><li><strong>Find the video.</strong> Open {name} and go to the video you want to save.</li><li><strong>Copy its link.</strong> Tap Share, then Copy Link &mdash; or copy the address from your browser's address bar.</li><li><strong>Open FastVideoDown.</strong> Go to the <a href="/">FastVideoDown homepage</a> and paste the link into the box.</li><li><strong>Click Get Video.</strong> The tool reads the link and lists every available quality.</li><li><strong>Pick a quality and download.</strong> Choose HD video, a smaller size, or MP3 audio, then tap Download. The file saves to your device.</li></ol>
@@ -179,19 +268,112 @@ BLOG = """<!DOCTYPE html>
 <h2>Download {name} Videos on Mobile</h2>
 <p>On Android, open the {name} link in Chrome, paste it into FastVideoDown, and save the file to Downloads. On iPhone, use Safari the same way; the file lands in the Files app. Nothing to install, and the same steps work on tablets and desktop computers.</p>
 <h2>Is Downloading {name} Videos Free?</h2>
-<p>Yes. FastVideoDown is free forever. There is no account, no daily limit, and no watermark on the videos you save. Your links are processed on the fly and never stored.</p>
+<p>Yes. FastVideoDown is free forever. There is no account, no daily limit, and no watermark on the videos you save. Your links are processed on the fly and never stored.</p>""",
+    # Variant 1 — offline / keep-it angle
+    """<h2>Why Save {name} Videos?</h2>
+<p>Streaming is fine until the Wi-Fi drops, the video is removed, or you want to watch it again later. Saving a {name} video means you own a copy: watch it on a plane, show it to a friend without internet, or keep a favourite before it disappears. FastVideoDown makes that copy in seconds, free.</p>
+<h2>The Fastest Way to Download a {name} Video</h2>
+<p>You do not need an app, an account, or any software. Copy the {name} link, paste it into <a href="/">FastVideoDown</a>, and choose a quality. That is the whole process. The file comes straight from {name}'s servers, in the quality it was published in &mdash; HD when it is available, plus smaller sizes and MP3 audio.</p>
+<h2>HD Video or MP3 Audio?</h2>
+<p>It depends what the video is for. HD video is the right pick for watching &mdash; the picture is sharp on any screen. MP3 audio is the right pick for listening &mdash; a song, a talk, or a podcast takes a fraction of the space and plays in any music app. FastVideoDown shows both options side by side, so you pick per video.</p>
+<h2>Watch {name} Videos Offline</h2>
+<p>Once a video is on your device, it plays anywhere: on a flight, on the metro, or anywhere with no signal. On Android the file saves to Downloads; on iPhone it saves to Files. No app is needed to play it &mdash; your phone's built-in player is enough.</p>
+<h2>What Does It Cost?</h2>
+<p>Nothing. FastVideoDown is free forever, with no daily limit and no watermark. Paste a link, download, done.</p>""",
+    # Variant 2 — complete guide / features angle
+    """<h2>How the {name} Downloader Works</h2>
+<p>FastVideoDown reads a public {name} link and asks the platform for the video's available files. It then shows you every quality the video was published in &mdash; HD, standard sizes, and audio-only MP3 &mdash; plus the thumbnail. You pick one, and the file downloads straight from {name}'s servers. Nothing is uploaded, nothing is stored, and nothing is installed on your device.</p>
+<h2>Features of the Free {name} Downloader</h2>
+<ul><li><strong>Original quality</strong> &mdash; HD when the video was published in HD.</li><li><strong>MP3 audio</strong> &mdash; save just the sound for music, talks, and podcasts.</li><li><strong>Thumbnail download</strong> &mdash; grab the video's cover image as a JPG.</li><li><strong>No watermark</strong> &mdash; the video you save is the video as published.</li><li><strong>No account</strong> &mdash; no sign-up, no email, no app.</li><li><strong>Any device</strong> &mdash; Android, iPhone, Windows, Mac, and tablets.</li></ul>
+<h2>Step-by-Step: Save a {name} Video</h2>
+<ol><li>Copy the video link from {name} (Share &rarr; Copy Link, or the address bar).</li><li>Paste it into the <a href="/">FastVideoDown downloader</a>.</li><li>Click Get Video and wait a few seconds.</li><li>Choose HD, a smaller size, or MP3, then tap Download.</li></ol>
+<h2>Common Problems and Fixes</h2>
+<p>If a link fails, the video is usually private, deleted, or age-restricted &mdash; those cannot be downloaded. Check that the video plays in your browser while logged out, copy the link again from the video page, and retry. Public videos work on the first try in almost every case.</p>
+<h2>Is It Free?</h2>
+<p>Yes. FastVideoDown costs nothing and has no daily limit. Use it as often as you like.</p>""",
+    # Variant 3 — mobile-first angle
+    """<h2>Save {name} Videos on Your Phone</h2>
+<p>Most people watch {name} on their phone &mdash; so the downloader is built for phones first. There is no app to install and no account to create. Open your browser, paste the link, and the video saves to your device in under a minute.</p>
+<h2>Download {name} Videos on Android</h2>
+<ol><li>Open the {name} video and tap Share &rarr; Copy Link.</li><li>Open Chrome and go to <a href="/">FastVideoDown</a>.</li><li>Paste the link and tap Get Video.</li><li>Pick HD or MP3 and tap Download. The file lands in your Downloads folder.</li></ol>
+<h2>Download {name} Videos on iPhone</h2>
+<ol><li>Copy the link from the {name} app or Safari.</li><li>Open Safari and go to <a href="/">FastVideoDown</a>.</li><li>Paste the link and tap Get Video.</li><li>Choose a quality and tap Download. The file saves to the Files app, ready to watch offline.</li></ol>
+<h2>Download {name} Videos on PC</h2>
+<p>On Windows or Mac, copy the link from your browser's address bar, paste it into FastVideoDown, and pick a quality. The file downloads to your usual Downloads folder. The same free tool works on every device &mdash; no software to install anywhere.</p>
+<h2>HD or MP3: What Should You Choose?</h2>
+<p>Choose HD video when you want to watch the video again. Choose MP3 when you only want the sound &mdash; music, a talk, or a podcast &mdash; because the file is far smaller. FastVideoDown lists both, so the choice is yours for every video.</p>""",
+]
+BLOG_FAQS = [
+    ("Is downloading {name} videos free?", "Yes. FastVideoDown is free forever, with no sign-up and no daily limit."),
+    ("What quality can I download {name} videos in?", "FastVideoDown shows every quality the video was published in, from the original upload quality down to smaller sizes, plus audio-only MP3 where available."),
+    ("Can I download {name} videos on my phone?", "Yes. It works in any mobile browser on Android and iPhone, with no app to install."),
+    ("Why did my {name} link fail?", "Private, deleted, or age-restricted videos cannot be downloaded. Make sure the video is public and the link is complete, then try again."),
+    ("Can I save a {name} video as MP3?", "Yes. Where the video has audio, FastVideoDown offers an audio-only MP3 option."),
+    ("Do I need to install an app?", "No. FastVideoDown works in your browser on any device &mdash; no app, no software, no account."),
+]
+BLOG_CONCLUSIONS = [
+    "Downloading {name} videos is simple: copy the link, paste it into FastVideoDown, and pick your quality. In a few seconds you have the video &mdash; in HD, a smaller size, or MP3 &mdash; saved on your own device, ready to watch offline whenever you like.",
+    "That is all there is to it. One link, one click, and the {name} video is yours &mdash; in HD or MP3, free, on any device. Keep the ones you love and watch them whenever you want, online or off.",
+    "With FastVideoDown, saving a {name} video takes less time than watching it. Paste the link, choose HD or MP3, and the file is on your device &mdash; free, private, and ready offline.",
+]
+
+def blog_html(n, s, bslug):
+    name = html.escape(display(n))
+    v = int(hashlib.md5((n + 'blog').encode()).hexdigest()[:8], 16) % len(BLOG_TITLES)
+    title = BLOG_TITLES[v].format(name=name)
+    desc = BLOG_DESCS[v].format(name=name)
+    intro = BLOG_INTROS[v].format(name=name, slug=s)
+    body = BLOG_BODIES[v].format(name=name, slug=s)
+    concl = pick(n + 'blogc', BLOG_CONCLUSIONS).format(name=name)
+    # FAQ: 4 questions, rotated by variant
+    faqs = list(BLOG_FAQS)
+    rot = int(hashlib.md5((n + 'blogf').encode()).hexdigest()[:8], 16) % len(faqs)
+    faqs = (faqs[rot:] + faqs[:rot])[:4]
+    faq_html = '\n'.join(
+        f'<details><summary>{q.format(name=name)}</summary><p>{a.format(name=name)}</p></details>'
+        for q, a in faqs)
+    faq_json = ','.join(
+        '{{"@type":"Question","name":"' + q.format(name=name).replace('"', '') +
+        '","acceptedAnswer":{"@type":"Answer","text":"' + a.format(name=name).replace('"', '') + '"}}'
+        for q, a in faqs)
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{FAVICON}
+<title>{title}</title>
+<meta name="description" content="{desc}">
+<meta name="keywords" content="how to download {name} videos, {name} video downloader, download {name} video free, {name} to mp4, {name} to mp3">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="{BASE}/blog/{bslug}/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{desc}">
+<meta property="og:url" content="{BASE}/blog/{bslug}/">
+<style>{CSS}</style>
+<script type="application/ld+json">
+{{"@context":"https://schema.org","@type":"Article","headline":"{title}","author":{{"@type":"Organization","name":"FastVideoDown","url":"{BASE}/"}},"publisher":{{"@type":"Organization","name":"FastVideoDown","url":"{BASE}/"}},"mainEntityOfPage":{{"@type":"WebPage","@id":"{BASE}/blog/{bslug}/"}}}}
+</script>
+<script type="application/ld+json">
+{{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{faq_json}]}}
+</script>
+</head>
+<body>
+{HEADER}
+<main>
+<h1>{title.split(' &ndash; ')[0].split(' | ')[0]}</h1>
+<p>{intro}</p>
+{body}
 <h2>Frequently Asked Questions</h2>
 <div class="faq">
-<details><summary>Is downloading {name} videos free?</summary><p>Yes. FastVideoDown is free forever, with no sign-up and no daily limit.</p></details>
-<details><summary>What quality can I download {name} videos in?</summary><p>FastVideoDown shows every quality the video was published in, including the original upload quality, plus audio-only MP3 where available.</p></details>
-<details><summary>Can I download {name} videos on my phone?</summary><p>Yes. It works in any mobile browser on Android and iPhone, with no app to install.</p></details>
-<details><summary>Why did my {name} link fail?</summary><p>Private, deleted, or age-restricted videos cannot be downloaded. Make sure the video is public and the link is complete, then try again.</p></details>
+{faq_html}
 </div>
 <h2>Conclusion</h2>
-<p>Downloading {name} videos is simple: copy the link, paste it into FastVideoDown, and pick your quality. In a few seconds you have the video &mdash; in HD, a smaller size, or MP3 &mdash; saved on your own device, ready to watch offline whenever you like. <a href="/{slug}/">Try the {name} downloader now &rarr;</a></p>
+<p>{concl} <a href="/{s}/">Try the {name} downloader now &rarr;</a></p>
 <p><a href="/blog/">More guides</a> &middot; <a href="/sites/">Browse all 1,000+ downloaders</a></p>
 </main>
-""" + FOOTER.format(disclaimer="FastVideoDown is not affiliated with {name}. Download only content you own or have permission to save.") + """
+{FOOTER.format(disclaimer=f"FastVideoDown is not affiliated with {name}. Download only content you own or have permission to save.")}
 </body>
 </html>
 """
@@ -202,13 +384,12 @@ for n in sites:
     d = os.path.join(OUT, s)
     os.makedirs(d, exist_ok=True)
     with open(os.path.join(d, 'index.html'), 'w') as f:
-        f.write(PAGE.format(name=html.escape(display(n)), slug=s, base=BASE, css=CSS, related=related_links(n, s)))
-    # blog guide for this site
+        f.write(page_html(n, s))
     bslug = s + '-guide'
     bd = os.path.join(OUT, 'blog', bslug)
     os.makedirs(bd, exist_ok=True)
     with open(os.path.join(bd, 'index.html'), 'w') as f:
-        f.write(BLOG.format(name=html.escape(display(n)), slug=s, bslug=bslug, base=BASE, css=CSS))
+        f.write(blog_html(n, s, bslug))
     count += 1
 print('pages written:', count)
 print('blog guides written:', count)
