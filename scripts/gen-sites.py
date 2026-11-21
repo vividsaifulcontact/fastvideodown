@@ -177,7 +177,8 @@ ADBLOCK_WALL = """<div class="adblock-wall" id="adblockWall" role="alertdialog" 
 })();
 </script>"""
 
-FAVICON = """<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23e11d48'/%3E%3Cstop offset='1' stop-color='%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath fill='%23fff' d='M32 14a2 2 0 0 1 2 2v14.6l5.3-5.3a2 2 0 1 1 2.8 2.8l-8.7 8.7a2 2 0 0 1-2.8 0l-8.7-8.7a2 2 0 1 1 2.8-2.8l5.3 5.3V16a2 2 0 0 1 2-2z'/%3E%3Crect x='14' y='46' width='36' height='4' rx='2' fill='%23fff'/%3E%3C/svg%3E">"""
+FAVICON = """<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">"""
 
 HEADER = """<header><a class="logo" href="/"><span class="logo-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#fff" d="M12 3a1 1 0 0 1 1 1v8.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0l-4.4-4.4a1 1 0 1 1 1.4-1.4l2.7 2.7V4a1 1 0 0 1 1-1z"/><path fill="#fff" d="M4 20a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1z"/></svg></span> Fast<span class="logo-accent">VideoDown</span></a><nav><a href="/">Home</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/sites/">All Downloaders</a><a href="/blog/">Blog</a></nav></header>"""
 
@@ -479,7 +480,7 @@ print('blog guides written:', count)
 letters = {}
 for n in sites:
     letters.setdefault(n[0].upper(), []).append(n)
-idx = ['<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">',
+idx = ['<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="icon" type="image/svg+xml" href="/favicon.svg">',
 '<title>All Video Downloaders &ndash; 1,000+ Sites | FastVideoDown</title>',
 '<meta name="description" content="Browse every video downloader on FastVideoDown: YouTube, TikTok, Instagram, Facebook, X, and 1,000+ more sites. Pick a site and download videos in HD & MP3 free.">',
 '<meta name="robots" content="index, follow">',
@@ -500,7 +501,7 @@ open(os.path.join(OUT, 'sites', 'index.html'), 'w').write('\n'.join(idx).replace
 print('sites index written')
 
 # --- blog index ---
-bidx = ['<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">',
+bidx = ['<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="icon" type="image/svg+xml" href="/favicon.svg">',
 '<title>Video Downloader Guides &ndash; How to Download Videos from 1,000+ Sites | FastVideoDown</title>',
 '<meta name="description" content="Step-by-step guides to downloading videos from YouTube, TikTok, Instagram, Facebook, X, and 1,000+ more sites in HD and MP3, free.">',
 '<meta name="robots" content="index, follow">',
