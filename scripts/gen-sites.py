@@ -359,7 +359,6 @@ document.addEventListener('DOMContentLoaded',function(){{try{{if(document.docume
 <tr><td><strong>Thumbnail (JPG)</strong> &ndash; the video's cover image</td><td>Using the cover as a picture or preview</td></tr></table>
 <p>The exact qualities depend on how the video was uploaded to {name}. FastVideoDown always shows every option the platform makes available.</p>
 {NATIVE_BANNER}
-{BANNER_160}
 <h2>Why Download {name} Videos with FastVideoDown?</h2>
 <ul><li><strong>Free forever</strong> &mdash; no payment, no account, no daily limit.</li><li><strong>Real quality picker</strong> &mdash; HD, smaller sizes, and audio-only MP3 where the platform offers them.</li><li><strong>Fast direct downloads</strong> &mdash; files come straight from the platform's servers.</li><li><strong>No watermark</strong> &mdash; you get the video as published.</li><li><strong>Private</strong> &mdash; links are processed and never stored.</li><li><strong>Any device</strong> &mdash; works on phone, tablet, and desktop with no app to install.</li></ul>
 <h2>Tips for the Best {name} Downloads</h2>
@@ -375,7 +374,6 @@ document.addEventListener('DOMContentLoaded',function(){{try{{if(document.docume
 <p style="margin-top:24px"><a href="/">Try the {name} downloader now &rarr;</a> &middot; <a href="/sites/">Browse all 1,000+ downloaders</a></p>
 </main>
 {BANNER_300}
-{BANNER_160x600}
 {FOOTER.format(disclaimer=f"FastVideoDown is not affiliated with {name}. Download only content you own or have permission to save.")}
 {SOCIAL_BAR}
 {BANNER_320}
@@ -523,7 +521,6 @@ document.addEventListener('DOMContentLoaded',function(){{try{{if(document.docume
 <p>{intro}</p>
 {body}
 {NATIVE_BANNER}
-{BANNER_160}
 <h2>Frequently Asked Questions</h2>
 <div class="faq">
 {faq_html}
@@ -533,7 +530,6 @@ document.addEventListener('DOMContentLoaded',function(){{try{{if(document.docume
 <p><a href="/blog/">More guides</a> &middot; <a href="/sites/">Browse all 1,000+ downloaders</a></p>
 </main>
 {BANNER_300}
-{BANNER_160x600}
 {FOOTER.format(disclaimer=f"FastVideoDown is not affiliated with {name}. Download only content you own or have permission to save.")}
 {SOCIAL_BAR}
 {BANNER_320}
