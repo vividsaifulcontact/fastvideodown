@@ -19,13 +19,13 @@ document.addEventListener('DOMContentLoaded',function(){try{if(document.document
 <title>Contact FastVideoDown — Report a Broken Link, Request a Site, or Ask a Question</title>
 <meta name="description" content="Contact FastVideoDown: report a link that does not work, request a new platform, send feedback, or raise a copyright concern. Email vividsaiful.contact@gmail.com — we read every message.">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://fastvideodown.pages.dev/contact.html">
+<link rel="canonical" href="https://fastvideodown.pages.dev/contact">
 <meta property="og:title" content="Contact FastVideoDown — Report a Broken Link, Request a Site, or Ask a Question">
 <meta property="og:description" content="Contact FastVideoDown: report a link that does not work, request a new platform, send feedback, or raise a copyright concern. Email vividsaiful.contact@gmail.com — we read every message.">
-<meta property="og:url" content="https://fastvideodown.pages.dev/contact.html">
+<meta property="og:url" content="https://fastvideodown.pages.dev/contact">
 <meta property="og:type" content="website">
 
-<style>.ad-label{font-size:11px;color:#94a3b8;text-align:center;letter-spacing:.12em;text-transform:uppercase;margin:10px 0 4px}.ad-banner728,.ad-banner468,.ad-banner300,.ad-banner160,.ad-banner160x600,.ad-native{max-width:100%;overflow:hidden}.ad-native .__bn{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important}.ad-native .__bn .__bn-container{flex:1 1 25%!important;max-width:25%!important;min-width:0!important}.ad-banner728 iframe,.ad-banner468 iframe,.ad-banner300 iframe,.ad-banner160 iframe,.ad-banner160x600 iframe{max-width:100%!important}@media(max-width:768px){.ad-banner468{display:block!important;overflow:hidden;height:45px;max-width:351px;margin-left:auto;margin-right:auto}.ad-banner468 iframe{transform:scale(.75);transform-origin:top left;width:468px!important;max-width:none!important}.ad-banner728{display:block!important;overflow:hidden;height:45px;max-width:364px;margin-left:auto;margin-right:auto}.ad-banner728 iframe{transform:scale(.5);transform-origin:top left;width:728px!important;max-width:none!important}}@media (max-width:600px){.menu-toggle{display:block!important}header .wrap{flex-wrap:wrap}nav{display:none}nav.open{display:flex;flex-wrap:wrap;gap:10px;order:3;width:100%;padding:8px 0 2px}.hero h1{font-size:20px!important;line-height:1.25}.hero p{font-size:14px!important}}html,body{overflow-x:hidden}
+<style>.ad-label{font-size:11px;color:#64748b;text-align:center;letter-spacing:.12em;text-transform:uppercase;margin:10px 0 4px}.ad-banner728,.ad-banner468,.ad-banner300,.ad-banner160,.ad-banner160x600,.ad-native{max-width:100%;overflow:hidden}.ad-native .__bn{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important}.ad-native .__bn .__bn-container{flex:1 1 25%!important;max-width:25%!important;min-width:0!important}.ad-banner728 iframe,.ad-banner468 iframe,.ad-banner300 iframe,.ad-banner160 iframe,.ad-banner160x600 iframe{max-width:100%!important}@media(max-width:768px){.ad-banner468{display:block!important;overflow:hidden;height:45px;max-width:351px;margin-left:auto;margin-right:auto}.ad-banner468 iframe{transform:scale(.75);transform-origin:top left;width:468px!important;max-width:none!important}.ad-banner728{display:block!important;overflow:hidden;height:45px;max-width:364px;margin-left:auto;margin-right:auto}.ad-banner728 iframe{transform:scale(.5);transform-origin:top left;width:728px!important;max-width:none!important}}@media (max-width:600px){.menu-toggle{display:block!important}header .wrap{flex-wrap:wrap}nav{display:none}nav.open{display:flex;flex-wrap:wrap;gap:10px;order:3;width:100%;padding:8px 0 2px}.hero h1{font-size:20px!important;line-height:1.25}.hero p{font-size:14px!important}}html,body{overflow-x:hidden}
 :root{--ink:#0f172a;--muted:#475569;--line:#e2e8f0;--bg:#f8fafc;--accent:#e11d48;--accent2:#7c3aed}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.65}
@@ -69,13 +69,38 @@ html.dark footer{background:#0f172a!important;color:#94a3b8!important}
 html.dark .card,html.dark .tool,html.dark .step{background:#1e293b!important;border-color:#334155!important}
 .night-toggle{background:none;border:1px solid #cbd5e1;border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer;color:inherit;white-space:nowrap}.menu-toggle{display:none;background:none;border:0;font-size:22px;line-height:1;cursor:pointer;color:inherit;padding:6px 8px}
 html.dark .night-toggle{border-color:#475569}
+html.dark details{background:#1e293b!important;border-color:#334155!important}
+html.dark .callout{background:#1e293b!important}
+.adblock-wall{position:fixed;inset:0;z-index:99999;background:#0f172a;color:#fff;display:none;align-items:center;justify-content:center;padding:24px;text-align:center}
+.adblock-wall.show{display:flex}
+.adblock-wall .box{max-width:520px}
+.adblock-wall h2{font-size:28px;margin-bottom:14px}
+.adblock-wall p{color:#cbd5e1;margin-bottom:12px;font-size:16px}
+.adblock-wall .steps{text-align:left;background:#1e293b;border-radius:12px;padding:16px 20px;margin:18px 0;font-size:15px;color:#e2e8f0}
+.adblock-wall .steps li{margin-bottom:6px}
+.adblock-wall .reload-btn{display:inline-block;background:linear-gradient(135deg,#e11d48,#7c3aed);color:#fff;font-weight:700;padding:14px 30px;border-radius:12px;border:0;cursor:pointer;font-size:17px}
+.adblock-wall .reload-btn:hover{filter:brightness(1.1)}
 </style>
 </head>
 <body>
+<div class="adblock-wall" id="adblockWall" role="alertdialog" aria-label="Ad blocker detected">
+  <div class="box">
+    <h2>🚫 Ad Blocker Detected</h2>
+    <p>FastVideoDown is <b>100% free</b> because of ads. To keep it free for everyone, please disable your ad blocker for this site.</p>
+    <p id="adblockBrave" style="display:none">You are using <b>Brave browser</b>. Please turn off Brave Shields for this site: click the <b>lion icon</b> in the address bar and switch Shields <b>off</b>.</p>
+    <ul class="steps">
+      <li><b>Chrome / Edge:</b> click the ad-blocker icon in the toolbar → "Pause on this site" or "Don't run on this site".</li>
+      <li><b>Firefox:</b> click the shield icon in the address bar → turn off Enhanced Tracking Protection for this site.</li>
+      <li><b>Phone:</b> open your browser settings or your ad-blocker app and allow fastvideodown.pages.dev.</li>
+    </ul>
+    <button class="reload-btn" type="button" onclick="location.reload()">I've disabled it — Reload the page</button>
+    <p style="margin-top:16px;font-size:14px;color:#94a3b8">FastVideoDown collects nothing and shows no pop-ups — the ads are the only thing that keeps the servers running.</p>
+  </div>
+</div>
 <header><div class="wrap">
 <a class="logo" href="/">⬇ FastVideoDown</a>
 <nav><a href="/">Downloader</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/facebook-video-downloader/">Facebook</a></nav>
-<button class="menu-toggle" id="menuToggle" onclick="document.querySelector('header nav').classList.toggle('open')" aria-label="Menu">☰</button><button class="night-toggle" id="nightToggle" onclick="toggleNight()">🌙 Night</button><div id="google_translate_element" style="display:inline-block;vertical-align:middle;margin-left:8px"></div>
+<button class="menu-toggle" id="menuToggle" onclick="document.querySelector('header nav').classList.toggle('open')" aria-label="Menu">☰</button><button class="night-toggle" id="nightToggle" onclick="toggleNight()">🌙 Night</button><select id="langSelect" onchange="switchLang(this)" style="margin-left:8px;padding:4px 6px;border-radius:999px;border:1px solid #cbd5e1;background:transparent;font-size:13px;color:inherit" aria-label="Language"><option value="" selected>English</option><option value="es">Español</option><option value="pt">Português</option><option value="id">Bahasa Indonesia</option><option value="hi">हिन्दी</option><option value="ar">العربية</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="tr">Türkçe</option><option value="ru">Русский</option><option value="vi">Tiếng Việt</option><option value="th">ไทย</option><option value="bn">বাংলা</option><option value="ur">اردو</option><option value="it">Italiano</option><option value="nl">Nederlands</option><option value="pl">Polski</option><option value="uk">Українська</option><option value="ms">Bahasa Melayu</option><option value="tl">Filipino</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="zh-cn">中文</option><option value="ta">தமிழ்</option><option value="te">తెలుగు</option><option value="mr">मराठी</option><option value="fa">فارسی</option><option value="sw">Kiswahili</option><option value="ha">Hausa</option><option value="el">Ελληνικά</option><option value="cs">Čeština</option><option value="ro">Română</option><option value="hu">Magyar</option><option value="sv">Svenska</option><option value="fi">Suomi</option><option value="da">Dansk</option><option value="no">Norsk</option><option value="he">עברית</option><option value="bg">Български</option><option value="sr">Српски</option><option value="hr">Hrvatski</option></select><script>function switchLang(sel){var code=sel.value;var langs=["es", "pt", "id", "hi", "ar", "fr", "de", "tr", "ru", "vi", "th", "bn", "ur", "it", "nl", "pl", "uk", "ms", "tl", "ja", "ko", "zh-cn", "ta", "te", "mr", "fa", "sw", "ha", "el", "cs", "ro", "hu", "sv", "fi", "da", "no", "he", "bg", "sr", "hr"];if(code&&langs.indexOf(code)<0)return;location.href=code?"/"+code+"/":"/";}</script>
 </div></header>
 <div class="hero"><div class="wrap">
 <h1>Contact FastVideoDown</h1>
@@ -88,7 +113,7 @@ html.dark .night-toggle{border-color:#475569}
 
 <h2>Email Us</h2>
 <div class="callout"><p><strong>vividsaiful.contact@gmail.com</strong><br>Write to us in any language. Tell us what happened and we will look into it.</p></div>
-<p>Your email address is used only to reply to you. We never share it, sell it, or add it to a mailing list. See our <a href="/privacy.html">Privacy Policy</a> for the full picture.</p>
+<p>Your email address is used only to reply to you. We never share it, sell it, or add it to a mailing list. See our <a href="/privacy">Privacy Policy</a> for the full picture.</p>
 
 <h2>What to Include in Your Message</h2>
 <p>The more detail you give, the faster we can help. When you write, please include:</p>
@@ -120,7 +145,7 @@ html.dark .night-toggle{border-color:#475569}
 <li>A description of the copyrighted work and where it appears;</li>
 <li>The link or links involved, and a statement that you are the rights holder or authorised to act for them.</li>
 </ul>
-<p>We take copyright complaints seriously and will act on valid reports promptly. Please also read our <a href="/terms.html">Terms of Use</a>, which explain the rules for lawful use of the service.</p>
+<p>We take copyright complaints seriously and will act on valid reports promptly. Please also read our <a href="/terms">Terms of Use</a>, which explain the rules for lawful use of the service.</p>
 
 <h2>How Long Until We Reply?</h2>
 <p>We aim to reply within 2–3 days. Broken-link reports and copyright concerns are handled first. If you do not hear back, please check your spam folder — or write again.</p>
@@ -133,7 +158,7 @@ html.dark .night-toggle{border-color:#475569}
 <details><summary>Can you add my favourite site?</summary><p>Probably! Email us the site's name and address and we will look into it. Popular requests are built first.</p></details>
 </div></main>
 <footer><div class="wrap">
-<a href="/">FastVideoDown</a> · <a href="/privacy.html">Privacy Policy</a> · <a href="/terms.html">Terms of Use</a> · <a href="/contact.html">Contact</a> · <a href="/sitemap.xml">Sitemap</a>
+<a href="/">FastVideoDown</a> · <a href="/privacy">Privacy Policy</a> · <a href="/terms">Terms of Use</a> · <a href="/contact">Contact</a> · <a href="/sitemap.xml">Sitemap</a>
 <p class="copy">© 2026 FastVideoDown. Download only videos you have the right to save.</p>
 </div></footer>
 <script data-cfasync="false" src="https://bellnewyork.org/14/f35df6e06fc69f99b8b2ce47d7d3bd4c"></script>
@@ -146,7 +171,66 @@ html.dark .night-toggle{border-color:#475569}
     'params' : {}
   };
 </script><script src="https://bellnewyork.org/22/c68d728f8fb3b0e170aed6f600c92dbc"></script></div>
-<script>(function(){function f(){document.querySelectorAll(".ad-native .__bn").forEach(function(b){b.style.setProperty("display","flex","important");b.style.setProperty("flex-direction","row","important");b.style.setProperty("flex-wrap","nowrap","important");});document.querySelectorAll(".ad-native .__bn-container").forEach(function(c){c.style.setProperty("flex","1 1 25%","important");c.style.setProperty("max-width","25%","important");c.style.setProperty("min-width","0","important");});}f();try{new MutationObserver(f).observe(document.documentElement,{childList:true,subtree:true,attributes:true});}catch(e){}var n=0;var iv=setInterval(function(){f();if(++n>20)clearInterval(iv);},500);})();</script><script type="text/javascript">function googleTranslateElementInit(){new google.translate.TranslateElement({pageLanguage:'en',layout:google.translate.TranslateElement.InlineLayout.SIMPLE,autoDisplay:false},'google_translate_element');}</script>
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script>(function(){function f(){document.querySelectorAll(".ad-native .__bn").forEach(function(b){b.style.setProperty("display","flex","important");b.style.setProperty("flex-direction","row","important");b.style.setProperty("flex-wrap","nowrap","important");});document.querySelectorAll(".ad-native .__bn-container").forEach(function(c){c.style.setProperty("flex","1 1 25%","important");c.style.setProperty("max-width","25%","important");c.style.setProperty("min-width","0","important");});}f();try{new MutationObserver(f).observe(document.documentElement,{childList:true,subtree:true,attributes:true});}catch(e){}var n=0;var iv=setInterval(function(){f();if(++n>20)clearInterval(iv);},500);})();</script>
+<script>
+/* Ad-blocker wall: if an ad blocker (extension, or a browser with built-in
+   ad blocking such as Brave) is active, block use of the site until it is
+   turned off. Detection: (1) a bait ad element that blockers hide,
+   (2) a bait ad script that blockers refuse to load, (3) Brave detection. */
+(function(){
+  function baitElementBlocked(){
+    var bait = document.createElement('div');
+    bait.className = 'adsbox ad-banner ads adslot pub_300x250';
+    bait.style.cssText = 'width:300px;height:250px;position:absolute;left:-9999px;top:0;';
+    bait.innerHTML = '&nbsp;';
+    document.body.appendChild(bait);
+    var cs = window.getComputedStyle(bait);
+    var blocked = bait.offsetHeight === 0 || cs.display === 'none' || cs.visibility === 'hidden';
+    bait.remove();
+    return blocked;
+  }
+  function baitScriptBlocked(){
+    return new Promise(function(resolve){
+      var done = false;
+      var s = document.createElement('script');
+      s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+      s.async = true;
+      s.onload = function(){ if(!done){ done = true; resolve(false); } };
+      s.onerror = function(){ if(!done){ done = true; resolve(true); } };
+      document.head.appendChild(s);
+      setTimeout(function(){ if(!done){ done = true; resolve(true); } }, 5000);
+    });
+  }
+  async function isBrave(){
+    try {
+      if (navigator.brave && navigator.brave.isBrave) return await navigator.brave.isBrave();
+    } catch(e){}
+    return false;
+  }
+  async function check(){
+    await new Promise(function(r){ setTimeout(r, 200); });
+    var elBlocked = baitElementBlocked();
+    var brave = await isBrave();
+    var blocked = elBlocked || brave;
+    if (!blocked) {
+      blocked = await baitScriptBlocked();
+    }
+    if (blocked) {
+      var wall = document.getElementById('adblockWall');
+      if (wall) wall.classList.add('show');
+      if (brave) {
+        var b = document.getElementById('adblockBrave');
+        if (b) b.style.display = 'block';
+      }
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', check);
+  } else {
+    check();
+  }
+})();
+</script>
 </body>
 </html>
