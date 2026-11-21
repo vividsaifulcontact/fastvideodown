@@ -1,4 +1,4 @@
-# Proxy the download API to the Netlify Functions backend (hidden).
-# Cloudflare Pages serves only the static site; yt-dlp runs on Netlify.
-# The 200 status makes this a proxy (same-origin, no CORS), not a redirect.
-/api/* https://stately-pavlova-7c69c9.netlify.app/api/:splat 200
+# No redirects. The old /api/* proxy to Netlify was removed 2026-11-21:
+# Netlify was dropped (free credits exhausted) and the live API runs on
+# Cloady, which the frontend calls directly (API_BASE in index.html).
+# Do not re-add a same-origin /api/* proxy unless a live backend needs it.
