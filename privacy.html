@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded',function(){try{if(document.document
 <meta property="og:url" content="https://fastvideodown.pages.dev/privacy.html">
 <meta property="og:type" content="website">
 
-<style>.ad-label{font-size:11px;color:#94a3b8;text-align:center;letter-spacing:.12em;text-transform:uppercase;margin:10px 0 4px}.ad-banner728,.ad-banner468,.ad-banner300,.ad-banner160,.ad-banner160x600,.ad-native{max-width:100%;overflow:hidden}.ad-banner728 iframe,.ad-banner468 iframe,.ad-banner300 iframe,.ad-banner160 iframe,.ad-banner160x600 iframe{max-width:100%!important}@media(max-width:768px){.ad-banner468{display:block!important;overflow:hidden;height:45px;max-width:351px;margin-left:auto;margin-right:auto}.ad-banner468 iframe{transform:scale(.75);transform-origin:top left;width:468px!important;max-width:none!important}.ad-banner728{display:block!important;overflow:hidden;height:45px;max-width:364px;margin-left:auto;margin-right:auto}.ad-banner728 iframe{transform:scale(.5);transform-origin:top left;width:728px!important;max-width:none!important}}body{overflow-x:hidden}
+<style>.ad-label{font-size:11px;color:#94a3b8;text-align:center;letter-spacing:.12em;text-transform:uppercase;margin:10px 0 4px}.ad-banner728,.ad-banner468,.ad-banner300,.ad-banner160,.ad-banner160x600,.ad-native{max-width:100%;overflow:hidden}.ad-banner728 iframe,.ad-banner468 iframe,.ad-banner300 iframe,.ad-banner160 iframe,.ad-banner160x600 iframe{max-width:100%!important}@media(max-width:768px){.ad-banner468{display:block!important;overflow:hidden;height:45px;max-width:351px;margin-left:auto;margin-right:auto}.ad-banner468 iframe{transform:scale(.75);transform-origin:top left;width:468px!important;max-width:none!important}.ad-banner728{display:block!important;overflow:hidden;height:45px;max-width:364px;margin-left:auto;margin-right:auto}.ad-banner728 iframe{transform:scale(.5);transform-origin:top left;width:728px!important;max-width:none!important}}@media (max-width:600px){.menu-toggle{display:block}header .wrap{flex-wrap:wrap}nav{display:none}nav.open{display:flex;flex-wrap:wrap;gap:10px;order:3;width:100%;padding:8px 0 2px}}body{overflow-x:hidden}
 :root{--ink:#0f172a;--muted:#475569;--line:#e2e8f0;--bg:#f8fafc;--accent:#e11d48;--accent2:#7c3aed}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.65}
@@ -67,7 +67,7 @@ html.dark input,html.dark textarea,html.dark select{background:#1e293b!important
 html.dark input::placeholder{color:#64748b}
 html.dark footer{background:#0f172a!important;color:#94a3b8!important}
 html.dark .card,html.dark .tool,html.dark .step{background:#1e293b!important;border-color:#334155!important}
-.night-toggle{background:none;border:1px solid #cbd5e1;border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer;color:inherit;white-space:nowrap}
+.night-toggle{background:none;border:1px solid #cbd5e1;border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer;color:inherit;white-space:nowrap}.menu-toggle{display:none;background:none;border:0;font-size:22px;line-height:1;cursor:pointer;color:inherit;padding:6px 8px}
 html.dark .night-toggle{border-color:#475569}
 </style>
 </head>
@@ -75,7 +75,7 @@ html.dark .night-toggle{border-color:#475569}
 <header><div class="wrap">
 <a class="logo" href="/">⬇ FastVideoDown</a>
 <nav><a href="/">Downloader</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/facebook-video-downloader/">Facebook</a></nav>
-<button class="night-toggle" id="nightToggle" onclick="toggleNight()">🌙 Night</button>
+<button class="menu-toggle" id="menuToggle" onclick="document.querySelector('header nav').classList.toggle('open')" aria-label="Menu">☰</button><button class="night-toggle" id="nightToggle" onclick="toggleNight()">🌙 Night</button>
 </div></header>
 <div class="hero"><div class="wrap">
 <h1>Privacy Policy</h1>

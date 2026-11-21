@@ -175,6 +175,9 @@ footer .copy{margin-top:26px;font-size:13px;border-top:1px solid #1e293b;padding
   .btn{width:100%}
   nav{display:none}
   .thumb{width:100%}
+  .menu-toggle{display:block}
+  header .wrap{flex-wrap:wrap}
+  nav.open{display:flex;flex-wrap:wrap;gap:10px;order:3;width:100%;padding:8px 0 2px}
 }
 .adblock-wall{position:fixed;inset:0;z-index:99999;background:#0f172a;color:#fff;display:none;align-items:center;justify-content:center;padding:24px;text-align:center}
 .adblock-wall.show{display:flex}
@@ -210,7 +213,7 @@ html.dark .btn.ghost{background:#1e293b!important;border-color:#475569!important
 html.dark .chip{background:#1e293b!important;border-color:#334155!important;color:#cbd5e1!important}
 html.dark .chip.active{background:#14532d!important;color:#86efac!important;border-color:#16a34a!important}
 html.dark .meta h3,html.dark .fmt .q,html.dark .fmt .d b,html.dark .group h4{color:#f1f5f9!important}
-.night-toggle{background:none;border:1px solid #cbd5e1;border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer;color:inherit;white-space:nowrap}
+.night-toggle{background:none;border:1px solid #cbd5e1;border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer;color:inherit;white-space:nowrap}.menu-toggle{display:none;background:none;border:0;font-size:22px;line-height:1;cursor:pointer;color:inherit;padding:6px 8px}
 html.dark .night-toggle{border-color:#475569}
 </style>
 </head>
@@ -241,7 +244,7 @@ html.dark .night-toggle{border-color:#475569}
       <a href="/thumbnail-downloader/">Thumbnail</a>
       <a href="/blog/">Blog</a>
     </nav>
-<button class="night-toggle" id="nightToggle" onclick="toggleNight()">🌙 Night</button>
+<button class="menu-toggle" id="menuToggle" onclick="document.querySelector('header nav').classList.toggle('open')" aria-label="Menu">☰</button><button class="night-toggle" id="nightToggle" onclick="toggleNight()">🌙 Night</button>
   </div>
 </header>
 
