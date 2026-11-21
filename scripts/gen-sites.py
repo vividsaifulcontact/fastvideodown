@@ -95,8 +95,87 @@ table{width:100%;border-collapse:collapse;margin:14px 0}th,td{border:1px solid #
 .faq summary{font-weight:600;cursor:pointer}
 .note{background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:14px 16px;margin:20px 0}
 .related{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px 20px;margin:24px 0}
+.adblock-wall{position:fixed;inset:0;z-index:99999;background:#0f172a;color:#fff;display:none;align-items:center;justify-content:center;padding:24px;text-align:center}
+.adblock-wall.show{display:flex}
+.adblock-wall .box{max-width:520px}
+.adblock-wall h2{font-size:26px;margin-bottom:14px;color:#fff}
+.adblock-wall p{color:#cbd5e1;margin-bottom:12px;font-size:16px}
+.adblock-wall .steps{text-align:left;background:#1e293b;border-radius:12px;padding:16px 20px;margin:18px 0;font-size:15px;color:#e2e8f0;list-style-position:inside}
+.adblock-wall .steps li{margin-bottom:6px}
+.adblock-wall .reload-btn{display:inline-block;background:linear-gradient(135deg,#e11d48,#7c3aed);color:#fff;font-weight:700;padding:14px 30px;border-radius:12px;border:0;cursor:pointer;font-size:17px}
 footer{background:#111827;color:#9ca3af;padding:28px 20px;text-align:center;font-size:14px}
 footer a{color:#d1d5db;margin:0 8px}"""
+
+ADBLOCK_WALL = """<div class="adblock-wall" id="adblockWall" role="alertdialog" aria-label="Ad blocker detected">
+  <div class="box">
+    <h2>🚫 Ad Blocker Detected</h2>
+    <p>FastVideoDown is <b>100% free</b> because of ads. To keep it free for everyone, please disable your ad blocker for this site.</p>
+    <p id="adblockBrave" style="display:none">You are using <b>Brave browser</b>. Please turn off Brave Shields for this site: click the <b>lion icon</b> in the address bar and switch Shields <b>off</b>.</p>
+    <ul class="steps">
+      <li><b>Chrome / Edge:</b> click the ad-blocker icon in the toolbar → "Pause on this site" or "Don't run on this site".</li>
+      <li><b>Firefox:</b> click the shield icon in the address bar → turn off Enhanced Tracking Protection for this site.</li>
+      <li><b>Phone:</b> open your browser settings or your ad-blocker app and allow fastvideodown.pages.dev.</li>
+    </ul>
+    <button class="reload-btn" type="button" onclick="location.reload()">I've disabled it — Reload the page</button>
+    <p style="margin-top:16px;font-size:14px;color:#94a3b8">FastVideoDown collects nothing and shows no pop-ups — the ads are the only thing that keeps the servers running.</p>
+  </div>
+</div>
+<script>
+(function(){
+  function baitElementBlocked(){
+    var bait = document.createElement('div');
+    bait.className = 'adsbox ad-banner ads adslot pub_300x250';
+    bait.style.cssText = 'width:300px;height:250px;position:absolute;left:-9999px;top:0;';
+    bait.innerHTML = '&nbsp;';
+    document.body.appendChild(bait);
+    var cs = window.getComputedStyle(bait);
+    var blocked = bait.offsetHeight === 0 || cs.display === 'none' || cs.visibility === 'hidden';
+    bait.remove();
+    return blocked;
+  }
+  function baitScriptBlocked(){
+    return new Promise(function(resolve){
+      var done = false;
+      var s = document.createElement('script');
+      s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+      s.async = true;
+      s.onload = function(){ if(!done){ done = true; resolve(false); } };
+      s.onerror = function(){ if(!done){ done = true; resolve(true); } };
+      document.head.appendChild(s);
+      setTimeout(function(){ if(!done){ done = true; resolve(true); } }, 5000);
+    });
+  }
+  async function isBrave(){
+    try {
+      if (navigator.brave && navigator.brave.isBrave) return await navigator.brave.isBrave();
+    } catch(e){}
+    return false;
+  }
+  async function check(){
+    await new Promise(function(r){ setTimeout(r, 200); });
+    var elBlocked = baitElementBlocked();
+    var brave = await isBrave();
+    var blocked = elBlocked || brave;
+    if (!blocked) {
+      blocked = await baitScriptBlocked();
+    }
+    if (blocked) {
+      var wall = document.getElementById('adblockWall');
+      if (wall) wall.classList.add('show');
+      if (brave) {
+        var b = document.getElementById('adblockBrave');
+        if (b) b.style.display = 'block';
+      }
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', check);
+  } else {
+    check();
+  }
+})();
+</script>"""
 
 FAVICON = """<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23e11d48'/%3E%3Cstop offset='1' stop-color='%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath fill='%23fff' d='M32 14a2 2 0 0 1 2 2v14.6l5.3-5.3a2 2 0 1 1 2.8 2.8l-8.7 8.7a2 2 0 0 1-2.8 0l-8.7-8.7a2 2 0 1 1 2.8-2.8l5.3 5.3V16a2 2 0 0 1 2-2z'/%3E%3Crect x='14' y='46' width='36' height='4' rx='2' fill='%23fff'/%3E%3C/svg%3E">"""
 
@@ -200,6 +279,7 @@ def page_html(n, s):
 </script>
 </head>
 <body>
+{ADBLOCK_WALL}
 {HEADER}
 <section class="hero"><h1>{name} Video Downloader</h1><p>{hero}</p><a class="btn" href="/">Download a {name} Video &rarr;</a></section>
 <main>
@@ -360,6 +440,7 @@ def blog_html(n, s, bslug):
 </script>
 </head>
 <body>
+{ADBLOCK_WALL}
 {HEADER}
 <main>
 <h1>{title.split(' &ndash; ')[0].split(' | ')[0]}</h1>
@@ -403,7 +484,7 @@ idx = ['<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="v
 '<meta name="description" content="Browse every video downloader on FastVideoDown: YouTube, TikTok, Instagram, Facebook, X, and 1,000+ more sites. Pick a site and download videos in HD & MP3 free.">',
 '<meta name="robots" content="index, follow">',
 f'<link rel="canonical" href="{BASE}/sites/">',
-'<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#1f2937;line-height:1.6}a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}header{background:#111827;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:22px;font-weight:800;color:#fff}.logo span{color:#f59e0b}nav a{color:#d1d5db;margin-left:16px;font-size:14px}main{max-width:900px;margin:0 auto;padding:32px 20px}h1{font-size:28px;margin-bottom:8px}h2{font-size:20px;margin:26px 0 10px;border-bottom:1px solid #e5e7eb;padding-bottom:6px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px 18px;font-size:15px}.letters{margin:16px 0}.letters a{margin-right:10px;font-weight:600}footer{background:#111827;color:#9ca3af;padding:28px 20px;text-align:center;font-size:14px}footer a{color:#d1d5db;margin:0 8px}</style></head><body>',
+'<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#1f2937;line-height:1.6}a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}header{background:#111827;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:22px;font-weight:800;color:#fff}.logo span{color:#f59e0b}nav a{color:#d1d5db;margin-left:16px;font-size:14px}main{max-width:900px;margin:0 auto;padding:32px 20px}h1{font-size:28px;margin-bottom:8px}h2{font-size:20px;margin:26px 0 10px;border-bottom:1px solid #e5e7eb;padding-bottom:6px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px 18px;font-size:15px}.letters{margin:16px 0}.letters a{margin-right:10px;font-weight:600}footer{background:#111827;color:#9ca3af;padding:28px 20px;text-align:center;font-size:14px}footer a{color:#d1d5db;margin:0 8px}.adblock-wall{position:fixed;inset:0;z-index:99999;background:#0f172a;color:#fff;display:none;align-items:center;justify-content:center;padding:24px;text-align:center}.adblock-wall.show{display:flex}.adblock-wall .box{max-width:520px}.adblock-wall h2{font-size:26px;margin-bottom:14px;color:#fff;border:0;padding:0}.adblock-wall p{color:#cbd5e1;margin-bottom:12px;font-size:16px}.adblock-wall .steps{text-align:left;background:#1e293b;border-radius:12px;padding:16px 20px;margin:18px 0;font-size:15px;color:#e2e8f0;list-style-position:inside}.adblock-wall .steps li{margin-bottom:6px}.adblock-wall .reload-btn{display:inline-block;background:linear-gradient(135deg,#e11d48,#7c3aed);color:#fff;font-weight:700;padding:14px 30px;border-radius:12px;border:0;cursor:pointer;font-size:17px}</style></head><body>',
 '<header><a class="logo" href="/">Fast<span>VideoDown</span></a><nav><a href="/">Home</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/blog/">Blog</a></nav></header><main>',
 f'<h1>All Video Downloaders &ndash; {len(sites)+8} Sites</h1>',
 '<p>Every site FastVideoDown can download from. Pick a site, paste its video link on the <a href="/">homepage</a>, and save the video in HD or MP3 &mdash; free, no sign-up.</p>',
@@ -415,7 +496,7 @@ for L in sorted(letters):
     idx.append('</div>')
 idx.append('</main><footer><a href="/">FastVideoDown</a><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Use</a><a href="/contact.html">Contact</a><a href="/sitemap.xml">Sitemap</a></footer></body></html>')
 os.makedirs(os.path.join(OUT, 'sites'), exist_ok=True)
-open(os.path.join(OUT, 'sites', 'index.html'), 'w').write('\n'.join(idx))
+open(os.path.join(OUT, 'sites', 'index.html'), 'w').write('\n'.join(idx).replace('<body>', '<body>' + ADBLOCK_WALL, 1))
 print('sites index written')
 
 # --- blog index ---
@@ -424,7 +505,7 @@ bidx = ['<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="
 '<meta name="description" content="Step-by-step guides to downloading videos from YouTube, TikTok, Instagram, Facebook, X, and 1,000+ more sites in HD and MP3, free.">',
 '<meta name="robots" content="index, follow">',
 f'<link rel="canonical" href="{BASE}/blog/">',
-'<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#1f2937;line-height:1.6}a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}header{background:#111827;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:22px;font-weight:800;color:#fff}.logo span{color:#f59e0b}nav a{color:#d1d5db;margin-left:16px;font-size:14px}main{max-width:900px;margin:0 auto;padding:32px 20px}h1{font-size:28px;margin-bottom:8px}h2{font-size:20px;margin:26px 0 10px;border-bottom:1px solid #e5e7eb;padding-bottom:6px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px 18px;font-size:15px}footer{background:#111827;color:#9ca3af;padding:28px 20px;text-align:center;font-size:14px}footer a{color:#d1d5db;margin:0 8px}</style></head><body>',
+'<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#1f2937;line-height:1.6}a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}header{background:#111827;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:22px;font-weight:800;color:#fff}.logo span{color:#f59e0b}nav a{color:#d1d5db;margin-left:16px;font-size:14px}main{max-width:900px;margin:0 auto;padding:32px 20px}h1{font-size:28px;margin-bottom:8px}h2{font-size:20px;margin:26px 0 10px;border-bottom:1px solid #e5e7eb;padding-bottom:6px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px 18px;font-size:15px}footer{background:#111827;color:#9ca3af;padding:28px 20px;text-align:center;font-size:14px}footer a{color:#d1d5db;margin:0 8px}.adblock-wall{position:fixed;inset:0;z-index:99999;background:#0f172a;color:#fff;display:none;align-items:center;justify-content:center;padding:24px;text-align:center}.adblock-wall.show{display:flex}.adblock-wall .box{max-width:520px}.adblock-wall h2{font-size:26px;margin-bottom:14px;color:#fff;border:0;padding:0}.adblock-wall p{color:#cbd5e1;margin-bottom:12px;font-size:16px}.adblock-wall .steps{text-align:left;background:#1e293b;border-radius:12px;padding:16px 20px;margin:18px 0;font-size:15px;color:#e2e8f0;list-style-position:inside}.adblock-wall .steps li{margin-bottom:6px}.adblock-wall .reload-btn{display:inline-block;background:linear-gradient(135deg,#e11d48,#7c3aed);color:#fff;font-weight:700;padding:14px 30px;border-radius:12px;border:0;cursor:pointer;font-size:17px}</style></head><body>',
 '<header><a class="logo" href="/">Fast<span>VideoDown</span></a><nav><a href="/">Home</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/sites/">All Downloaders</a></nav></header><main>',
 f'<h1>Video Downloader Guides &ndash; {len(sites)+1} Articles</h1>',
 '<p>Step-by-step guides for downloading videos from every site FastVideoDown supports. Each guide covers how to copy the link, pick a quality, and save the video in HD or MP3 &mdash; free, on phone and PC.</p>',
@@ -435,7 +516,7 @@ for n in sites:
     bidx.append(f'<a href="/blog/{slug(n)}-guide/">How to Download {html.escape(display(n))} Videos</a>')
 bidx.append('</div></main><footer><a href="/">FastVideoDown</a><a href="/sites/">All Downloaders</a><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Use</a><a href="/contact.html">Contact</a><a href="/sitemap.xml">Sitemap</a></footer></body></html>')
 os.makedirs(os.path.join(OUT, 'blog'), exist_ok=True)
-open(os.path.join(OUT, 'blog', 'index.html'), 'w').write('\n'.join(bidx))
+open(os.path.join(OUT, 'blog', 'index.html'), 'w').write('\n'.join(bidx).replace('<body>', '<body>' + ADBLOCK_WALL, 1))
 print('blog index written')
 
 # --- sitemap ---
