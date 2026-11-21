@@ -181,8 +181,8 @@ FAVICON = """<link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">"""
 
 SOCIAL_BAR = """<script data-cfasync="false" src="https://bellnewyork.org/14/f35df6e06fc69f99b8b2ce47d7d3bd4c"></script>"""
-NATIVE_BANNER = """<div class="ad-native"><script async="async" data-cfasync="false" src="https://bellnewyork.org/21/7fe12e0cd0157c1a5aa6a92146507cd8"></script><div id="container-7fe12e0cd0157c1a5aa6a92146507cd8"></div></div>"""
-BANNER_300 = """<div class="ad-banner300"><script>
+NATIVE_BANNER = """<div class="ad-label">Ads</div><div class="ad-native"><script async="async" data-cfasync="false" src="https://bellnewyork.org/21/7fe12e0cd0157c1a5aa6a92146507cd8"></script><div id="container-7fe12e0cd0157c1a5aa6a92146507cd8"></div></div>"""
+BANNER_300 = """<div class="ad-label">Ads</div><div class="ad-banner300"><script>
   atOptions = {
     'key' : 'e44833ba896b1c664de7c10791813111',
     'format' : 'iframe',
@@ -191,7 +191,7 @@ BANNER_300 = """<div class="ad-banner300"><script>
     'params' : {}
   };
 </script><script src="https://bellnewyork.org/22/e44833ba896b1c664de7c10791813111"></script></div>"""
-BANNER_160 = """<div class="ad-banner160"><script>
+BANNER_160 = """<div class="ad-label">Ads</div><div class="ad-banner160"><script>
   atOptions = {
     'key' : '4ccb6c7e07ad296505f3956a0fa5f9b5',
     'format' : 'iframe',
@@ -200,7 +200,7 @@ BANNER_160 = """<div class="ad-banner160"><script>
     'params' : {}
   };
 </script><script src="https://bellnewyork.org/22/4ccb6c7e07ad296505f3956a0fa5f9b5"></script></div>"""
-BANNER_160x600 = """<div class="ad-banner160x600"><script>
+BANNER_160x600 = """<div class="ad-label">Ads</div><div class="ad-banner160x600"><script>
   atOptions = {
     'key' : 'b59ae1a26b0176eed2cb5f7a13ab12ba',
     'format' : 'iframe',
@@ -209,7 +209,7 @@ BANNER_160x600 = """<div class="ad-banner160x600"><script>
     'params' : {}
   };
 </script><script src="https://bellnewyork.org/22/b59ae1a26b0176eed2cb5f7a13ab12ba"></script></div>"""
-BANNER_320 = """<style>.ad-sticky320{position:fixed;left:0;right:0;bottom:0;z-index:9998;text-align:center;background:#fff;padding:4px 0 2px;box-shadow:0 -2px 10px rgba(0,0,0,.12);display:none}@media(max-width:768px){.ad-sticky320{display:block}body{padding-bottom:58px}}</style><div class="ad-sticky320"><script>
+BANNER_320 = """<style>.ad-sticky320{position:fixed;left:0;right:0;bottom:0;z-index:9998;text-align:center;background:#fff;padding:4px 0 2px;box-shadow:0 -2px 10px rgba(0,0,0,.12);display:none}@media(max-width:768px){.ad-sticky320{display:block}body{padding-bottom:58px}}</style><div class="ad-sticky320"><div class="ad-label" style="margin:0 0 2px">Ads</div><script>
   atOptions = {
     'key' : 'c68d728f8fb3b0e170aed6f600c92dbc',
     'format' : 'iframe',
@@ -218,7 +218,7 @@ BANNER_320 = """<style>.ad-sticky320{position:fixed;left:0;right:0;bottom:0;z-in
     'params' : {}
   };
 </script><script src="https://bellnewyork.org/22/c68d728f8fb3b0e170aed6f600c92dbc"></script></div>"""
-BANNER_728 = """<div class="ad-banner728"><script>
+BANNER_728 = """<div class="ad-label">Ads</div><div class="ad-banner728"><script>
   atOptions = {
     'key' : 'b151b4d08c14193b5a8bbfd698df3094',
     'format' : 'iframe',
@@ -546,7 +546,7 @@ idx = ['<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="v
 '<meta name="description" content="Browse every video downloader on FastVideoDown: YouTube, TikTok, Instagram, Facebook, X, and 1,000+ more sites. Pick a site and download videos in HD & MP3 free.">',
 '<meta name="robots" content="index, follow">',
 f'<link rel="canonical" href="{BASE}/sites/">',
-'<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#1f2937;line-height:1.6}a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}header{background:#111827;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:22px;font-weight:800;color:#fff}.logo span{color:#f59e0b}nav a{color:#d1d5db;margin-left:16px;font-size:14px}main{max-width:900px;margin:0 auto;padding:32px 20px}h1{font-size:28px;margin-bottom:8px}h2{font-size:20px;margin:26px 0 10px;border-bottom:1px solid #e5e7eb;padding-bottom:6px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px 18px;font-size:15px}.letters{margin:16px 0}.letters a{margin-right:10px;font-weight:600}footer{background:#111827;color:#9ca3af;padding:28px 20px;text-align:center;font-size:14px}footer a{color:#d1d5db;margin:0 8px}.adblock-wall{position:fixed;inset:0;z-index:99999;background:#0f172a;color:#fff;display:none;align-items:center;justify-content:center;padding:24px;text-align:center}.adblock-wall.show{display:flex}.adblock-wall .box{max-width:520px}.adblock-wall h2{font-size:26px;margin-bottom:14px;color:#fff;border:0;padding:0}.adblock-wall p{color:#cbd5e1;margin-bottom:12px;font-size:16px}.adblock-wall .steps{text-align:left;background:#1e293b;border-radius:12px;padding:16px 20px;margin:18px 0;font-size:15px;color:#e2e8f0;list-style-position:inside}.adblock-wall .steps li{margin-bottom:6px}.adblock-wall .reload-btn{display:inline-block;background:linear-gradient(135deg,#e11d48,#7c3aed);color:#fff;font-weight:700;padding:14px 30px;border-radius:12px;border:0;cursor:pointer;font-size:17px}</style></head><body>',
+'<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#1f2937;line-height:1.6}a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}header{background:#111827;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:22px;font-weight:800;color:#fff}.logo span{color:#f59e0b}nav a{color:#d1d5db;margin-left:16px;font-size:14px}main{max-width:900px;margin:0 auto;padding:32px 20px}h1{font-size:28px;margin-bottom:8px}h2{font-size:20px;margin:26px 0 10px;border-bottom:1px solid #e5e7eb;padding-bottom:6px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px 18px;font-size:15px}.letters{margin:16px 0}.letters a{margin-right:10px;font-weight:600}footer{background:#111827;color:#9ca3af;padding:28px 20px;text-align:center;font-size:14px}footer a{color:#d1d5db;margin:0 8px}.ad-label{font-size:11px;color:#94a3b8;text-align:center;letter-spacing:.12em;text-transform:uppercase;margin:10px 0 4px}.adblock-wall{position:fixed;inset:0;z-index:99999;background:#0f172a;color:#fff;display:none;align-items:center;justify-content:center;padding:24px;text-align:center}.adblock-wall.show{display:flex}.adblock-wall .box{max-width:520px}.adblock-wall h2{font-size:26px;margin-bottom:14px;color:#fff;border:0;padding:0}.adblock-wall p{color:#cbd5e1;margin-bottom:12px;font-size:16px}.adblock-wall .steps{text-align:left;background:#1e293b;border-radius:12px;padding:16px 20px;margin:18px 0;font-size:15px;color:#e2e8f0;list-style-position:inside}.adblock-wall .steps li{margin-bottom:6px}.adblock-wall .reload-btn{display:inline-block;background:linear-gradient(135deg,#e11d48,#7c3aed);color:#fff;font-weight:700;padding:14px 30px;border-radius:12px;border:0;cursor:pointer;font-size:17px}</style></head><body>',
 '<header><a class="logo" href="/">Fast<span>VideoDown</span></a><nav><a href="/">Home</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/blog/">Blog</a></nav></header><main>',
 f'<h1>All Video Downloaders &ndash; {len(sites)+8} Sites</h1>',
 '<p>Every site FastVideoDown can download from. Pick a site, paste its video link on the <a href="/">homepage</a>, and save the video in HD or MP3 &mdash; free, no sign-up.</p>',
