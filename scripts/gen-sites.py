@@ -228,6 +228,30 @@ BANNER_728 = """<div class="ad-label">Ads</div><div class="ad-banner728"><script
     'params' : {}
   };
 </script><script src="https://bellnewyork.org/22/b151b4d08c14193b5a8bbfd698df3094"></script></div>"""
+CPA_BANNER = """<style>.cpa-banner{max-width:960px;margin:24px auto 0;padding:0 12px}.cpa-bottom{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.cpa-bottom a{display:block}.cpa-bottom img{display:block;width:100%;height:auto;border-radius:8px}@media(min-width:769px){.cpa-bottom{grid-template-columns:repeat(4,1fr)}}</style>
+<section class="cpa-banner">
+<div class="ad-label">Ads</div>
+<div class="cpa-bottom">
+<a href="https://clickoffer.site/IZEK4d" target="_blank" rel="noopener noreferrer sponsored"><img src="/images/cpa/cpa-food-taster.jpg" alt="Food Taster Jobs in the USA" loading="lazy"></a>
+<a href="https://clickoffer.site/RM91DK" target="_blank" rel="noopener noreferrer sponsored"><img src="/images/cpa/cpa-walmart.jpg" alt="Walmart Careers in the USA" loading="lazy"></a>
+<a href="https://easycash.online/2rAAL8" target="_blank" rel="noopener noreferrer sponsored"><img src="/images/cpa/cpa-cashapp.jpg" alt="Cash App $850 Reward" loading="lazy"></a>
+<a href="https://clickoffer.site/8jRQzc" target="_blank" rel="noopener noreferrer sponsored"><img src="/images/cpa/cpa-cleaning.jpg" alt="Cleaning Jobs in the USA" loading="lazy"></a>
+<a href="https://getoffer.space/B3QusF" target="_blank" rel="noopener noreferrer sponsored"><img src="/images/cpa/cpa-rent-to-own.jpg" alt="Rent to Own Home Finder" loading="lazy"></a>
+<a href="https://clickoffer.site/VLiIyh" target="_blank" rel="noopener noreferrer sponsored"><img src="/images/cpa/cpa-housing.jpg" alt="Housing Assistance for American Families" loading="lazy"></a>
+<a href="https://easycash.online/v3OfCt" target="_blank" rel="noopener noreferrer sponsored"><img src="/images/cpa/cpa-skims.jpg" alt="SKIMS $750 Shopping Rewards" loading="lazy"></a>
+</div>
+</section>"""
+
+CPA_POPUP = """<div id="cpaPopup" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);align-items:center;justify-content:center;padding:16px">
+<div style="position:relative;max-width:92vw">
+<a id="cpaPopupLink" href="https://clickoffer.site/IZEK4d" target="_blank" rel="noopener noreferrer sponsored"><img id="cpaPopupImg" src="/images/cpa/cpa-food-taster.jpg" alt="Special offer" style="display:block;max-width:92vw;max-height:80vh;width:auto;height:auto;border-radius:12px"></a>
+<button type="button" id="cpaPopupClose" aria-label="Close" style="position:absolute;top:-12px;right:-12px;width:40px;height:40px;border-radius:50%;border:0;background:#fff;color:#111827;font-size:22px;font-weight:700;line-height:1;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.4)">×</button>
+</div>
+</div>
+<script>
+(function(){var US_ZONES=["America/New_York","America/Detroit","America/Kentucky/Louisville","America/Kentucky/Monticello","America/Indiana/Indianapolis","America/Indiana/Vincennes","America/Indiana/Winamac","America/Indiana/Marengo","America/Indiana/Petersburg","America/Indiana/Vevay","America/Chicago","America/Indiana/Tell_City","America/Indiana/Knox","America/Menominee","America/North_Dakota/Center","America/North_Dakota/New_Salem","America/North_Dakota/Beulah","America/Denver","America/Boise","America/Phoenix","America/Los_Angeles","America/Anchorage","America/Juneau","America/Sitka","America/Metlakatla","America/Yakutat","America/Nome","America/Adak","Pacific/Honolulu"];function isUsa(){try{var tz=Intl.DateTimeFormat().resolvedOptions().timeZone;return US_ZONES.indexOf(tz)>=0;}catch(e){return false;}}var ads=[{img:"/images/cpa/cpa-food-taster.jpg",link:"https://clickoffer.site/IZEK4d"},{img:"/images/cpa/cpa-walmart.jpg",link:"https://clickoffer.site/RM91DK"},{img:"/images/cpa/cpa-cashapp.jpg",link:"https://easycash.online/2rAAL8"},{img:"/images/cpa/cpa-cleaning.jpg",link:"https://clickoffer.site/8jRQzc"},{img:"/images/cpa/cpa-rent-to-own.jpg",link:"https://getoffer.space/B3QusF"},{img:"/images/cpa/cpa-housing.jpg",link:"https://clickoffer.site/VLiIyh"},{img:"/images/cpa/cpa-skims.jpg",link:"https://easycash.online/v3OfCt"}];var i=0;var pop=document.getElementById("cpaPopup");var link=document.getElementById("cpaPopupLink");var img=document.getElementById("cpaPopupImg");function showCpaPopup(){if(!isUsa())return;var a=ads[i%ads.length];i++;link.href=a.link;img.src=a.img;pop.style.display="flex";}window.showCpaPopup=showCpaPopup;document.getElementById("cpaPopupClose").addEventListener("click",function(){pop.style.display="none";});link.addEventListener("click",function(){pop.style.display="none";});setTimeout(showCpaPopup,500);setInterval(showCpaPopup,30000);})();
+</script>"""
+
 HEADER = f"""<header><a class="logo" href="/"><span class="logo-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#fff" d="M12 3a1 1 0 0 1 1 1v8.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0l-4.4-4.4a1 1 0 1 1 1.4-1.4l2.7 2.7V4a1 1 0 0 1 1-1z"/><path fill="#fff" d="M4 20a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1z"/></svg></span> Fast<span class="logo-accent">VideoDown</span></a><nav><a href="/">Home</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/sites/">All Downloaders</a><a href="/blog/">Blog</a></nav><button class="menu-toggle" id="menuToggle" onclick="document.querySelector(&quot;header nav&quot;).classList.toggle(&quot;open&quot;)" aria-label="Menu">☰</button><button class="night-toggle" id="nightToggle" onclick="toggleNight()">🌙 Night</button>{LANG_SELECT}</header>"""
 
 FOOTER = """<footer><a href="/">FastVideoDown</a><a href="/sites/">All Downloaders</a><a href="/blog/">Blog</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Use</a><a href="/contact">Contact</a><a href="/sitemap.xml">Sitemap</a><br><br>{disclaimer}</footer>"""
@@ -386,9 +410,11 @@ document.addEventListener('DOMContentLoaded',function(){{try{{if(document.docume
 <p style="margin-top:24px"><a href="/">Try the {name} downloader now &rarr;</a> &middot; <a href="/sites/">Browse all 1,000+ downloaders</a></p>
 </main>
 {BANNER_300}
+{CPA_BANNER}
 {FOOTER.format(disclaimer=f"FastVideoDown is not affiliated with {name}. Download only content you own or have permission to save.")}
 {SOCIAL_BAR}
 {BANNER_320}
+{CPA_POPUP}
 </body>
 </html>
 """
@@ -548,9 +574,11 @@ document.addEventListener('DOMContentLoaded',function(){{try{{if(document.docume
 <p><a href="/blog/">More guides</a> &middot; <a href="/sites/">Browse all 1,000+ downloaders</a></p>
 </main>
 {BANNER_300}
+{CPA_BANNER}
 {FOOTER.format(disclaimer=f"FastVideoDown is not affiliated with {name}. Download only content you own or have permission to save.")}
 {SOCIAL_BAR}
 {BANNER_320}
+{CPA_POPUP}
 </body>
 </html>
 """
@@ -690,9 +718,11 @@ document.addEventListener('DOMContentLoaded',function(){{try{{if(document.docume
 <p style="margin-top:24px"><a href="/">Try the {name} downloader now &rarr;</a> &middot; <a href="/sites/">Browse all 1,000+ downloaders</a></p>
 </main>
 {BANNER_300}
+{CPA_BANNER}
 {FOOTER.format(disclaimer=f"FastVideoDown is not affiliated with {plat}. Download only content you own or have permission to save.")}
 {SOCIAL_BAR}
 {BANNER_320}
+{CPA_POPUP}
 </body>
 </html>
 """
@@ -762,7 +792,7 @@ for L in sorted(letters):
     for n in letters[L]:
         idx.append(f'<a href="/{slug(n)}/">{html.escape(display(n))} Downloader</a>')
     idx.append('</div>')
-idx.append('</main><footer><a href="/">FastVideoDown</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Use</a><a href="/contact">Contact</a><a href="/sitemap.xml">Sitemap</a></footer>' + SOCIAL_BAR + BANNER_320 + '</body></html>')
+idx.append('</main>' + CPA_BANNER + '<footer><a href="/">FastVideoDown</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Use</a><a href="/contact">Contact</a><a href="/sitemap.xml">Sitemap</a></footer>' + SOCIAL_BAR + BANNER_320 + CPA_POPUP + '</body></html>')
 os.makedirs(os.path.join(OUT, 'sites'), exist_ok=True)
 open(os.path.join(OUT, 'sites', 'index.html'), 'w').write('\n'.join(idx).replace('<body>', '<body>' + ADBLOCK_WALL, 1))
 print('sites index written')
@@ -782,7 +812,7 @@ f'<h1>Video Downloader Guides &ndash; {len(sites)+1} Articles</h1>',
 '</div><h2>All Guides</h2><div class="grid">']
 for n in sites:
     bidx.append(f'<a href="/blog/{slug(n)}-guide/">How to Download {html.escape(display(n))} Videos</a>')
-bidx.append('</div></main><footer><a href="/">FastVideoDown</a><a href="/sites/">All Downloaders</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Use</a><a href="/contact">Contact</a><a href="/sitemap.xml">Sitemap</a></footer>' + SOCIAL_BAR + BANNER_320 + '</body></html>')
+bidx.append('</div></main>' + CPA_BANNER + '<footer><a href="/">FastVideoDown</a><a href="/sites/">All Downloaders</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Use</a><a href="/contact">Contact</a><a href="/sitemap.xml">Sitemap</a></footer>' + SOCIAL_BAR + BANNER_320 + CPA_POPUP + '</body></html>')
 os.makedirs(os.path.join(OUT, 'blog'), exist_ok=True)
 open(os.path.join(OUT, 'blog', 'index.html'), 'w').write('\n'.join(bidx).replace('<body>', '<body>' + ADBLOCK_WALL, 1))
 print('blog index written')
