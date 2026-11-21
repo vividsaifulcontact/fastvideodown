@@ -303,7 +303,11 @@ def page_html(n, s):
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script><script type="text/javascript">
+    aclib.runAutoTag({
+        zoneId: 'jz7nrikboa',
+    });
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 {FAVICON}
@@ -475,7 +479,11 @@ def blog_html(n, s, bslug):
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script><script type="text/javascript">
+    aclib.runAutoTag({
+        zoneId: 'jz7nrikboa',
+    });
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 {FAVICON}
@@ -543,7 +551,7 @@ print('blog guides written:', count)
 letters = {}
 for n in sites:
     letters.setdefault(n[0].upper(), []).append(n)
-idx = ['<!DOCTYPE html><html lang="en"><head><script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="icon" type="image/svg+xml" href="/favicon.svg">',
+idx = ['<!DOCTYPE html><html lang="en"><head><script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script><script type="text/javascript">aclib.runAutoTag({zoneId: \"jz7nrikboa\",});</script><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="icon" type="image/svg+xml" href="/favicon.svg">',
 '<title>All Video Downloaders &ndash; 1,000+ Sites | FastVideoDown</title>',
 '<meta name="description" content="Browse every video downloader on FastVideoDown: YouTube, TikTok, Instagram, Facebook, X, and 1,000+ more sites. Pick a site and download videos in HD & MP3 free.">',
 '<meta name="robots" content="index, follow">',
@@ -564,7 +572,7 @@ open(os.path.join(OUT, 'sites', 'index.html'), 'w').write('\n'.join(idx).replace
 print('sites index written')
 
 # --- blog index ---
-bidx = ['<!DOCTYPE html><html lang="en"><head><script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="icon" type="image/svg+xml" href="/favicon.svg">',
+bidx = ['<!DOCTYPE html><html lang="en"><head><script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script><script type="text/javascript">aclib.runAutoTag({zoneId: \"jz7nrikboa\",});</script><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="icon" type="image/svg+xml" href="/favicon.svg">',
 '<title>Video Downloader Guides &ndash; How to Download Videos from 1,000+ Sites | FastVideoDown</title>',
 '<meta name="description" content="Step-by-step guides to downloading videos from YouTube, TikTok, Instagram, Facebook, X, and 1,000+ more sites in HD and MP3, free.">',
 '<meta name="robots" content="index, follow">',
