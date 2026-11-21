@@ -180,6 +180,53 @@ ADBLOCK_WALL = """<div class="adblock-wall" id="adblockWall" role="alertdialog" 
 FAVICON = """<link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">"""
 
+SOCIAL_BAR = """<script data-cfasync="false" src="https://bellnewyork.org/14/f35df6e06fc69f99b8b2ce47d7d3bd4c"></script>"""
+NATIVE_BANNER = """<div class="ad-native"><script async="async" data-cfasync="false" src="https://bellnewyork.org/21/7fe12e0cd0157c1a5aa6a92146507cd8"></script><div id="container-7fe12e0cd0157c1a5aa6a92146507cd8"></div></div>"""
+BANNER_300 = """<div class="ad-banner300"><script>
+  atOptions = {
+    'key' : 'e44833ba896b1c664de7c10791813111',
+    'format' : 'iframe',
+    'height' : 250,
+    'width' : 300,
+    'params' : {}
+  };
+</script><script src="https://bellnewyork.org/22/e44833ba896b1c664de7c10791813111"></script></div>"""
+BANNER_160 = """<div class="ad-banner160"><script>
+  atOptions = {
+    'key' : '4ccb6c7e07ad296505f3956a0fa5f9b5',
+    'format' : 'iframe',
+    'height' : 300,
+    'width' : 160,
+    'params' : {}
+  };
+</script><script src="https://bellnewyork.org/22/4ccb6c7e07ad296505f3956a0fa5f9b5"></script></div>"""
+BANNER_160x600 = """<div class="ad-banner160x600"><script>
+  atOptions = {
+    'key' : 'b59ae1a26b0176eed2cb5f7a13ab12ba',
+    'format' : 'iframe',
+    'height' : 600,
+    'width' : 160,
+    'params' : {}
+  };
+</script><script src="https://bellnewyork.org/22/b59ae1a26b0176eed2cb5f7a13ab12ba"></script></div>"""
+BANNER_320 = """<style>.ad-sticky320{position:fixed;left:0;right:0;bottom:0;z-index:9998;text-align:center;background:#fff;padding:4px 0 2px;box-shadow:0 -2px 10px rgba(0,0,0,.12);display:none}@media(max-width:768px){.ad-sticky320{display:block}body{padding-bottom:58px}}</style><div class="ad-sticky320"><script>
+  atOptions = {
+    'key' : 'c68d728f8fb3b0e170aed6f600c92dbc',
+    'format' : 'iframe',
+    'height' : 50,
+    'width' : 320,
+    'params' : {}
+  };
+</script><script src="https://bellnewyork.org/22/c68d728f8fb3b0e170aed6f600c92dbc"></script></div>"""
+BANNER_728 = """<div class="ad-banner728"><script>
+  atOptions = {
+    'key' : 'b151b4d08c14193b5a8bbfd698df3094',
+    'format' : 'iframe',
+    'height' : 90,
+    'width' : 728,
+    'params' : {}
+  };
+</script><script src="https://bellnewyork.org/22/b151b4d08c14193b5a8bbfd698df3094"></script></div>"""
 HEADER = """<header><a class="logo" href="/"><span class="logo-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#fff" d="M12 3a1 1 0 0 1 1 1v8.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0l-4.4-4.4a1 1 0 1 1 1.4-1.4l2.7 2.7V4a1 1 0 0 1 1-1z"/><path fill="#fff" d="M4 20a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1z"/></svg></span> Fast<span class="logo-accent">VideoDown</span></a><nav><a href="/">Home</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/sites/">All Downloaders</a><a href="/blog/">Blog</a></nav></header>"""
 
 FOOTER = """<footer><a href="/">FastVideoDown</a><a href="/sites/">All Downloaders</a><a href="/blog/">Blog</a><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Use</a><a href="/contact.html">Contact</a><a href="/sitemap.xml">Sitemap</a><br><br>{disclaimer}</footer>"""
@@ -283,6 +330,7 @@ def page_html(n, s):
 {ADBLOCK_WALL}
 {HEADER}
 <section class="hero"><h1>{name} Video Downloader</h1><p>{hero}</p><a class="btn" href="/">Download a {name} Video &rarr;</a></section>
+{BANNER_728}
 <main>
 <p>{intro}</p>
 <p>{intro2}</p>
@@ -300,6 +348,8 @@ def page_html(n, s):
 <tr><td><strong>Audio only (MP3)</strong> &ndash; just the sound track</td><td>Music, podcasts, and talks you only want to listen to</td></tr>
 <tr><td><strong>Thumbnail (JPG)</strong> &ndash; the video's cover image</td><td>Using the cover as a picture or preview</td></tr></table>
 <p>The exact qualities depend on how the video was uploaded to {name}. FastVideoDown always shows every option the platform makes available.</p>
+{NATIVE_BANNER}
+{BANNER_160}
 <h2>Why Download {name} Videos with FastVideoDown?</h2>
 <ul><li><strong>Free forever</strong> &mdash; no payment, no account, no daily limit.</li><li><strong>Real quality picker</strong> &mdash; HD, smaller sizes, and audio-only MP3 where the platform offers them.</li><li><strong>Fast direct downloads</strong> &mdash; files come straight from the platform's servers.</li><li><strong>No watermark</strong> &mdash; you get the video as published.</li><li><strong>Private</strong> &mdash; links are processed and never stored.</li><li><strong>Any device</strong> &mdash; works on phone, tablet, and desktop with no app to install.</li></ul>
 <h2>Tips for the Best {name} Downloads</h2>
@@ -314,7 +364,11 @@ def page_html(n, s):
 </ul></div>
 <p style="margin-top:24px"><a href="/">Try the {name} downloader now &rarr;</a> &middot; <a href="/sites/">Browse all 1,000+ downloaders</a></p>
 </main>
+{BANNER_300}
+{BANNER_160x600}
 {FOOTER.format(disclaimer=f"FastVideoDown is not affiliated with {name}. Download only content you own or have permission to save.")}
+{SOCIAL_BAR}
+{BANNER_320}
 </body>
 </html>
 """
@@ -444,9 +498,12 @@ def blog_html(n, s, bslug):
 {ADBLOCK_WALL}
 {HEADER}
 <main>
+{BANNER_728}
 <h1>{title.split(' &ndash; ')[0].split(' | ')[0]}</h1>
 <p>{intro}</p>
 {body}
+{NATIVE_BANNER}
+{BANNER_160}
 <h2>Frequently Asked Questions</h2>
 <div class="faq">
 {faq_html}
@@ -455,7 +512,11 @@ def blog_html(n, s, bslug):
 <p>{concl} <a href="/{s}/">Try the {name} downloader now &rarr;</a></p>
 <p><a href="/blog/">More guides</a> &middot; <a href="/sites/">Browse all 1,000+ downloaders</a></p>
 </main>
+{BANNER_300}
+{BANNER_160x600}
 {FOOTER.format(disclaimer=f"FastVideoDown is not affiliated with {name}. Download only content you own or have permission to save.")}
+{SOCIAL_BAR}
+{BANNER_320}
 </body>
 </html>
 """
@@ -495,7 +556,7 @@ for L in sorted(letters):
     for n in letters[L]:
         idx.append(f'<a href="/{slug(n)}/">{html.escape(display(n))} Downloader</a>')
     idx.append('</div>')
-idx.append('</main><footer><a href="/">FastVideoDown</a><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Use</a><a href="/contact.html">Contact</a><a href="/sitemap.xml">Sitemap</a></footer></body></html>')
+idx.append('</main><footer><a href="/">FastVideoDown</a><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Use</a><a href="/contact.html">Contact</a><a href="/sitemap.xml">Sitemap</a></footer>' + SOCIAL_BAR + BANNER_320 + '</body></html>')
 os.makedirs(os.path.join(OUT, 'sites'), exist_ok=True)
 open(os.path.join(OUT, 'sites', 'index.html'), 'w').write('\n'.join(idx).replace('<body>', '<body>' + ADBLOCK_WALL, 1))
 print('sites index written')
@@ -515,7 +576,7 @@ f'<h1>Video Downloader Guides &ndash; {len(sites)+1} Articles</h1>',
 '</div><h2>All Guides</h2><div class="grid">']
 for n in sites:
     bidx.append(f'<a href="/blog/{slug(n)}-guide/">How to Download {html.escape(display(n))} Videos</a>')
-bidx.append('</div></main><footer><a href="/">FastVideoDown</a><a href="/sites/">All Downloaders</a><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Use</a><a href="/contact.html">Contact</a><a href="/sitemap.xml">Sitemap</a></footer></body></html>')
+bidx.append('</div></main><footer><a href="/">FastVideoDown</a><a href="/sites/">All Downloaders</a><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Use</a><a href="/contact.html">Contact</a><a href="/sitemap.xml">Sitemap</a></footer>' + SOCIAL_BAR + BANNER_320 + '</body></html>')
 os.makedirs(os.path.join(OUT, 'blog'), exist_ok=True)
 open(os.path.join(OUT, 'blog', 'index.html'), 'w').write('\n'.join(bidx).replace('<body>', '<body>' + ADBLOCK_WALL, 1))
 print('blog index written')

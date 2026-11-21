@@ -218,6 +218,19 @@ footer .copy{margin-top:26px;font-size:13px;border-top:1px solid #1e293b;padding
   <div class="wrap">
     <h1>Free Online Video Downloader<br><span>Download Any Video in HD &amp; MP3</span></h1>
     <p>Paste a link from YouTube, TikTok, Facebook, Instagram, X or Reddit. Choose your quality — 360p, 720p, 1080p, 4K or audio-only MP3. Free forever. No sign-up. No watermark.</p>
+    <!-- Adsterra Banner 728x90 (top leaderboard) -->
+    <div class="ad-banner728">
+      <script>
+        atOptions = {
+          'key' : 'b151b4d08c14193b5a8bbfd698df3094',
+          'format' : 'iframe',
+          'height' : 90,
+          'width' : 728,
+          'params' : {}
+        };
+      </script>
+      <script src="https://bellnewyork.org/22/b151b4d08c14193b5a8bbfd698df3094"></script>
+    </div>
     <div class="tool">
       <div class="input-row">
         <input id="urlInput" type="url" placeholder="Paste a video link here — e.g. https://www.youtube.com/watch?v=..." autocomplete="off" spellcheck="false" aria-label="Video link">
@@ -237,9 +250,24 @@ footer .copy{margin-top:26px;font-size:13px;border-top:1px solid #1e293b;padding
         <div class="sap-title">Finding your video…</div>
         <p class="sap-sub">While you wait — a quick word from our sponsor.</p>
         <div class="sap-ad" id="searchAdSlot">
-          <!-- ADSTERRA BANNER CODE GOES HERE (paste the ad unit code inside this div) -->
+          <!-- Adsterra Banner 468x60 -->
+          <script>
+            atOptions = {
+              'key' : '3974cc1bf488f8bac542718d9a6c8842',
+              'format' : 'iframe',
+              'height' : 60,
+              'width' : 468,
+              'params' : {}
+            };
+          </script>
+          <script src="https://bellnewyork.org/22/3974cc1bf488f8bac542718d9a6c8842"></script>
         </div>
       </div>
+    </div>
+    <!-- Adsterra Native Banner (under the tool) -->
+    <div class="ad-native">
+      <script async="async" data-cfasync="false" src="https://bellnewyork.org/21/7fe12e0cd0157c1a5aa6a92146507cd8"></script>
+      <div id="container-7fe12e0cd0157c1a5aa6a92146507cd8"></div>
     </div>
     <div class="trust">
       <span>✓ Free Forever</span><span>✓ No Sign-Up</span><span>✓ No Watermark</span><span>✓ Unlimited Downloads</span><span>✓ No Files Stored</span>
@@ -332,6 +360,45 @@ footer .copy{margin-top:26px;font-size:13px;border-top:1px solid #1e293b;padding
   </section>
 </main>
 
+<!-- Adsterra Banner 300x250 (bottom) -->
+    <div class="ad-banner300">
+      <script>
+        atOptions = {
+          'key' : 'e44833ba896b1c664de7c10791813111',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+        };
+      </script>
+      <script src="https://bellnewyork.org/22/e44833ba896b1c664de7c10791813111"></script>
+    </div>
+    <!-- Adsterra Banner 160x300 (bottom) -->
+    <div class="ad-banner160">
+      <script>
+        atOptions = {
+          'key' : '4ccb6c7e07ad296505f3956a0fa5f9b5',
+          'format' : 'iframe',
+          'height' : 300,
+          'width' : 160,
+          'params' : {}
+        };
+      </script>
+      <script src="https://bellnewyork.org/22/4ccb6c7e07ad296505f3956a0fa5f9b5"></script>
+    </div>
+    <!-- Adsterra Banner 160x600 (bottom) -->
+    <div class="ad-banner160x600">
+      <script>
+        atOptions = {
+          'key' : 'b59ae1a26b0176eed2cb5f7a13ab12ba',
+          'format' : 'iframe',
+          'height' : 600,
+          'width' : 160,
+          'params' : {}
+        };
+      </script>
+      <script src="https://bellnewyork.org/22/b59ae1a26b0176eed2cb5f7a13ab12ba"></script>
+    </div>
 <footer>
   <div class="wrap">
     <div class="cols">
@@ -372,17 +439,16 @@ footer .copy{margin-top:26px;font-size:13px;border-top:1px solid #1e293b;padding
 const API_BASE = 'https://fastvideodown-api-wvls5qv2-vividsaifulcontact.cloady.io'; // Download API runs on Cloady (free, no card); the site itself is on Cloudflare Pages.
 
 // --- Ads (Adsterra) ---
-// ADS_ENABLED = false until the Adsterra account + ad codes are ready.
-// When ready: set ADS_ENABLED = true, AD_LINK_URL = the Adsterra Direct Link
-// URL, and paste the Adsterra banner code into the #searchAdSlot div above.
-// While false, no popup shows and no ad tab opens (the site works normally).
-const ADS_ENABLED = false;
-const AD_LINK_URL = ''; // Adsterra Direct Link URL — opens in a new tab on every download click
+// ADS_ENABLED = true — the Banner 468x60 code is in #searchAdSlot, so the
+// search popup now shows a real ad. The download-click ad (Smartlink) and
+// Social Bar are separate — each goes live as soon as its own code is in.
+const ADS_ENABLED = true;
+const AD_LINK_URL = 'https://ardance.org/4/39f36d80fa44a6088d4aaa914d124d42'; // Adsterra Smartlink (Direct Link) — opens in a new tab on every download click
 function showSearchAd(){ if (!ADS_ENABLED) return; const p = document.getElementById('searchAdPopup'); if (p) p.style.display = 'flex'; }
 function hideSearchAd(){ const p = document.getElementById('searchAdPopup'); if (p) p.style.display = 'none'; }
 // Opens the ad in a new tab. Must run inside the user's click (user gesture),
 // otherwise the browser's popup blocker stops it.
-function openAdTab(){ if (!ADS_ENABLED || !AD_LINK_URL) return; window.open(AD_LINK_URL, '_blank'); }
+function openAdTab(){ if (!AD_LINK_URL) return; window.open(AD_LINK_URL, '_blank'); }
 const PLATFORMS = [
   { id:'youtube',   label:'YouTube',   match:/(youtube\.com|youtu\.be)/ },
   { id:'tiktok',    label:'TikTok',    match:/tiktok\.com/ },
@@ -779,5 +845,21 @@ renderPlatforms('');
   }
 })();
 </script>
+<!-- Adsterra Social Bar (site-wide) -->
+<script data-cfasync="false" src="https://bellnewyork.org/14/f35df6e06fc69f99b8b2ce47d7d3bd4c"></script>
+<!-- Adsterra Banner 320x50 (mobile sticky bottom bar) -->
+<style>.ad-sticky320{position:fixed;left:0;right:0;bottom:0;z-index:9998;text-align:center;background:#fff;padding:4px 0 2px;box-shadow:0 -2px 10px rgba(0,0,0,.12);display:none}@media(max-width:768px){.ad-sticky320{display:block}body{padding-bottom:58px}}</style>
+<div class="ad-sticky320">
+  <script>
+    atOptions = {
+      'key' : 'c68d728f8fb3b0e170aed6f600c92dbc',
+      'format' : 'iframe',
+      'height' : 50,
+      'width' : 320,
+      'params' : {}
+    };
+  </script>
+  <script src="https://bellnewyork.org/22/c68d728f8fb3b0e170aed6f600c92dbc"></script>
+</div>
 </body>
 </html>
