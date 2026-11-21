@@ -304,9 +304,9 @@ def page_html(n, s):
 <html lang="en">
 <head>
 <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script><script type="text/javascript">
-    aclib.runAutoTag({
+    aclib.runAutoTag({{
         zoneId: 'jz7nrikboa',
-    });
+    }});
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -480,9 +480,9 @@ def blog_html(n, s, bslug):
 <html lang="en">
 <head>
 <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script><script type="text/javascript">
-    aclib.runAutoTag({
+    aclib.runAutoTag({{
         zoneId: 'jz7nrikboa',
-    });
+    }});
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
