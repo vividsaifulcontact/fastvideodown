@@ -174,6 +174,14 @@ footer .copy{margin-top:26px;font-size:13px;border-top:1px solid #1e293b;padding
 .adblock-wall .steps li{margin-bottom:6px}
 .adblock-wall .reload-btn{display:inline-block;background:linear-gradient(135deg,#e11d48,#7c3aed);color:#fff;font-weight:700;padding:14px 30px;border-radius:12px;border:0;cursor:pointer;font-size:17px}
 .adblock-wall .reload-btn:hover{filter:brightness(1.1)}
+/* --- Search ad popup: shows an ad while the video is being found --- */
+#searchAdPopup{display:none;position:fixed;inset:0;z-index:99998;background:rgba(2,6,23,.72);align-items:center;justify-content:center;padding:16px}
+#searchAdPopup .sap-box{position:relative;background:#fff;color:#0f172a;border-radius:14px;max-width:360px;width:100%;padding:22px 18px 18px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+#searchAdPopup .sap-close{position:absolute;top:8px;right:10px;border:0;background:none;font-size:22px;line-height:1;cursor:pointer;color:#64748b;padding:4px 8px}
+#searchAdPopup .sap-close:hover{color:#0f172a}
+#searchAdPopup .sap-title{font-weight:800;font-size:16px;margin:2px 0 4px}
+#searchAdPopup .sap-sub{font-size:13px;color:#475569;margin:0 0 12px}
+#searchAdPopup .sap-ad{min-height:250px;display:flex;align-items:center;justify-content:center;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;overflow:hidden}
 </style>
 </head>
 <body>
@@ -219,6 +227,19 @@ footer .copy{margin-top:26px;font-size:13px;border-top:1px solid #1e293b;padding
       <div class="platforms" id="platforms"></div>
       <div id="status" role="status"></div>
       <div id="result"></div>
+    </div>
+
+    <!-- Search ad popup: appears while the video is being found, closes
+         automatically when the result arrives. The X closes it early. -->
+    <div id="searchAdPopup" role="dialog" aria-label="Advertisement">
+      <div class="sap-box">
+        <button class="sap-close" type="button" onclick="hideSearchAd()" aria-label="Close ad">×</button>
+        <div class="sap-title">Finding your video…</div>
+        <p class="sap-sub">While you wait — a quick word from our sponsor.</p>
+        <div class="sap-ad" id="searchAdSlot">
+          <!-- ADSTERRA BANNER CODE GOES HERE (paste the ad unit code inside this div) -->
+        </div>
+      </div>
     </div>
     <div class="trust">
       <span>✓ Free Forever</span><span>✓ No Sign-Up</span><span>✓ No Watermark</span><span>✓ Unlimited Downloads</span><span>✓ No Files Stored</span>
@@ -349,6 +370,19 @@ footer .copy{margin-top:26px;font-size:13px;border-top:1px solid #1e293b;padding
 
 <script>
 const API_BASE = 'https://fastvideodown-api-wvls5qv2-vividsaifulcontact.cloady.io'; // Download API runs on Cloady (free, no card); the site itself is on Cloudflare Pages.
+
+// --- Ads (Adsterra) ---
+// ADS_ENABLED = false until the Adsterra account + ad codes are ready.
+// When ready: set ADS_ENABLED = true, AD_LINK_URL = the Adsterra Direct Link
+// URL, and paste the Adsterra banner code into the #searchAdSlot div above.
+// While false, no popup shows and no ad tab opens (the site works normally).
+const ADS_ENABLED = false;
+const AD_LINK_URL = ''; // Adsterra Direct Link URL — opens in a new tab on every download click
+function showSearchAd(){ if (!ADS_ENABLED) return; const p = document.getElementById('searchAdPopup'); if (p) p.style.display = 'flex'; }
+function hideSearchAd(){ const p = document.getElementById('searchAdPopup'); if (p) p.style.display = 'none'; }
+// Opens the ad in a new tab. Must run inside the user's click (user gesture),
+// otherwise the browser's popup blocker stops it.
+function openAdTab(){ if (!ADS_ENABLED || !AD_LINK_URL) return; window.open(AD_LINK_URL, '_blank'); }
 const PLATFORMS = [
   { id:'youtube',   label:'YouTube',   match:/(youtube\.com|youtu\.be)/ },
   { id:'tiktok',    label:'TikTok',    match:/tiktok\.com/ },
@@ -412,9 +446,11 @@ async function fetchVideo(){
   fetchBtn.disabled = true;
   resultEl.style.display = 'none'; resultEl.innerHTML = '';
   statusEl.innerHTML = `<div class="info"><span class="spinner"></span>Finding your video…</div>`;
+  showSearchAd(); // ad popup while the video is being found
   try {
     const data = await fetchFormats(url, false); // fast path (~3s)
     if (!data.ok) {
+      hideSearchAd();
       statusEl.innerHTML = `<div class="err">${esc(data.error || 'Could not download from this link. Try another one.')}</div>`;
       return;
     }
@@ -443,6 +479,7 @@ async function fetchVideo(){
       }).catch(() => {});
     }
   } catch (e) {
+    hideSearchAd();
     statusEl.innerHTML = `<div class="err">Could not download from this link. Try another one.</div>`;
   } finally {
     fetchBtn.disabled = false;
@@ -490,6 +527,7 @@ function qualityRow(h, withSoundFmt, videoOnlyFmt){
 // video), so warn the user first.
 async function downloadMerged(height){
   if (!current) return;
+  openAdTab(); // 1 click = video download + ad opens in a new tab
   const fname = ((current.title || 'video').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'video') + '-' + height + 'p.mp4';
   const mUrl = API_BASE + '/api/merge?url=' + encodeURIComponent(current.url) + '&height=' + height + '&filename=' + encodeURIComponent(fname);
   statusEl.innerHTML = `<div class="info"><span class="spinner"></span>Preparing ${height}p with sound… the server is merging video + audio (this takes a while for long videos). Please keep this tab open.</div>`;
@@ -500,6 +538,7 @@ async function downloadMerged(height){
 }
 
 function renderResult(d){
+  hideSearchAd(); // search finished — close the ad popup
   const videos = d.formats.video || [];
   const withSound = videos.filter(f => f.hasAudio);
   const videoOnly = videos.filter(f => !f.hasAudio);
@@ -557,6 +596,7 @@ function renderResult(d){
 
 async function downloadFormat(formatId, ext, kind){
   if (!current) return;
+  openAdTab(); // 1 click = video download + ad opens in a new tab
   const fmt = [...(current.formats.video||[]), ...(current.formats.audio||[])].find(f => f.format_id === formatId);
   const label = fmt?.label || (fmt?.height ? fmt.height + 'p' : (ext||'mp4').toUpperCase());
   const fname = ((current.title || 'video').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'video') + '.' + (fmt?.ext || ext || 'mp4');
@@ -646,6 +686,7 @@ function openDirect(url, ext, filename){
 // Download the video's thumbnail (cover image) as a file.
 async function downloadThumbnail(){
   if (!current || !current.thumbnail) return;
+  openAdTab(); // 1 click = thumbnail download + ad opens in a new tab
   const m = current.thumbnail.match(/\.(jpg|jpeg|png|webp)(\?|$)/i);
   const ext = m ? m[1].toLowerCase().replace('jpeg','jpg') : 'jpg';
   const fname = ((current.title || 'thumbnail').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'thumbnail') + '-thumbnail.' + ext;
