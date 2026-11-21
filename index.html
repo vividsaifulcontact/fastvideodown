@@ -7,6 +7,11 @@
         zoneId: 'jz7nrikboa',
     });
 </script>
+<script>
+(function(){try{if(localStorage.getItem('fvd-theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}})();
+function toggleNight(){var h=document.documentElement;var d=h.classList.toggle('dark');try{localStorage.setItem('fvd-theme',d?'dark':'light')}catch(e){}var b=document.getElementById('nightToggle');if(b)b.textContent=d?'\u2600\uFE0F Day':'\uD83C\uDF19 Night';}
+document.addEventListener('DOMContentLoaded',function(){try{if(document.documentElement.classList.contains('dark')){var b=document.getElementById('nightToggle');if(b)b.textContent='\u2600\uFE0F Day';}}catch(e){}});
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Free Online Video Downloader – Download Any Video in HD &amp; MP3 | FastVideoDown</title>
@@ -189,6 +194,18 @@ footer .copy{margin-top:26px;font-size:13px;border-top:1px solid #1e293b;padding
 #searchAdPopup .sap-sub{font-size:13px;color:#475569;margin:0 0 12px}
 .ad-label{font-size:11px;color:#94a3b8;text-align:center;letter-spacing:.12em;text-transform:uppercase;margin:10px 0 4px}
 #searchAdPopup .sap-ad{min-height:250px;display:flex;align-items:center;justify-content:center;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;overflow:hidden}
+html.dark body{background:#0f172a!important;color:#e2e8f0!important}
+html.dark header{background:#1e293b!important;border-color:#334155!important}
+html.dark nav a{color:#cbd5e1!important}
+html.dark a{color:#93c5fd}
+html.dark h1,html.dark h2,html.dark h3{color:#f1f5f9!important}
+html.dark p,html.dark li,html.dark td{color:#cbd5e1}
+html.dark input,html.dark textarea,html.dark select{background:#1e293b!important;color:#e2e8f0!important;border-color:#475569!important}
+html.dark input::placeholder{color:#64748b}
+html.dark footer{background:#0f172a!important;color:#94a3b8!important}
+html.dark .card,html.dark .tool{background:#1e293b!important;border-color:#334155!important}
+.night-toggle{background:none;border:1px solid #cbd5e1;border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer;color:inherit;white-space:nowrap}
+html.dark .night-toggle{border-color:#475569}
 </style>
 </head>
 <body>
@@ -218,6 +235,7 @@ footer .copy{margin-top:26px;font-size:13px;border-top:1px solid #1e293b;padding
       <a href="/thumbnail-downloader/">Thumbnail</a>
       <a href="/blog/">Blog</a>
     </nav>
+<button class="night-toggle" id="nightToggle" onclick="toggleNight()">🌙 Night</button>
   </div>
 </header>
 
