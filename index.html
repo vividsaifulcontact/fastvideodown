@@ -53,10 +53,14 @@ document.addEventListener('DOMContentLoaded',function(){try{if(document.document
     {"@type":"Question","name":"Which websites does FastVideoDown support?","acceptedAnswer":{"@type":"Answer","text":"YouTube, TikTok, Facebook, Instagram, X (Twitter), Reddit, Vimeo, Dailymotion, Twitch and 1000+ other video sites. Paste a link from any of them and FastVideoDown will find the available video and audio formats."}},
     {"@type":"Question","name":"Can I download YouTube videos in 1080p or 4K?","acceptedAnswer":{"@type":"Answer","text":"FastVideoDown shows every quality the platform makes available for that video — usually 360p, 720p, 1080p and sometimes 4K. High qualities are often video-only (no sound); for sound, pick the highest 'Video with sound' option."}},
     {"@type":"Question","name":"Can I download only the audio as MP3?","acceptedAnswer":{"@type":"Answer","text":"Yes. When a video has an audio track, FastVideoDown lists an 'Audio only' section. The audio downloads in its original format (M4A/WebM); most players and phones play it like an MP3."}},
-    {"@type":"Question","name":"Is there a watermark on downloaded videos?","acceptedAnswer":{"@type":"Answer","text":"No. FastVideoDown never adds a watermark. Videos download exactly as the platform serves them (TikTok videos keep their original watermark if the platform baked it in)."}},
+    {"@type":"Question","name":"Is there a watermark on downloaded videos?","acceptedAnswer":{"@type":"Answer","text":"No. FastVideoDown never adds a watermark, and TikTok videos download without watermark. You get a clean video, ready to share or keep."}},
     {"@type":"Question","name":"Is it legal to download videos?","acceptedAnswer":{"@type":"Answer","text":"Download only videos you have the right to save — your own uploads, Creative Commons or public-domain content, or videos for personal offline use where the platform allows it. Do not re-upload or sell someone else's work."}},
     {"@type":"Question","name":"Are my links or videos stored on your servers?","acceptedAnswer":{"@type":"Answer","text":"No. FastVideoDown fetches the video information, gives you a direct download link from the platform's own servers, and stores nothing. Your links and downloads are never saved or logged."}},
     {"@type":"Question","name":"Why did my link fail?","acceptedAnswer":{"@type":"Answer","text":"Some platforms block server-side downloads (TikTok and Instagram often block data-center IPs), and private or login-only videos cannot be fetched. Try a public video link, or try again later."}},
+    {"@type":"Question","name":"How do I download videos on iPhone?","acceptedAnswer":{"@type":"Answer","text":"Open Safari, go to FastVideoDown, paste the video link, tap Get Video, pick a quality and tap Download. The file saves to the Files app, ready to watch offline. No app to install."}},
+    {"@type":"Question","name":"How do I download videos on Android?","acceptedAnswer":{"@type":"Answer","text":"Open Chrome, go to FastVideoDown, paste the video link, tap Get Video, pick a quality and tap Download. The file saves to your Downloads folder. No app to install."}},
+    {"@type":"Question","name":"Where do my downloads go?","acceptedAnswer":{"@type":"Answer","text":"On Android, downloads go to the Downloads folder. On iPhone, they go to the Files app. On Windows or Mac, they go to your usual Downloads folder."}},
+    {"@type":"Question","name":"Can I download TikTok videos without a watermark?","acceptedAnswer":{"@type":"Answer","text":"Yes. TikTok videos download without watermark through FastVideoDown, so you get a clean video you can share or keep."}},
     {"@type":"Question","name":"How fast are downloads?","acceptedAnswer":{"@type":"Answer","text":"Very fast. FastVideoDown gives you a direct link to the platform's own high-speed servers, so the file downloads straight to your device with no middleman slowing it down. Speed then depends on your internet connection."}}
   ]
 }
@@ -163,6 +167,10 @@ font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));
 padding:14px 16px;margin-bottom:10px}
 .faq summary{font-weight:700;cursor:pointer;font-size:15.5px}
 .faq p{margin:8px 0 0;font-size:14.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:28px 0 8px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;text-align:center}
+.stat b{display:block;font-size:22px}
+.stat span{font-size:13.5px;color:var(--muted)}
 footer{background:#0f172a;color:#94a3b8;margin-top:56px;padding:36px 0}
 footer a{color:#cbd5e1}
 footer .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:22px}
@@ -209,7 +217,7 @@ html.dark p,html.dark li,html.dark td{color:#cbd5e1}
 html.dark input,html.dark textarea,html.dark select{background:#1e293b!important;color:#e2e8f0!important;border-color:#475569!important}
 html.dark input::placeholder{color:#64748b}
 html.dark footer{background:#0f172a!important;color:#94a3b8!important}
-html.dark .card,html.dark .tool,html.dark .step{background:#1e293b!important;border-color:#334155!important}
+html.dark .card,html.dark .tool,html.dark .step,html.dark .stat{background:#1e293b!important;border-color:#334155!important}
 html.dark .meta .sub,html.dark .fmt .d{color:#94a3b8!important}
 html.dark .btn.ghost{background:#1e293b!important;border-color:#475569!important;color:#e2e8f0!important}
 html.dark .chip{background:#1e293b!important;border-color:#334155!important;color:#cbd5e1!important}
@@ -316,6 +324,12 @@ html.dark .night-toggle{border-color:#475569}
 </div>
 
 <main class="wrap">
+  <div class="stats">
+    <div class="stat"><b>1,000+</b><span>sites supported</span></div>
+    <div class="stat"><b>9</b><span>popular platforms</span></div>
+    <div class="stat"><b>HD · 4K · MP3</b><span>every quality</span></div>
+    <div class="stat"><b>100%</b><span>free forever</span></div>
+  </div>
   <section id="how-to">
     <h2>How to Download a Video in 3 Steps</h2>
     <div class="steps">
@@ -323,6 +337,10 @@ html.dark .night-toggle{border-color:#475569}
       <div class="step"><div class="n">2</div><h3>Paste it above</h3><p>Paste the link into the box and click <b>Get Video</b>. FastVideoDown finds the video in a few seconds and shows its title, thumbnail and every available quality.</p></div>
       <div class="step"><div class="n">3</div><h3>Pick a quality &amp; save</h3><p>Choose 360p, 720p, 1080p, 4K or audio-only MP3, then click <b>Download</b>. The file downloads straight from the platform's own high-speed servers.</p></div>
     </div>
+    <h3>Download videos on your phone</h3>
+    <p>On Android, open Chrome, paste the link into FastVideoDown, pick a quality and tap Download — the file saves to your Downloads folder. On iPhone, do the same in Safari — the file saves to the Files app. No app to install, and the same steps work on tablets.</p>
+    <h3>Download videos on your computer</h3>
+    <p>On Windows or Mac, copy the link from your browser's address bar, paste it into FastVideoDown, pick a quality and click Download. The file lands in your usual Downloads folder. No software to install.</p>
   </section>
 
   <section id="platforms">
@@ -330,7 +348,7 @@ html.dark .night-toggle{border-color:#475569}
     <p>FastVideoDown works with 1000+ video sites. These are the most popular ones — each has its own dedicated downloader page with step-by-step instructions.</p>
     <div class="cards">
       <div class="card"><h3><a href="/youtube-video-downloader/">YouTube Video Downloader</a></h3><p>Download YouTube videos in 360p, 720p, 1080p and 4K, or save the audio as MP3. No sign-up, no watermark.</p></div>
-      <div class="card"><h3><a href="/tiktok-video-downloader/">TikTok Video Downloader</a></h3><p>Save TikTok videos in HD. Paste any TikTok link and download the video in seconds.</p></div>
+      <div class="card"><h3><a href="/tiktok-video-downloader/">TikTok Video Downloader</a></h3><p>Save TikTok videos in HD — without watermark. Paste any TikTok link and download the video in seconds, clean and ready to share.</p></div>
       <div class="card"><h3><a href="/facebook-video-downloader/">Facebook Video Downloader</a></h3><p>Download Facebook videos, Reels and Watch clips in HD quality — free and unlimited.</p></div>
       <div class="card"><h3><a href="/instagram-video-downloader/">Instagram Video Downloader</a></h3><p>Save Instagram Reels, videos and IGTV clips in high quality, straight from the link.</p></div>
       <div class="card"><h3><a href="/twitter-video-downloader/">X (Twitter) Video Downloader</a></h3><p>Download videos and GIFs from X / Twitter posts in MP4, in the best available quality.</p></div>
@@ -373,6 +391,23 @@ html.dark .night-toggle{border-color:#475569}
     <p>Facebook videos and Reels, Instagram Reels and video posts, X (Twitter) videos and GIFs, Reddit videos with sound — FastVideoDown handles them all from the same box. One tool, every platform, no extra apps.</p>
   </section>
 
+  <section id="guide">
+    <h2>What Is FastVideoDown? The Complete Guide to Downloading Videos Online</h2>
+    <p>FastVideoDown is a free online video downloader that saves videos from YouTube, TikTok, Facebook, Instagram, X (Twitter), Reddit, Vimeo, Dailymotion, Twitch and 1,000+ other sites. Paste any video link, pick a quality — 360p, 720p, 1080p, 4K or audio-only MP3 — and download the file straight to your phone or computer. There is no app to install, no account to create, and no payment: the tool runs entirely in your browser and is free forever.</p>
+    <h3>Why download videos instead of streaming?</h3>
+    <p>Streaming is fine until the Wi-Fi drops, the video is removed, or you want to watch it again later. A downloaded video plays anywhere — on a flight, on the metro, or anywhere with no signal. Students save lectures and tutorials to study offline. Creators download their own uploads to edit, repost and archive. Music lovers save songs and podcasts as MP3 to listen offline. Downloading gives you a copy you own, in the original quality, ready whenever you need it.</p>
+    <h3>How the video downloader works</h3>
+    <p>FastVideoDown reads a public video link and asks the platform for the video's available files. It then shows every quality the video was published in — HD, standard sizes, and audio-only MP3 — plus the video's thumbnail, which you can also download. You pick one, and the file downloads straight from the platform's own high-speed servers. Nothing is uploaded, nothing is stored, and nothing is installed on your device. Your links are processed on the fly and forgotten.</p>
+    <h3>Which quality should you pick?</h3>
+    <p>Pick the highest quality when you want the best picture — for example to watch on a TV or keep a favourite clip. Pick a smaller size when you are short on storage or on mobile data. If you only want the sound — a song, a talk, or a podcast — choose the audio-only MP3 option; the file is much smaller and plays in any music app. For 1080p and above, the "with sound" option is merged on the server (video + audio), so it takes a little longer — keep the tab open until the download starts.</p>
+    <h3>TikTok videos without watermark</h3>
+    <p>TikTok videos download without watermark through FastVideoDown, so you get a clean video you can share or keep. The same tool also saves TikTok stories before they disappear, TikTok photo slideshows in full quality, and TikTok sounds as MP3. See the dedicated <a href="/tiktok-story-video-downloader/">TikTok Story Downloader</a>, <a href="/tiktok-slideshow-video-downloader/">TikTok Slideshow Downloader</a> and <a href="/tiktok-mp3-video-downloader/">TikTok MP3 Downloader</a> pages.</p>
+    <h3>YouTube to MP3 and MP4</h3>
+    <p>YouTube is the world's biggest video site, and FastVideoDown supports it fully. Save any YouTube video as MP4 in 360p, 720p, 1080p or 4K, or convert it to MP3 audio for offline listening. YouTube Shorts work the same way. See the <a href="/youtube-mp3-video-downloader/">YouTube MP3 Downloader</a>, <a href="/youtube-to-mp4-video-downloader/">YouTube to MP4 Downloader</a> and <a href="/youtube-shorts-video-downloader/">YouTube Shorts Downloader</a> pages.</p>
+    <h3>Download videos on any device</h3>
+    <p>FastVideoDown works on Android, iPhone, Windows, Mac and tablets, in any browser. There is no app, no extension and no software to install — the same free tool works everywhere. On Android the file saves to Downloads; on iPhone it saves to Files; on a computer it lands in your usual Downloads folder.</p>
+  </section>
+
   <section id="thumbnail">
     <h2>Thumbnail Downloader — Save Any Video's Cover Image</h2>
     <p>Every video has a thumbnail — the cover image you see before it plays. FastVideoDown's <a href="/thumbnail-downloader/">Thumbnail Downloader</a> saves that image in full quality. Paste any YouTube, TikTok, Instagram, Facebook or X video link and you get the thumbnail with a one-click download, right next to the video itself. Use the <b>Download Thumbnail</b> button on any video result, or open the dedicated <a href="/thumbnail-downloader/">Thumbnail Downloader</a> page.</p>
@@ -391,10 +426,14 @@ html.dark .night-toggle{border-color:#475569}
       <details><summary>Which websites does FastVideoDown support?</summary><p>YouTube, TikTok, Facebook, Instagram, X (Twitter), Reddit, Vimeo, Dailymotion, Twitch and 1000+ other video sites. Paste a link from any of them and FastVideoDown will find the available video and audio formats.</p></details>
       <details><summary>Can I download YouTube videos in 1080p or 4K?</summary><p>FastVideoDown shows every quality the platform makes available for that video — usually 360p, 720p, 1080p and sometimes 4K. High qualities are often video-only (no sound); for sound, pick the highest “Video with sound” option.</p></details>
       <details><summary>Can I download only the audio as MP3?</summary><p>Yes. When a video has an audio track, FastVideoDown lists an “Audio only” section. The audio downloads in its original format (M4A/WebM); most players and phones play it just like an MP3.</p></details>
-      <details><summary>Is there a watermark on downloaded videos?</summary><p>No. FastVideoDown never adds a watermark. Videos download exactly as the platform serves them (TikTok videos keep their original watermark if the platform baked it in).</p></details>
+      <details><summary>Is there a watermark on downloaded videos?</summary><p>No. FastVideoDown never adds a watermark — and TikTok videos download without watermark. You get a clean video, ready to share or keep.</p></details>
       <details><summary>Is it legal to download videos?</summary><p>Download only videos you have the right to save — your own uploads, Creative Commons or public-domain content, or videos for personal offline use where the platform allows it. Do not re-upload or sell someone else's work.</p></details>
       <details><summary>Are my links or videos stored on your servers?</summary><p>No. FastVideoDown fetches the video information, gives you a direct download link from the platform's own servers, and stores nothing. Your links and downloads are never saved or logged.</p></details>
       <details><summary>Why did my link fail?</summary><p>Some platforms block server-side downloads (TikTok and Instagram often block data-center IPs), and private or login-only videos cannot be fetched. Try a public video link, or try again later.</p></details>
+      <details><summary>How do I download videos on iPhone?</summary><p>Open Safari, go to FastVideoDown, paste the video link, tap Get Video, pick a quality and tap Download. The file saves to the Files app, ready to watch offline. No app to install.</p></details>
+      <details><summary>How do I download videos on Android?</summary><p>Open Chrome, go to FastVideoDown, paste the video link, tap Get Video, pick a quality and tap Download. The file saves to your Downloads folder. No app to install.</p></details>
+      <details><summary>Where do my downloads go?</summary><p>On Android, downloads go to the Downloads folder. On iPhone, they go to the Files app. On Windows or Mac, they go to your usual Downloads folder.</p></details>
+      <details><summary>Can I download TikTok videos without a watermark?</summary><p>Yes. TikTok videos download without watermark through FastVideoDown, so you get a clean video you can share or keep.</p></details>
       <details><summary>How fast are downloads?</summary><p>Very fast. FastVideoDown gives you a direct link to the platform's own high-speed servers, so the file downloads straight to your device with no middleman slowing it down. Speed then depends on your internet connection.</p></details>
     </div>
   </section>

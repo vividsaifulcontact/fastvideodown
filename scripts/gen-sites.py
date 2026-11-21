@@ -296,7 +296,7 @@ def page_html(n, s):
         f'<details><summary>{q.format(name=name)}</summary><p>{a.format(name=name)}</p></details>'
         for q, a in faqs)
     faq_json = ','.join(
-        '{{"@type":"Question","name":"' + q.format(name=name).replace('"', '') +
+        '{"@type":"Question","name":"' + q.format(name=name).replace('"', '') +
         '","acceptedAnswer":{"@type":"Answer","text":"' + a.format(name=name).replace('"', '') + '"}}'
         for q, a in faqs)
     related = related_links(n, s)
@@ -476,7 +476,7 @@ def blog_html(n, s, bslug):
         f'<details><summary>{q.format(name=name)}</summary><p>{a.format(name=name)}</p></details>'
         for q, a in faqs)
     faq_json = ','.join(
-        '{{"@type":"Question","name":"' + q.format(name=name).replace('"', '') +
+        '{"@type":"Question","name":"' + q.format(name=name).replace('"', '') +
         '","acceptedAnswer":{"@type":"Answer","text":"' + a.format(name=name).replace('"', '') + '"}}'
         for q, a in faqs)
     return f"""<!DOCTYPE html>
@@ -537,6 +537,137 @@ document.addEventListener('DOMContentLoaded',function(){{try{{if(document.docume
 </html>
 """
 
+# ---------- FEATURE pages (per-feature long-tail SEO pages, like the
+# competitors' TikTok Stories / Slideshow / MP3 pages) ----------
+# key, display name, platform, platform page slug
+FEATURES = [
+    ('tiktok-story', 'TikTok Story', 'TikTok', 'tiktok-video-downloader'),
+    ('tiktok-slideshow', 'TikTok Slideshow', 'TikTok', 'tiktok-video-downloader'),
+    ('tiktok-mp3', 'TikTok MP3', 'TikTok', 'tiktok-video-downloader'),
+    ('youtube-mp3', 'YouTube MP3', 'YouTube', 'youtube-video-downloader'),
+    ('youtube-to-mp4', 'YouTube to MP4', 'YouTube', 'youtube-video-downloader'),
+    ('youtube-shorts', 'YouTube Shorts', 'YouTube', 'youtube-video-downloader'),
+    ('facebook-reels', 'Facebook Reels', 'Facebook', 'facebook-video-downloader'),
+    ('instagram-reels', 'Instagram Reels', 'Instagram', 'instagram-video-downloader'),
+    ('instagram-story', 'Instagram Story', 'Instagram', 'instagram-video-downloader'),
+    ('twitter-gif', 'X GIF', 'X (Twitter)', 'twitter-video-downloader'),
+]
+
+FEATURE_INTROS = {
+    'tiktok-story': "Save any TikTok story in seconds with FastVideoDown &mdash; the free TikTok story downloader. TikTok stories disappear after 24 hours, so saving the ones you love matters. Paste the story link, pick a quality, and download the story video or photo without watermark. No app, no account, no payment &mdash; it works on Android, iPhone, and PC, right in your browser.",
+    'tiktok-slideshow': "Download TikTok photo slideshows with FastVideoDown &mdash; the free TikTok slideshow downloader. A TikTok slideshow is a set of photos with music; FastVideoDown saves every photo from the slideshow in full quality, plus the video version and the audio. Paste the slideshow link and download it without watermark, free, on phone or PC.",
+    'tiktok-mp3': "Save TikTok sounds as MP3 with FastVideoDown &mdash; the free TikTok MP3 downloader. Paste any TikTok link and download just the audio: the song, the voiceover, or the sound behind the video. No app, no account, no payment. The MP3 works in any music app, on Android, iPhone, and PC.",
+    'youtube-mp3': "Convert YouTube videos to MP3 with FastVideoDown &mdash; the free YouTube to MP3 downloader. Paste any YouTube link and save just the audio: a song, a podcast, a lecture, or a talk. No app, no account, no payment. The audio downloads in its original quality and plays in any music app.",
+    'youtube-to-mp4': "Download YouTube videos as MP4 with FastVideoDown &mdash; the free YouTube to MP4 downloader. Paste any YouTube link and save the video in MP4, in the quality it was published in: 360p, 720p, 1080p, or 4K where available. No app, no account, no payment, and no watermark.",
+    'youtube-shorts': "Download YouTube Shorts with FastVideoDown &mdash; the free YouTube Shorts downloader. Shorts are short vertical videos; FastVideoDown saves any Short in HD MP4 or as MP3 audio. Paste the Shorts link, pick a quality, and download it free, on phone or PC, with no app and no account.",
+    'facebook-reels': "Download Facebook Reels with FastVideoDown &mdash; the free Facebook Reels downloader. Reels are short vertical videos on Facebook; FastVideoDown saves any Reel in HD MP4 or as MP3 audio. Paste the Reel link, pick a quality, and download it free, on phone or PC, with no app and no account.",
+    'instagram-reels': "Download Instagram Reels with FastVideoDown &mdash; the free Instagram Reels downloader. Paste any Instagram Reel link and save the Reel in HD MP4 or as MP3 audio. No app, no account, no payment &mdash; it works on Android, iPhone, and PC, right in your browser.",
+    'instagram-story': "Save Instagram stories with FastVideoDown &mdash; the free Instagram story downloader. Instagram stories disappear after 24 hours, so saving the ones you love matters. Paste the story link and download the story video or photo in full quality. No app, no account, no payment.",
+    'twitter-gif': "Download GIFs and videos from X (Twitter) with FastVideoDown &mdash; the free X GIF downloader. Paste any X post link and save the GIF or video as an MP4 in the best available quality. No app, no account, no payment &mdash; it works on Android, iPhone, and PC, right in your browser.",
+}
+
+FEATURE_FAQS = [
+    ("Is the {display} downloader free?", "Yes. FastVideoDown is free forever, with no sign-up and no daily limit."),
+    ("Can I download {display} in HD?", "Yes. FastVideoDown shows every quality the {platform} video was published in, including the original upload quality."),
+    ("Can I download {display} on my phone?", "Yes. FastVideoDown works in any mobile browser on Android and iPhone, with no app to install. Paste the link, pick a quality, and save the file."),
+    ("Do I need an account to download {display}?", "No. Paste the link, pick a quality, and download. No account, no app, and no payment."),
+    ("Can I download {display} as MP3 audio?", "Yes. Where the video has audio, FastVideoDown offers an audio-only MP3 option alongside the video qualities."),
+    ("Is it legal to download {display}?", "Only download videos you own or have permission to save. Respect the creator's rights and {platform}'s terms of service."),
+]
+
+def feature_html(key, disp, platform, pslug):
+    s = slug(key)
+    name = html.escape(disp)
+    plat = html.escape(platform)
+    intro = FEATURE_INTROS[key]
+    title = f"{name} Downloader &ndash; Download {name} Free in HD &amp; MP3 | FastVideoDown"
+    desc = f"Download {name} free with FastVideoDown. Paste any {plat} link, pick HD video or MP3 audio, and save it in seconds. No sign-up, no watermark, works on phone and PC."
+    faqs = FEATURE_FAQS
+    faq_html = '\n'.join(
+        f'<details><summary>{q.format(display=name, platform=plat)}</summary><p>{a.format(display=name, platform=plat)}</p></details>'
+        for q, a in faqs)
+    faq_json = ','.join(
+        '{"@type":"Question","name":"' + q.format(display=name, platform=plat).replace('"', '') +
+        '","acceptedAnswer":{"@type":"Answer","text":"' + a.format(display=name, platform=plat).replace('"', '') + '"}}'
+        for q, a in faqs)
+    others = [(d2, slug(k2)) for k2, d2, _, _ in FEATURES if k2 != key][:5]
+    rel = f'<li><a href="/{pslug}/">{plat} Video Downloader</a></li>'
+    rel += '\n'.join(f'<li><a href="/{u}/">{html.escape(t)} Downloader</a></li>' for t, u in others)
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script><script type="text/javascript">
+    aclib.runAutoTag({{
+        zoneId: 'jz7nrikboa',
+    }});
+</script>
+<script>
+(function(){{try{{if(localStorage.getItem('fvd-theme')==='dark')document.documentElement.classList.add('dark')}}catch(e){{}}}})();
+function toggleNight(){{var h=document.documentElement;var d=h.classList.toggle('dark');try{{localStorage.setItem('fvd-theme',d?'dark':'light')}}catch(e){{}}var b=document.getElementById('nightToggle');if(b)b.textContent=d?'☀️ Day':'🌙 Night';}}
+document.addEventListener('DOMContentLoaded',function(){{try{{if(document.documentElement.classList.contains('dark')){{var b=document.getElementById('nightToggle');if(b)b.textContent='☀️ Day';}}}}catch(e){{}}}});
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+{FAVICON}
+<title>{title}</title>
+<meta name="description" content="{desc}">
+<meta name="keywords" content="{name} downloader, download {name}, {name} to mp4, {name} to mp3, {name} download free, save {name}, {name} downloader online">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="{BASE}/{s}/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{desc}">
+<meta property="og:url" content="{BASE}/{s}/">
+<style>{CSS}</style>
+<script type="application/ld+json">
+{{"@context":"https://schema.org","@type":"WebApplication","name":"{name} Downloader","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{{"@type":"Offer","price":"0","priceCurrency":"USD"}},"url":"{BASE}/{s}/"}}
+</script>
+<script type="application/ld+json">
+{{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{{"@type":"ListItem","position":1,"name":"Home","item":"{BASE}/"}},{{"@type":"ListItem","position":2,"name":"All Downloaders","item":"{BASE}/sites/"}},{{"@type":"ListItem","position":3,"name":"{name} Downloader","item":"{BASE}/{s}/"}}]}}
+</script>
+<script type="application/ld+json">
+{{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{faq_json}]}}
+</script>
+</head>
+<body>
+{ADBLOCK_WALL}
+{HEADER}
+<section class="hero"><h1>{name} Downloader</h1><p>Download {name} free in HD &amp; MP3. Paste any {plat} link, pick your quality, and save it in seconds. No sign-up, no watermark.</p><a class="btn" href="/">Download a {name} &rarr;</a></section>
+{BANNER_728}
+<main>
+<p>{intro}</p>
+<h2>How to Download {name} in 3 Steps</h2>
+<ol><li><strong>Copy the link.</strong> Open the {plat} {name.lower()} you want and copy its link from the address bar or the share menu.</li><li><strong>Paste it into FastVideoDown.</strong> Go to the <a href="/">FastVideoDown downloader</a>, paste the link into the box, and click Get Video.</li><li><strong>Pick a quality and save.</strong> Choose the video quality or MP3 audio you want, then tap Download. The file comes straight from {plat}'s servers, in the quality it was published in.</li></ol>
+<div class="note"><strong>Original quality:</strong> FastVideoDown lists every quality the video was published in on {plat}, including the original upload quality, so you can save the best version available.</div>
+<h2>Download {name} on Your Phone</h2>
+<p>FastVideoDown works in any mobile browser, so there is no app to install. On Android, paste the {plat} link in Chrome, pick a quality, and the video saves to your Downloads folder. On iPhone, use Safari the same way &mdash; the file saves to Files, ready to watch offline. The same steps work on tablets and desktop computers.</p>
+<h2>{name} Quality &amp; Formats</h2>
+<table><tr><th>Format</th><th>Best for</th></tr>
+<tr><td><strong>HD video (MP4)</strong> &ndash; the highest quality the video was published in</td><td>Watching on a big screen or keeping the best copy</td></tr>
+<tr><td><strong>Standard video (MP4)</strong> &ndash; smaller file sizes</td><td>Saving space on your phone or slow connections</td></tr>
+<tr><td><strong>Audio only (MP3)</strong> &ndash; just the sound track</td><td>Music, podcasts, and talks you only want to listen to</td></tr>
+<tr><td><strong>Thumbnail (JPG)</strong> &ndash; the video's cover image</td><td>Using the cover as a picture or preview</td></tr></table>
+{NATIVE_BANNER}
+<h2>Why Download {name} with FastVideoDown?</h2>
+<ul><li><strong>Free forever</strong> &mdash; no payment, no account, no daily limit.</li><li><strong>Real quality picker</strong> &mdash; HD, smaller sizes, and audio-only MP3 where the platform offers them.</li><li><strong>Fast direct downloads</strong> &mdash; files come straight from the platform's servers.</li><li><strong>No watermark</strong> &mdash; you get the video as published.</li><li><strong>Private</strong> &mdash; links are processed and never stored.</li><li><strong>Any device</strong> &mdash; works on phone, tablet, and desktop with no app to install.</li></ul>
+<h2>Is It Legal to Download {name}?</h2>
+<p>Only download videos you own or have permission to save, or that are free for personal use. Respect the creator's rights and {plat}'s terms of service. FastVideoDown is a tool for personal, lawful use.</p>
+<div class="faq"><h2>Frequently Asked Questions</h2>
+{faq_html}
+</div>
+<div class="related"><h2>More Video Downloaders</h2><ul>
+{rel}
+</ul></div>
+<p style="margin-top:24px"><a href="/">Try the {name} downloader now &rarr;</a> &middot; <a href="/sites/">Browse all 1,000+ downloaders</a></p>
+</main>
+{BANNER_300}
+{FOOTER.format(disclaimer=f"FastVideoDown is not affiliated with {platform}. Download only content you own or have permission to save.")}
+{SOCIAL_BAR}
+{BANNER_320}
+</body>
+</html>
+"""
+
 count = 0
 for n in sites:
     s = slug(n)
@@ -553,6 +684,17 @@ for n in sites:
 print('pages written:', count)
 print('blog guides written:', count)
 
+# --- feature pages ---
+fcount = 0
+for key, disp, plat, pslug in FEATURES:
+    fs = slug(key)
+    fd = os.path.join(OUT, fs)
+    os.makedirs(fd, exist_ok=True)
+    with open(os.path.join(fd, 'index.html'), 'w') as f:
+        f.write(feature_html(key, disp, plat, pslug))
+    fcount += 1
+print('feature pages written:', fcount)
+
 # --- sites index ---
 letters = {}
 for n in sites:
@@ -566,6 +708,25 @@ f'<link rel="canonical" href="{BASE}/sites/">',
 '<header><a class="logo" href="/">Fast<span>VideoDown</span></a><nav><a href="/">Home</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/blog/">Blog</a></nav><button class="menu-toggle" id="menuToggle" onclick="document.querySelector(&quot;header nav&quot;).classList.toggle(&quot;open&quot;)" aria-label="Menu">☰</button><button class="night-toggle" id="nightToggle" onclick="toggleNight()">🌙 Night</button></header><main>',
 f'<h1>All Video Downloaders &ndash; {len(sites)+8} Sites</h1>',
 '<p>Every site FastVideoDown can download from. Pick a site, paste its video link on the <a href="/">homepage</a>, and save the video in HD or MP3 &mdash; free, no sign-up.</p>',
+'<h2>Popular Downloaders</h2><div class="grid">'
+'<a href="/youtube-video-downloader/">YouTube Video Downloader</a>'
+'<a href="/tiktok-video-downloader/">TikTok Video Downloader</a>'
+'<a href="/facebook-video-downloader/">Facebook Video Downloader</a>'
+'<a href="/instagram-video-downloader/">Instagram Video Downloader</a>'
+'<a href="/twitter-video-downloader/">X Video Downloader</a>'
+'<a href="/thumbnail-downloader/">Thumbnail Downloader</a>'
+'</div><h2>Popular Tools</h2><div class="grid">'
+'<a href="/tiktok-story-video-downloader/">TikTok Story Downloader</a>'
+'<a href="/tiktok-slideshow-video-downloader/">TikTok Slideshow Downloader</a>'
+'<a href="/tiktok-mp3-video-downloader/">TikTok MP3 Downloader</a>'
+'<a href="/youtube-mp3-video-downloader/">YouTube MP3 Downloader</a>'
+'<a href="/youtube-to-mp4-video-downloader/">YouTube to MP4 Downloader</a>'
+'<a href="/youtube-shorts-video-downloader/">YouTube Shorts Downloader</a>'
+'<a href="/facebook-reels-video-downloader/">Facebook Reels Downloader</a>'
+'<a href="/instagram-reels-video-downloader/">Instagram Reels Downloader</a>'
+'<a href="/instagram-story-video-downloader/">Instagram Story Downloader</a>'
+'<a href="/twitter-gif-video-downloader/">X GIF Downloader</a>'
+'</div>',
 '<div class="letters">' + ' '.join(f'<a href="#{L}">{L}</a>' for L in sorted(letters)) + '</div>']
 for L in sorted(letters):
     idx.append(f'<h2 id="{L}">{L}</h2><div class="grid">')
@@ -606,6 +767,8 @@ urls = ['', 'youtube-video-downloader/', 'tiktok-video-downloader/', 'facebook-v
 for n in sites:
     urls.append(slug(n) + '/')
     urls.append('blog/' + slug(n) + '-guide/')
+for key, disp, plat, pslug in FEATURES:
+    urls.append(slug(key) + '/')
 sm = ['<?xml version="1.0" encoding="UTF-8"?>',
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
 for u in urls:
