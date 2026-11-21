@@ -247,7 +247,7 @@ footer .copy{margin-top:26px;font-size:13px;border-top:1px solid #1e293b;padding
 #searchAdPopup .sap-close:hover{color:#0f172a}
 #searchAdPopup .sap-title{font-weight:800;font-size:16px;margin:2px 0 4px}
 #searchAdPopup .sap-sub{font-size:13px;color:#475569;margin:0 0 12px}
-.ad-label{font-size:11px;color:#94a3b8;text-align:center;letter-spacing:.12em;text-transform:uppercase;margin:10px 0 4px}.ad-banner728,.ad-banner468,.ad-banner300,.ad-banner160,.ad-banner160x600,.ad-native{max-width:100%;overflow:hidden}.ad-native .__bn{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important}.ad-native .__bn .__bn-container{flex:1 1 25%!important;max-width:25%!important;min-width:0!important}.ad-banner728 iframe,.ad-banner468 iframe,.ad-banner300 iframe,.ad-banner160 iframe,.ad-banner160x600 iframe{max-width:100%!important}@media(max-width:768px){.ad-banner468{display:block!important;overflow:hidden;height:45px;max-width:351px;margin-left:auto;margin-right:auto}.ad-banner468 iframe{transform:scale(.75);transform-origin:top left;width:468px!important;max-width:none!important}.ad-banner728{display:block!important;overflow:hidden;height:45px;max-width:364px;margin-left:auto;margin-right:auto}.ad-banner728 iframe{transform:scale(.5);transform-origin:top left;width:728px!important;max-width:none!important}}html,body{overflow-x:hidden}
+.ad-label{font-size:11px;color:#64748b;text-align:center;letter-spacing:.12em;text-transform:uppercase;margin:10px 0 4px}.ad-banner728,.ad-banner468,.ad-banner300,.ad-banner160,.ad-banner160x600,.ad-native{max-width:100%;overflow:hidden}.ad-native .__bn{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important}.ad-native .__bn .__bn-container{flex:1 1 25%!important;max-width:25%!important;min-width:0!important}.ad-banner728 iframe,.ad-banner468 iframe,.ad-banner300 iframe,.ad-banner160 iframe,.ad-banner160x600 iframe{max-width:100%!important}@media(max-width:768px){.ad-banner468{display:block!important;overflow:hidden;height:45px;max-width:351px;margin-left:auto;margin-right:auto}.ad-banner468 iframe{transform:scale(.75);transform-origin:top left;width:468px!important;max-width:none!important}.ad-banner728{display:block!important;overflow:hidden;height:45px;max-width:364px;margin-left:auto;margin-right:auto}.ad-banner728 iframe{transform:scale(.5);transform-origin:top left;width:728px!important;max-width:none!important}}html,body{overflow-x:hidden}
 #searchAdPopup .sap-ad{min-height:250px;display:flex;align-items:center;justify-content:center;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;overflow:hidden}
 html.dark{--ink:#e2e8f0;--muted:#94a3b8;--line:#334155;--card:#1e293b;--bg:#0f172a}
 html.dark body{background:#0f172a!important;color:#e2e8f0!important}
@@ -267,6 +267,10 @@ html.dark .chip.active{background:#14532d!important;color:#86efac!important;bord
 html.dark .meta h3,html.dark .fmt .q,html.dark .fmt .d b,html.dark .group h4{color:#f1f5f9!important}
 .night-toggle{background:none;border:1px solid #cbd5e1;border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer;color:inherit;white-space:nowrap}.menu-toggle{display:none;background:none;border:0;font-size:22px;line-height:1;cursor:pointer;color:inherit;padding:6px 8px}
 html.dark .night-toggle{border-color:#475569}
+html.dark .fmt{background:#1e293b!important;border-color:#334155!important}
+html.dark .hint{background:#1e293b!important;border-color:#334155!important;color:#cbd5e1!important}
+html.dark .group h4 .tag{background:#334155!important;border-color:#475569!important;color:#cbd5e1!important}
+html.dark #status .ok{color:#4ade80!important}
 </style>
 </head>
 <body>
@@ -296,7 +300,7 @@ html.dark .night-toggle{border-color:#475569}
       <a href="/thumbnail-downloader/">Thumbnail</a>
       <a href="/blog/">Blog</a>
     </nav>
-<button class="menu-toggle" id="menuToggle" onclick="document.querySelector('header nav').classList.toggle('open')" aria-label="Menu">☰</button><button class="night-toggle" id="nightToggle" onclick="toggleNight()">🌙 Night</button><select id="langSelect" onchange="switchLang(this)" style="margin-left:8px;padding:4px 6px;border-radius:999px;border:1px solid #cbd5e1;background:transparent;font-size:13px;color:inherit" aria-label="Language"><option value="" selected>English</option><option value="es">Español</option><option value="pt">Português</option><option value="id">Bahasa Indonesia</option><option value="hi">हिन्दी</option><option value="ar">العربية</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="tr">Türkçe</option><option value="ru">Русский</option><option value="vi">Tiếng Việt</option><option value="th">ไทย</option><option value="bn">বাংলা</option><option value="ur">اردو</option><option value="it">Italiano</option><option value="nl">Nederlands</option><option value="pl">Polski</option><option value="uk">Українська</option><option value="ms">Bahasa Melayu</option><option value="tl">Filipino</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="zh-cn">中文</option><option value="ta">தமிழ்</option><option value="te">తెలుగు</option><option value="mr">मराठी</option><option value="fa">فارسی</option><option value="sw">Kiswahili</option><option value="ha">Hausa</option><option value="el">Ελληνικά</option><option value="cs">Čeština</option><option value="ro">Română</option><option value="hu">Magyar</option><option value="sv">Svenska</option><option value="fi">Suomi</option><option value="da">Dansk</option><option value="no">Norsk</option><option value="he">עברית</option><option value="bg">Български</option><option value="sr">Српски</option><option value="hr">Hrvatski</option></select><script>function switchLang(sel){var code=sel.value;var langs=["es", "pt", "id", "hi", "ar", "fr", "de", "tr", "ru", "vi", "th", "bn", "ur", "it", "nl", "pl", "uk", "ms", "tl", "ja", "ko", "zh-cn", "ta", "te", "mr", "fa", "sw", "ha", "el", "cs", "ro", "hu", "sv", "fi", "da", "no", "he", "bg", "sr", "hr"];var parts=location.pathname.split("/").filter(function(x){return x!==""});if(parts.length>0&&langs.indexOf(parts[0])>=0)parts.shift();var slug=parts.join("/");var url=code?"/"+code+"/"+slug:"/"+slug;if(!slug)url=code?"/"+code+"/":"/";location.href=url;}</script>
+<button class="menu-toggle" id="menuToggle" onclick="document.querySelector('header nav').classList.toggle('open')" aria-label="Menu">☰</button><button class="night-toggle" id="nightToggle" onclick="toggleNight()">🌙 Night</button><select id="langSelect" onchange="switchLang(this)" style="margin-left:8px;padding:4px 6px;border-radius:999px;border:1px solid #cbd5e1;background:transparent;font-size:13px;color:inherit" aria-label="Language"><option value="" selected>English</option><option value="es">Español</option><option value="pt">Português</option><option value="id">Bahasa Indonesia</option><option value="hi">हिन्दी</option><option value="ar">العربية</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="tr">Türkçe</option><option value="ru">Русский</option><option value="vi">Tiếng Việt</option><option value="th">ไทย</option><option value="bn">বাংলা</option><option value="ur">اردو</option><option value="it">Italiano</option><option value="nl">Nederlands</option><option value="pl">Polski</option><option value="uk">Українська</option><option value="ms">Bahasa Melayu</option><option value="tl">Filipino</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="zh-cn">中文</option><option value="ta">தமிழ்</option><option value="te">తెలుగు</option><option value="mr">मराठी</option><option value="fa">فارسی</option><option value="sw">Kiswahili</option><option value="ha">Hausa</option><option value="el">Ελληνικά</option><option value="cs">Čeština</option><option value="ro">Română</option><option value="hu">Magyar</option><option value="sv">Svenska</option><option value="fi">Suomi</option><option value="da">Dansk</option><option value="no">Norsk</option><option value="he">עברית</option><option value="bg">Български</option><option value="sr">Српски</option><option value="hr">Hrvatski</option></select><script>function switchLang(sel){var code=sel.value;var langs=["es", "pt", "id", "hi", "ar", "fr", "de", "tr", "ru", "vi", "th", "bn", "ur", "it", "nl", "pl", "uk", "ms", "tl", "ja", "ko", "zh-cn", "ta", "te", "mr", "fa", "sw", "ha", "el", "cs", "ro", "hu", "sv", "fi", "da", "no", "he", "bg", "sr", "hr"];if(code&&langs.indexOf(code)<0)return;var parts=location.pathname.split("/").filter(function(x){return x!==""});if(parts.length>0&&langs.indexOf(parts[0])>=0)parts.shift();var slug=parts.join("/");var url=code?"/"+code+"/"+slug:"/"+slug;if(!slug)url=code?"/"+code+"/":"/";location.href=url;}</script>
   </div>
 </header>
 
@@ -385,7 +389,7 @@ html.dark .night-toggle{border-color:#475569}
     <p>On Windows or Mac, copy the link from your browser's address bar, paste it into FastVideoDown, pick a quality and click Download. The file lands in your usual Downloads folder. No software to install.</p>
   </section>
 
-  <section id="platforms">
+  <section id="all-platforms">
     <h2>Download Videos From Any Platform</h2>
     <p>FastVideoDown works with 1000+ video sites. These are the most popular ones — each has its own dedicated downloader page with step-by-step instructions.</p>
     <div class="cards">
@@ -457,7 +461,7 @@ html.dark .night-toggle{border-color:#475569}
 
   <section id="legal">
     <h2>Is It Legal to Download Videos?</h2>
-    <p>Downloading a video is fine when you have the right to save it — your own uploads, Creative Commons or public-domain videos, or videos you save for personal offline viewing where the platform allows it. It is not OK to re-upload, sell or claim someone else's work as your own. FastVideoDown is a tool for personal use: respect creators, respect copyright, and check the rules of the platform you download from. Read our <a href="/terms.html">Terms of Use</a> and <a href="/privacy.html">Privacy Policy</a> for the full details.</p>
+    <p>Downloading a video is fine when you have the right to save it — your own uploads, Creative Commons or public-domain videos, or videos you save for personal offline viewing where the platform allows it. It is not OK to re-upload, sell or claim someone else's work as your own. FastVideoDown is a tool for personal use: respect creators, respect copyright, and check the rules of the platform you download from. Read our <a href="/terms">Terms of Use</a> and <a href="/privacy">Privacy Policy</a> for the full details.</p>
   </section>
 
   <section id="faq">
@@ -521,9 +525,9 @@ html.dark .night-toggle{border-color:#475569}
       <div>
         <h4>Company</h4>
         <ul>
-          <li><a href="/privacy.html">Privacy Policy</a></li>
-          <li><a href="/terms.html">Terms of Use</a></li>
-          <li><a href="/contact.html">Contact</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/terms">Terms of Use</a></li>
+          <li><a href="/contact">Contact</a></li>
         </ul>
       </div>
     </div>
@@ -544,7 +548,7 @@ function showSearchAd(){ if (!ADS_ENABLED) return; const p = document.getElement
 function hideSearchAd(){ const p = document.getElementById('searchAdPopup'); if (p) p.style.display = 'none'; }
 // Opens the ad in a new tab. Must run inside the user's click (user gesture),
 // otherwise the browser's popup blocker stops it.
-function openAdTab(){ if (!AD_LINK_URL) return; window.open(AD_LINK_URL, '_blank'); }
+function openAdTab(){ if (!AD_LINK_URL) return; window.open(AD_LINK_URL, '_blank', 'noopener,noreferrer'); }
 const PLATFORMS = [
   { id:'youtube',   label:'YouTube',   match:/(youtube\.com|youtu\.be)/ },
   { id:'tiktok',    label:'TikTok',    match:/tiktok\.com/ },
@@ -591,6 +595,16 @@ function fmtSize(b){
 }
 function esc(s){
   return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// Values placed inside a single-quoted JS string in an onclick attribute that
+// is itself set via innerHTML must NOT use esc(): the HTML parser decodes
+// &#39; back to ' before JS parses the handler, breaking out of the string
+// (stored XSS via API-returned format_id/ext/url). jsEsc() escapes so the
+// value round-trips exactly: & -> &amp; (no entity survives HTML decoding),
+// backslash, quote, newlines, and < as \x3c.
+function jsEsc(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n').replace(/\r/g,'\\r').replace(/</g,'\\x3c');
 }
 
 let current = null;
@@ -654,8 +668,8 @@ function fmtRow(f, kind){
   const tag = kind === 'video' ? (f.hasAudio ? '' : ' • Video only (no sound)') : '';
   return `<div class="fmt">
     <span class="q">${esc(f.label)}</span>
-    <span class="d"><b>${esc((f.ext||'').toUpperCase())}</b>${esc(size)}${esc(tag)}${f.fps ? ' • '+f.fps+'fps' : ''}</span>
-    <button class="btn small" onclick="downloadFormat('${esc(f.format_id)}','${esc(f.ext||'mp4')}','${kind}')">Download ${esc(f.label)}</button>
+    <span class="d"><b>${esc((f.ext||'').toUpperCase())}</b>${esc(size)}${esc(tag)}${f.fps ? ' • '+esc(f.fps)+'fps' : ''}</span>
+    <button class="btn small" onclick="downloadFormat('${jsEsc(f.format_id)}','${jsEsc(f.ext||'mp4')}','${kind}')">Download ${esc(f.label)}</button>
   </div>`;
 }
 
@@ -668,7 +682,7 @@ function fmtRow(f, kind){
 //   (/api/merge) and sends the merged MP4. It takes longer (the server
 //   downloads both streams and muxes them), so the button warns the user.
 function qualityRow(h, withSoundFmt, videoOnlyFmt){
-  const btn = (f, suffix) => `<button class="btn small" onclick="downloadFormat('${esc(f.format_id)}','${esc(f.ext||'mp4')}','video')">${esc(h + 'p ' + suffix)}</button>`;
+  const btn = (f, suffix) => `<button class="btn small" onclick="downloadFormat('${jsEsc(f.format_id)}','${jsEsc(f.ext||'mp4')}','video')">${esc(h + 'p ' + suffix)}</button>`;
   const withBtn = withSoundFmt
     ? btn(withSoundFmt, 'with sound')
     : (videoOnlyFmt && h > 720
@@ -839,7 +853,8 @@ async function downloadFormat(formatId, ext, kind){
 }
 
 function openDirect(url, ext, filename){
-  statusEl.innerHTML = `<div class="ok">✓ Your file opened in a new tab — use your browser menu to Save it. <button class="btn small ghost" style="margin-left:8px" onclick="copyLink('${esc(url)}', this)">Copy link</button></div>`;
+  if (!/^https?:\/\//i.test(url || '')) { statusEl.innerHTML = `<div class="err">Could not get a download link. Please try again.</div>`; return; }
+  statusEl.innerHTML = `<div class="ok">✓ Your file opened in a new tab — use your browser menu to Save it. <button class="btn small ghost" style="margin-left:8px" onclick="copyLink('${jsEsc(url)}', this)">Copy link</button></div>`;
   const a = document.createElement('a');
   a.href = url; a.target = '_blank'; a.rel = 'noopener';
   a.download = filename || ((current.title || 'video').replace(/[^\w\s\-.]/g,'').trim().slice(0,80) || 'video') + '.' + (ext || 'mp4');
@@ -868,7 +883,7 @@ async function downloadThumbnail(){
       return;
     }
   } catch (e) { /* fall through to opening the image */ }
-  window.open(current.thumbnail, '_blank');
+  if (/^https?:\/\//i.test(current.thumbnail || '')) window.open(current.thumbnail, '_blank', 'noopener,noreferrer');
   statusEl.innerHTML = `<div class="ok">✓ Thumbnail opened in a new tab — right-click it and choose Save image.</div>`;
 }
 
