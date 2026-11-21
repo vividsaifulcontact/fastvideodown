@@ -181,7 +181,7 @@ FAVICON = """<link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">"""
 
 SOCIAL_BAR = """<script data-cfasync="false" src="https://bellnewyork.org/14/f35df6e06fc69f99b8b2ce47d7d3bd4c"></script>"""
-NATIVE_BANNER = """<div class="ad-label">Ads</div><div class="ad-native"><script async="async" data-cfasync="false" src="https://bellnewyork.org/21/7fe12e0cd0157c1a5aa6a92146507cd8"></script><div id="container-7fe12e0cd0157c1a5aa6a92146507cd8"></div></div>"""
+NATIVE_BANNER = """<div class="ad-label">Ads</div><div class="ad-native"><script async="async" data-cfasync="false" src="https://bellnewyork.org/21/7fe12e0cd0157c1a5aa6a92146507cd8"></script><div id="container-7fe12e0cd0157c1a5aa6a92146507cd8"></div></div><script>(function(){var CID="container-7fe12e0cd0157c1a5aa6a92146507cd8";function fix(){var c=document.getElementById(CID);if(!c)return;var w=c.parentElement;if(window.innerWidth>768){c.style.width="";c.style.transform="";w.style.height="";w.style.overflow="";return;}var a=w.clientWidth||340;var s=Math.min(a/728,1);c.style.width="728px";c.style.transform="scale("+s+")";c.style.transformOrigin="top left";w.style.overflow="hidden";w.style.height=(c.offsetHeight*s)+"px";}function init(){fix();var c=document.getElementById(CID);if(c&&window.ResizeObserver){new ResizeObserver(function(){fix();}).observe(c);}setTimeout(fix,1500);setTimeout(fix,3000);}if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",init);}else{init();}window.addEventListener("resize",fix);})();</script>"""
 BANNER_300 = """<div class="ad-label">Ads</div><div class="ad-banner300"><script>
   atOptions = {
     'key' : 'e44833ba896b1c664de7c10791813111',
@@ -314,7 +314,7 @@ function toggleNight(){{var h=document.documentElement;var d=h.classList.toggle(
 document.addEventListener('DOMContentLoaded',function(){{try{{if(document.documentElement.classList.contains('dark')){{var b=document.getElementById('nightToggle');if(b)b.textContent='☀️ Day';}}}}catch(e){{}}}});
 </script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1000">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 {FAVICON}
 <title>{title}</title>
 <meta name="description" content="{desc}">
@@ -493,7 +493,7 @@ function toggleNight(){{var h=document.documentElement;var d=h.classList.toggle(
 document.addEventListener('DOMContentLoaded',function(){{try{{if(document.documentElement.classList.contains('dark')){{var b=document.getElementById('nightToggle');if(b)b.textContent='☀️ Day';}}}}catch(e){{}}}});
 </script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1000">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 {FAVICON}
 <title>{title}</title>
 <meta name="description" content="{desc}">
@@ -557,7 +557,7 @@ print('blog guides written:', count)
 letters = {}
 for n in sites:
     letters.setdefault(n[0].upper(), []).append(n)
-idx = ['<!DOCTYPE html><html lang="en"><head><script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script><script type="text/javascript">aclib.runAutoTag({zoneId: \"jz7nrikboa\",});</script><script>(function(){try{if(localStorage.getItem(\"fvd-theme\")==="dark")document.documentElement.classList.add(\"dark\")}catch(e){}})();function toggleNight(){var h=document.documentElement;var d=h.classList.toggle(\"dark\");try{localStorage.setItem(\"fvd-theme\",d?\"dark\":\"light\")}catch(e){}var b=document.getElementById(\"nightToggle\");if(b)b.textContent=d?\"\\u2600\\uFE0F Day\":\"\\uD83C\\uDF19 Night\";}document.addEventListener(\"DOMContentLoaded\",function(){try{if(document.documentElement.classList.contains(\"dark\")){var b=document.getElementById(\"nightToggle\");if(b)b.textContent=\"\\u2600\\uFE0F Day\";}}catch(e){}});</script><meta charset="UTF-8"><meta name="viewport" content="width=1000"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="icon" type="image/svg+xml" href="/favicon.svg">',
+idx = ['<!DOCTYPE html><html lang="en"><head><script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script><script type="text/javascript">aclib.runAutoTag({zoneId: \"jz7nrikboa\",});</script><script>(function(){try{if(localStorage.getItem(\"fvd-theme\")==="dark")document.documentElement.classList.add(\"dark\")}catch(e){}})();function toggleNight(){var h=document.documentElement;var d=h.classList.toggle(\"dark\");try{localStorage.setItem(\"fvd-theme\",d?\"dark\":\"light\")}catch(e){}var b=document.getElementById(\"nightToggle\");if(b)b.textContent=d?\"\\u2600\\uFE0F Day\":\"\\uD83C\\uDF19 Night\";}document.addEventListener(\"DOMContentLoaded\",function(){try{if(document.documentElement.classList.contains(\"dark\")){var b=document.getElementById(\"nightToggle\");if(b)b.textContent=\"\\u2600\\uFE0F Day\";}}catch(e){}});</script><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="icon" type="image/svg+xml" href="/favicon.svg">',
 '<title>All Video Downloaders &ndash; 1,000+ Sites | FastVideoDown</title>',
 '<meta name="description" content="Browse every video downloader on FastVideoDown: YouTube, TikTok, Instagram, Facebook, X, and 1,000+ more sites. Pick a site and download videos in HD & MP3 free.">',
 '<meta name="robots" content="index, follow">',
@@ -578,7 +578,7 @@ open(os.path.join(OUT, 'sites', 'index.html'), 'w').write('\n'.join(idx).replace
 print('sites index written')
 
 # --- blog index ---
-bidx = ['<!DOCTYPE html><html lang="en"><head><script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script><script type="text/javascript">aclib.runAutoTag({zoneId: \"jz7nrikboa\",});</script><script>(function(){try{if(localStorage.getItem(\"fvd-theme\")==="dark")document.documentElement.classList.add(\"dark\")}catch(e){}})();function toggleNight(){var h=document.documentElement;var d=h.classList.toggle(\"dark\");try{localStorage.setItem(\"fvd-theme\",d?\"dark\":\"light\")}catch(e){}var b=document.getElementById(\"nightToggle\");if(b)b.textContent=d?\"\\u2600\\uFE0F Day\":\"\\uD83C\\uDF19 Night\";}document.addEventListener(\"DOMContentLoaded\",function(){try{if(document.documentElement.classList.contains(\"dark\")){var b=document.getElementById(\"nightToggle\");if(b)b.textContent=\"\\u2600\\uFE0F Day\";}}catch(e){}});</script><meta charset="UTF-8"><meta name="viewport" content="width=1000"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="icon" type="image/svg+xml" href="/favicon.svg">',
+bidx = ['<!DOCTYPE html><html lang="en"><head><script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script><script type="text/javascript">aclib.runAutoTag({zoneId: \"jz7nrikboa\",});</script><script>(function(){try{if(localStorage.getItem(\"fvd-theme\")==="dark")document.documentElement.classList.add(\"dark\")}catch(e){}})();function toggleNight(){var h=document.documentElement;var d=h.classList.toggle(\"dark\");try{localStorage.setItem(\"fvd-theme\",d?\"dark\":\"light\")}catch(e){}var b=document.getElementById(\"nightToggle\");if(b)b.textContent=d?\"\\u2600\\uFE0F Day\":\"\\uD83C\\uDF19 Night\";}document.addEventListener(\"DOMContentLoaded\",function(){try{if(document.documentElement.classList.contains(\"dark\")){var b=document.getElementById(\"nightToggle\");if(b)b.textContent=\"\\u2600\\uFE0F Day\";}}catch(e){}});</script><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="icon" type="image/svg+xml" href="/favicon.svg">',
 '<title>Video Downloader Guides &ndash; How to Download Videos from 1,000+ Sites | FastVideoDown</title>',
 '<meta name="description" content="Step-by-step guides to downloading videos from YouTube, TikTok, Instagram, Facebook, X, and 1,000+ more sites in HD and MP3, free.">',
 '<meta name="robots" content="index, follow">',
