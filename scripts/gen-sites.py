@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Generate one SEO downloader page per site in sites.txt, plus the
-all-sites index and sitemap.xml. Run at build time (Netlify) and locally.
+"""Generate one rich SEO downloader page per site in sites.txt, one blog
+guide per site, the all-sites index and sitemap.xml.
+Run at build time (Cloudflare Pages) and locally.
 Usage: python3 scripts/gen-sites.py"""
 import re, os, html
 
@@ -17,56 +18,108 @@ def slug(n):
 def display(n):
     return n[0].upper() + n[1:] if n else n
 
+# Popular platform pages (hand-written) used for internal "related" links.
+POPULAR = [
+    ('YouTube', 'youtube-video-downloader'),
+    ('TikTok', 'tiktok-video-downloader'),
+    ('Facebook', 'facebook-video-downloader'),
+    ('Instagram', 'instagram-video-downloader'),
+    ('X (Twitter)', 'twitter-video-downloader'),
+    ('Reddit', 'reddit-video-downloader'),
+    ('Vimeo', 'vimeo-video-downloader'),
+    ('Dailymotion', 'dailymotion-video-downloader'),
+]
+
+def related_links(name, s):
+    """6 internal links: popular platforms (excluding self) + 2 alpha neighbours."""
+    links = [(t, u) for t, u in POPULAR if u != s][:5]
+    idx = sites.index(name) if name in sites else -1
+    if idx >= 0:
+        for j in (idx + 1, idx + 2):
+            if j < len(sites):
+                n2 = sites[j]
+                links.append((display(n2), slug(n2)))
+    out = []
+    for t, u in links[:6]:
+        out.append(f'<li><a href="/{u}/">{html.escape(t)} Video Downloader</a></li>')
+    return '\n'.join(out)
+
+CSS = """*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#1f2937;line-height:1.7}
+a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}
+header{background:#111827;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.logo{font-size:22px;font-weight:800;color:#fff;text-decoration:none;display:flex;align-items:center;gap:9px}.logo-mark{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#e11d48,#7c3aed);flex:none}.logo-mark svg{display:block}.logo-accent{background:linear-gradient(90deg,#fda4af,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent}
+nav a{color:#d1d5db;margin-left:16px;font-size:14px}
+.hero{background:#111827;color:#fff;text-align:center;padding:44px 20px 36px}
+.hero h1{font-size:30px;margin-bottom:10px}.hero p{color:#d1d5db;max-width:680px;margin:0 auto 22px}
+.btn{display:inline-block;background:#f59e0b;color:#111827;font-weight:700;padding:12px 26px;border-radius:8px}
+.btn:hover{text-decoration:none;background:#d97706}
+main{max-width:820px;margin:0 auto;padding:32px 20px}
+h2{font-size:22px;margin:28px 0 10px}h3{font-size:17px;margin:18px 0 6px}
+ol,ul{margin:8px 0 8px 22px}li{margin-bottom:6px}
+table{width:100%;border-collapse:collapse;margin:14px 0}th,td{border:1px solid #e5e7eb;padding:9px 12px;text-align:left;font-size:15px}th{background:#f9fafb}
+.faq details{border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;margin-bottom:10px}
+.faq summary{font-weight:600;cursor:pointer}
+.note{background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:14px 16px;margin:20px 0}
+.related{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px 20px;margin:24px 0}
+footer{background:#111827;color:#9ca3af;padding:28px 20px;text-align:center;font-size:14px}
+footer a{color:#d1d5db;margin:0 8px}"""
+
+FAVICON = """<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23e11d48'/%3E%3Cstop offset='1' stop-color='%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath fill='%23fff' d='M32 14a2 2 0 0 1 2 2v14.6l5.3-5.3a2 2 0 1 1 2.8 2.8l-8.7 8.7a2 2 0 0 1-2.8 0l-8.7-8.7a2 2 0 1 1 2.8-2.8l5.3 5.3V16a2 2 0 0 1 2-2z'/%3E%3Crect x='14' y='46' width='36' height='4' rx='2' fill='%23fff'/%3E%3C/svg%3E">"""
+
+HEADER = """<header><a class="logo" href="/"><span class="logo-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#fff" d="M12 3a1 1 0 0 1 1 1v8.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0l-4.4-4.4a1 1 0 1 1 1.4-1.4l2.7 2.7V4a1 1 0 0 1 1-1z"/><path fill="#fff" d="M4 20a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1z"/></svg></span> Fast<span class="logo-accent">VideoDown</span></a><nav><a href="/">Home</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/sites/">All Downloaders</a><a href="/blog/">Blog</a></nav></header>"""
+
+FOOTER = """<footer><a href="/">FastVideoDown</a><a href="/sites/">All Downloaders</a><a href="/blog/">Blog</a><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Use</a><a href="/contact.html">Contact</a><a href="/sitemap.xml">Sitemap</a><br><br>{disclaimer}</footer>"""
+
 PAGE = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23e11d48'/%3E%3Cstop offset='1' stop-color='%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath fill='%23fff' d='M32 14a2 2 0 0 1 2 2v14.6l5.3-5.3a2 2 0 1 1 2.8 2.8l-8.7 8.7a2 2 0 0 1-2.8 0l-8.7-8.7a2 2 0 1 1 2.8-2.8l5.3 5.3V16a2 2 0 0 1 2-2z'/%3E%3Crect x='14' y='46' width='36' height='4' rx='2' fill='%23fff'/%3E%3C/svg%3E">
-<title>{name} Video Downloader &ndash; Download {name} Videos Free | FastVideoDown</title>
-<meta name="description" content="Download {name} videos in HD &amp; MP3 for free with FastVideoDown. Paste any {name} link, pick your quality, and save the video in seconds. No sign-up, no watermark.">
-<meta name="keywords" content="{name} video downloader, download {name} videos, {name} to mp4, {name} to mp3, free video downloader">
+""" + FAVICON + """
+<title>{name} Video Downloader &ndash; Download {name} Videos Free in HD &amp; MP3 | FastVideoDown</title>
+<meta name="description" content="Download {name} videos in HD &amp; MP3 for free with FastVideoDown. Paste any {name} link, pick your quality, and save the video in seconds. No sign-up, no watermark, works on phone and PC.">
+<meta name="keywords" content="{name} video downloader, download {name} videos, {name} to mp4, {name} to mp3, {name} video download free, save {name} video, {name} downloader online">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="{base}/{slug}/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="{name} Video Downloader &ndash; Download {name} Videos Free | FastVideoDown">
 <meta property="og:description" content="Paste a {name} link and download the video in HD or MP3. Free, no sign-up, no watermark.">
 <meta property="og:url" content="{base}/{slug}/">
-<style>
-*{{box-sizing:border-box;margin:0;padding:0}}body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#1f2937;line-height:1.6}}
-a{{color:#2563eb;text-decoration:none}}a:hover{{text-decoration:underline}}
-header{{background:#111827;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}}
-.logo{{font-size:22px;font-weight:800;color:#fff;text-decoration:none;display:flex;align-items:center;gap:9px}}.logo-mark{{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#e11d48,#7c3aed);flex:none}}.logo-mark svg{{display:block}}.logo-accent{{background:linear-gradient(90deg,#fda4af,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent}}
-nav a{{color:#d1d5db;margin-left:16px;font-size:14px}}
-.hero{{background:#111827;color:#fff;text-align:center;padding:44px 20px 36px}}
-.hero h1{{font-size:30px;margin-bottom:10px}}.hero p{{color:#d1d5db;max-width:640px;margin:0 auto 22px}}
-.btn{{display:inline-block;background:#f59e0b;color:#111827;font-weight:700;padding:12px 26px;border-radius:8px}}
-.btn:hover{{text-decoration:none;background:#d97706}}
-main{{max-width:820px;margin:0 auto;padding:32px 20px}}
-h2{{font-size:22px;margin:28px 0 10px}}h3{{font-size:17px;margin:18px 0 6px}}
-ol,ul{{margin:8px 0 8px 22px}}li{{margin-bottom:6px}}
-.faq details{{border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;margin-bottom:10px}}
-.faq summary{{font-weight:600;cursor:pointer}}
-.note{{background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:14px 16px;margin:20px 0}}
-footer{{background:#111827;color:#9ca3af;padding:28px 20px;text-align:center;font-size:14px}}
-footer a{{color:#d1d5db;margin:0 8px}}
-</style>
+<style>{css}</style>
 <script type="application/ld+json">
 {{"@context":"https://schema.org","@type":"WebApplication","name":"{name} Video Downloader","applicationCategory":"MultimediaApplication","operatingSystem":"Any","offers":{{"@type":"Offer","price":"0","priceCurrency":"USD"}},"url":"{base}/{slug}/"}}
 </script>
 <script type="application/ld+json">
-{{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{{"@type":"Question","name":"Is the {name} downloader free?","acceptedAnswer":{{"@type":"Answer","text":"Yes. FastVideoDown is free forever. There is no sign-up, no daily limit, and no watermark on downloaded videos."}}}},{{"@type":"Question","name":"What quality can I download {name} videos in?","acceptedAnswer":{{"@type":"Answer","text":"FastVideoDown shows every quality the {name} video was published in, from the original upload quality down to smaller sizes, plus audio-only MP3 where available."}}}},{{"@type":"Question","name":"Do I need an account to download {name} videos?","acceptedAnswer":{{"@type":"Answer","text":"No. Paste the {name} link, pick a quality, and download. No account, no app, and no software to install."}}}}]}}
+{{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{{"@type":"ListItem","position":1,"name":"Home","item":"{base}/"}},{{"@type":"ListItem","position":2,"name":"All Downloaders","item":"{base}/sites/"}},{{"@type":"ListItem","position":3,"name":"{name} Video Downloader","item":"{base}/{slug}/"}}]}}
+</script>
+<script type="application/ld+json">
+{{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{{"@type":"Question","name":"Is the {name} downloader free?","acceptedAnswer":{{"@type":"Answer","text":"Yes. FastVideoDown is free forever. There is no sign-up, no daily limit, and no watermark on downloaded videos."}}}},{{"@type":"Question","name":"What quality can I download {name} videos in?","acceptedAnswer":{{"@type":"Answer","text":"FastVideoDown shows every quality the {name} video was published in, from the original upload quality down to smaller sizes, plus audio-only MP3 where available."}}}},{{"@type":"Question","name":"Do I need an account to download {name} videos?","acceptedAnswer":{{"@type":"Answer","text":"No. Paste the {name} link, pick a quality, and download. No account, no app, and no software to install."}}}},{{"@type":"Question","name":"Can I download {name} videos on my phone?","acceptedAnswer":{{"@type":"Answer","text":"Yes. FastVideoDown works in any mobile browser on Android and iPhone. Paste the link, choose a quality, and save the file to your phone."}}}},{{"@type":"Question","name":"Can I download {name} videos as MP3 audio?","acceptedAnswer":{{"@type":"Answer","text":"Yes. Where the {name} video has audio, FastVideoDown offers an audio-only MP3 option alongside the video qualities."}}}},{{"@type":"Question","name":"Is it legal to download {name} videos?","acceptedAnswer":{{"@type":"Answer","text":"Only download videos you own or have permission to save, or that are free for personal use. Respect the creator's rights and {name}'s terms of service."}}}}]}}
 </script>
 </head>
 <body>
-<header><a class="logo" href="/"><span class="logo-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#fff" d="M12 3a1 1 0 0 1 1 1v8.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0l-4.4-4.4a1 1 0 1 1 1.4-1.4l2.7 2.7V4a1 1 0 0 1 1-1z"/><path fill="#fff" d="M4 20a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1z"/></svg></span> Fast<span class="logo-accent">VideoDown</span></a><nav><a href="/">Home</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/sites/">All Downloaders</a><a href="/blog/how-to-download-youtube-videos/">Blog</a></nav></header>
+""" + HEADER + """
 <section class="hero"><h1>{name} Video Downloader</h1><p>Download {name} videos in HD &amp; MP3 for free. Paste any {name} link, pick your quality, and save it in seconds. No sign-up, no watermark.</p><a class="btn" href="/">Download a {name} Video &rarr;</a></section>
 <main>
+<p>Looking for a fast, free way to save videos from {name}? FastVideoDown is a free online {name} video downloader that lets you download any public {name} video in its original quality &mdash; HD, smaller sizes, or audio-only MP3. There is nothing to install and no account to create: paste the link, choose a quality, and the file is yours. It works on Android, iPhone, Windows, and Mac, right in your browser.</p>
+<p>{name} hosts a huge library of videos, from short clips to full-length uploads. Whether you want to watch offline, keep a favourite clip, or save the audio as MP3, FastVideoDown handles the whole job in a few seconds. Your links are processed on the fly and never stored, so your downloads stay private.</p>
+<h2>What Is {name}?</h2>
+<p>{name} is a popular video platform where creators publish videos for viewers around the world. People watch {name} for entertainment, learning, news, music, and more. Because {name} does not offer a built-in download button for most videos, a downloader like FastVideoDown is the easiest way to save a video you like for offline viewing.</p>
 <h2>How to Download {name} Videos in 3 Steps</h2>
-<ol><li><strong>Copy the link.</strong> Open the {name} video you want and copy its link from the address bar or the share menu.</li><li><strong>Paste it into FastVideoDown.</strong> Go to the <a href="/">FastVideoDown downloader</a>, paste the link, and click Get Video.</li><li><strong>Pick a quality and save.</strong> Choose the video quality or MP3 audio you want, then tap Download. The file comes straight from {name}'s servers.</li></ol>
+<ol><li><strong>Copy the link.</strong> Open the {name} video you want and copy its link from the address bar or the share menu.</li><li><strong>Paste it into FastVideoDown.</strong> Go to the <a href="/">FastVideoDown downloader</a>, paste the link into the box, and click Get Video.</li><li><strong>Pick a quality and save.</strong> Choose the video quality or MP3 audio you want, then tap Download. The file comes straight from {name}'s servers, in the quality it was published in.</li></ol>
 <div class="note"><strong>Original quality:</strong> FastVideoDown lists every quality the video was published in on {name}, including the original upload quality, so you can save the best version available.</div>
+<h2>Download {name} Videos on Your Phone</h2>
+<p>FastVideoDown works in any mobile browser, so there is no app to install. On Android, paste the {name} link in Chrome, pick a quality, and the video saves to your Downloads folder. On iPhone, use Safari the same way &mdash; the file saves to Files, ready to watch offline. The same steps work on tablets and desktop computers.</p>
+<h2>{name} Video Quality &amp; Formats</h2>
+<table><tr><th>Format</th><th>Best for</th></tr>
+<tr><td><strong>HD video (MP4)</strong> &ndash; the highest quality the video was published in</td><td>Watching on a big screen or keeping the best copy</td></tr>
+<tr><td><strong>Standard video (MP4)</strong> &ndash; smaller file sizes</td><td>Saving space on your phone or slow connections</td></tr>
+<tr><td><strong>Audio only (MP3)</strong> &ndash; just the sound track</td><td>Music, podcasts, and talks you only want to listen to</td></tr>
+<tr><td><strong>Thumbnail (JPG)</strong> &ndash; the video's cover image</td><td>Using the cover as a picture or preview</td></tr></table>
+<p>The exact qualities depend on how the video was uploaded to {name}. FastVideoDown always shows every option the platform makes available.</p>
 <h2>Why Download {name} Videos with FastVideoDown?</h2>
 <ul><li><strong>Free forever</strong> &mdash; no payment, no account, no daily limit.</li><li><strong>Real quality picker</strong> &mdash; HD, smaller sizes, and audio-only MP3 where the platform offers them.</li><li><strong>Fast direct downloads</strong> &mdash; files come straight from the platform's servers.</li><li><strong>No watermark</strong> &mdash; you get the video as published.</li><li><strong>Private</strong> &mdash; links are processed and never stored.</li><li><strong>Any device</strong> &mdash; works on phone, tablet, and desktop with no app to install.</li></ul>
+<h2>Tips for the Best {name} Downloads</h2>
+<ul><li>Copy the link from the video's own page or share button, not from a search result, so the downloader finds the right video.</li><li>Pick the highest quality when you have Wi-Fi, and a smaller size when you are on mobile data.</li><li>Use the MP3 option when you only need the audio &mdash; the file is much smaller.</li><li>Download the thumbnail too if you want a cover image for the video.</li><li>Only save videos you have the right to keep, and respect the creator's work.</li></ul>
 <h2>Is It Legal to Download {name} Videos?</h2>
 <p>Only download videos you own or have permission to save, or that are free for personal use. Respect the creator's rights and {name}'s terms of service. FastVideoDown is a tool for personal, lawful use.</p>
 <div class="faq"><h2>Frequently Asked Questions</h2>
@@ -74,10 +127,71 @@ footer a{{color:#d1d5db;margin:0 8px}}
 <details><summary>What quality can I download {name} videos in?</summary><p>FastVideoDown shows every quality the {name} video was published in, including the original upload quality, plus audio-only MP3 where available.</p></details>
 <details><summary>Do I need an account to download {name} videos?</summary><p>No. Paste the link, pick a quality, and download. No account or app is needed.</p></details>
 <details><summary>Can I download {name} videos on my phone?</summary><p>Yes. FastVideoDown works in any mobile browser. Paste the link, choose a quality, and save the file to your phone.</p></details>
+<details><summary>Can I download {name} videos as MP3 audio?</summary><p>Yes. Where the video has audio, FastVideoDown offers an audio-only MP3 option alongside the video qualities.</p></details>
+<details><summary>Can I download the thumbnail of a {name} video?</summary><p>Yes. FastVideoDown also shows the video's thumbnail, which you can save as a JPG image.</p></details>
+<details><summary>Why did my {name} link fail?</summary><p>Private, deleted, or age-restricted videos cannot be downloaded. Check that the video is public and the link is complete, then try again.</p></details>
+<details><summary>Is it legal to download {name} videos?</summary><p>Only download videos you own or have permission to save. Respect the creator's rights and {name}'s terms of service.</p></details>
 </div>
+<div class="related"><h2>More Video Downloaders</h2><ul>
+{related}
+</ul></div>
 <p style="margin-top:24px"><a href="/">Try the {name} downloader now &rarr;</a> &middot; <a href="/sites/">Browse all 1,000+ downloaders</a></p>
 </main>
-<footer><a href="/">FastVideoDown</a><a href="/sites/">All Downloaders</a><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Use</a><a href="/contact.html">Contact</a><a href="/sitemap.xml">Sitemap</a><br><br>FastVideoDown is not affiliated with {name}. Download only content you own or have permission to save.</footer>
+""" + FOOTER.format(disclaimer="FastVideoDown is not affiliated with {name}. Download only content you own or have permission to save.") + """
+</body>
+</html>
+"""
+
+BLOG = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+""" + FAVICON + """
+<title>How to Download {name} Videos in HD (2026 Guide) &ndash; Free {name} Downloader | FastVideoDown</title>
+<meta name="description" content="Learn how to download {name} videos in HD and MP3 for free in 2026. Step-by-step guide for phone and PC, quality options, and answers to common questions.">
+<meta name="keywords" content="how to download {name} videos, {name} video downloader, download {name} video free, {name} to mp4, {name} to mp3">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="{base}/blog/{bslug}/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to Download {name} Videos in HD (2026 Guide) | FastVideoDown">
+<meta property="og:description" content="A simple guide to downloading {name} videos in HD and MP3 for free, on phone and PC.">
+<meta property="og:url" content="{base}/blog/{bslug}/">
+<style>{css}</style>
+<script type="application/ld+json">
+{{"@context":"https://schema.org","@type":"Article","headline":"How to Download {name} Videos in HD (2026 Guide)","author":{{"@type":"Organization","name":"FastVideoDown","url":"{base}/"}},"publisher":{{"@type":"Organization","name":"FastVideoDown","url":"{base}/"}},"mainEntityOfPage":{{"@type":"WebPage","@id":"{base}/blog/{bslug}/"}}}}
+</script>
+<script type="application/ld+json">
+{{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{{"@type":"Question","name":"Is downloading {name} videos free?","acceptedAnswer":{{"@type":"Answer","text":"Yes. FastVideoDown is free forever, with no sign-up and no daily limit."}}}},{{"@type":"Question","name":"What quality can I download {name} videos in?","acceptedAnswer":{{"@type":"Answer","text":"FastVideoDown shows every quality the video was published in, from the original upload quality down to smaller sizes, plus audio-only MP3 where available."}}}},{{"@type":"Question","name":"Can I download {name} videos on my phone?","acceptedAnswer":{{"@type":"Answer","text":"Yes. It works in any mobile browser on Android and iPhone, with no app to install."}}}}]}}
+</script>
+</head>
+<body>
+""" + HEADER + """
+<main>
+<h1>How to Download {name} Videos in HD (2026 Guide)</h1>
+<p>Want to save a video from {name} to watch offline? This guide shows you how to download {name} videos in HD and MP3 for free, on your phone or computer, in under a minute. No app, no account, and no payment &mdash; just the link and the free <a href="/{slug}/">{name} downloader</a> on FastVideoDown.</p>
+<h2>What Is {name}?</h2>
+<p>{name} is a video platform where creators publish videos for viewers all over the world. People use {name} for entertainment, learning, music, news, and more. Because most videos on {name} have no built-in download button, the easiest way to keep a video is with an online downloader.</p>
+<h2>How to Download {name} Videos &ndash; Step by Step</h2>
+<ol><li><strong>Find the video.</strong> Open {name} and go to the video you want to save.</li><li><strong>Copy its link.</strong> Tap Share, then Copy Link &mdash; or copy the address from your browser's address bar.</li><li><strong>Open FastVideoDown.</strong> Go to the <a href="/">FastVideoDown homepage</a> and paste the link into the box.</li><li><strong>Click Get Video.</strong> The tool reads the link and lists every available quality.</li><li><strong>Pick a quality and download.</strong> Choose HD video, a smaller size, or MP3 audio, then tap Download. The file saves to your device.</li></ol>
+<h2>Which Quality Should You Pick?</h2>
+<p>FastVideoDown lists every quality the video was published in on {name}. Pick the highest quality when you want the best picture, for example to watch on a TV or keep a favourite clip. Pick a smaller size when you are short on storage or on mobile data. If you only want the sound &mdash; a song, a talk, or a podcast &mdash; choose the MP3 audio option; the file is much smaller and plays anywhere.</p>
+<h2>Download {name} Videos on Mobile</h2>
+<p>On Android, open the {name} link in Chrome, paste it into FastVideoDown, and save the file to Downloads. On iPhone, use Safari the same way; the file lands in the Files app. Nothing to install, and the same steps work on tablets and desktop computers.</p>
+<h2>Is Downloading {name} Videos Free?</h2>
+<p>Yes. FastVideoDown is free forever. There is no account, no daily limit, and no watermark on the videos you save. Your links are processed on the fly and never stored.</p>
+<h2>Frequently Asked Questions</h2>
+<div class="faq">
+<details><summary>Is downloading {name} videos free?</summary><p>Yes. FastVideoDown is free forever, with no sign-up and no daily limit.</p></details>
+<details><summary>What quality can I download {name} videos in?</summary><p>FastVideoDown shows every quality the video was published in, including the original upload quality, plus audio-only MP3 where available.</p></details>
+<details><summary>Can I download {name} videos on my phone?</summary><p>Yes. It works in any mobile browser on Android and iPhone, with no app to install.</p></details>
+<details><summary>Why did my {name} link fail?</summary><p>Private, deleted, or age-restricted videos cannot be downloaded. Make sure the video is public and the link is complete, then try again.</p></details>
+</div>
+<h2>Conclusion</h2>
+<p>Downloading {name} videos is simple: copy the link, paste it into FastVideoDown, and pick your quality. In a few seconds you have the video &mdash; in HD, a smaller size, or MP3 &mdash; saved on your own device, ready to watch offline whenever you like. <a href="/{slug}/">Try the {name} downloader now &rarr;</a></p>
+<p><a href="/blog/">More guides</a> &middot; <a href="/sites/">Browse all 1,000+ downloaders</a></p>
+</main>
+""" + FOOTER.format(disclaimer="FastVideoDown is not affiliated with {name}. Download only content you own or have permission to save.") + """
 </body>
 </html>
 """
@@ -88,9 +202,16 @@ for n in sites:
     d = os.path.join(OUT, s)
     os.makedirs(d, exist_ok=True)
     with open(os.path.join(d, 'index.html'), 'w') as f:
-        f.write(PAGE.format(name=html.escape(display(n)), slug=s, base=BASE))
+        f.write(PAGE.format(name=html.escape(display(n)), slug=s, base=BASE, css=CSS, related=related_links(n, s)))
+    # blog guide for this site
+    bslug = s + '-guide'
+    bd = os.path.join(OUT, 'blog', bslug)
+    os.makedirs(bd, exist_ok=True)
+    with open(os.path.join(bd, 'index.html'), 'w') as f:
+        f.write(BLOG.format(name=html.escape(display(n)), slug=s, bslug=bslug, base=BASE, css=CSS))
     count += 1
 print('pages written:', count)
+print('blog guides written:', count)
 
 # --- sites index ---
 letters = {}
@@ -102,7 +223,7 @@ idx = ['<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="v
 '<meta name="robots" content="index, follow">',
 f'<link rel="canonical" href="{BASE}/sites/">',
 '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#1f2937;line-height:1.6}a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}header{background:#111827;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:22px;font-weight:800;color:#fff}.logo span{color:#f59e0b}nav a{color:#d1d5db;margin-left:16px;font-size:14px}main{max-width:900px;margin:0 auto;padding:32px 20px}h1{font-size:28px;margin-bottom:8px}h2{font-size:20px;margin:26px 0 10px;border-bottom:1px solid #e5e7eb;padding-bottom:6px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px 18px;font-size:15px}.letters{margin:16px 0}.letters a{margin-right:10px;font-weight:600}footer{background:#111827;color:#9ca3af;padding:28px 20px;text-align:center;font-size:14px}footer a{color:#d1d5db;margin:0 8px}</style></head><body>',
-'<header><a class="logo" href="/"><span class="logo-mark"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#fff" d="M12 3a1 1 0 0 1 1 1v8.6l2.7-2.7a1 1 0 1 1 1.4 1.4l-4.4 4.4a1 1 0 0 1-1.4 0l-4.4-4.4a1 1 0 1 1 1.4-1.4l2.7 2.7V4a1 1 0 0 1 1-1z"/><path fill="#fff" d="M4 20a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1z"/></svg></span> Fast<span class="logo-accent">VideoDown</span></a><nav><a href="/">Home</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/blog/how-to-download-youtube-videos/">Blog</a></nav></header><main>',
+'<header><a class="logo" href="/">Fast<span>VideoDown</span></a><nav><a href="/">Home</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/blog/">Blog</a></nav></header><main>',
 f'<h1>All Video Downloaders &ndash; {len(sites)+8} Sites</h1>',
 '<p>Every site FastVideoDown can download from. Pick a site, paste its video link on the <a href="/">homepage</a>, and save the video in HD or MP3 &mdash; free, no sign-up.</p>',
 '<div class="letters">' + ' '.join(f'<a href="#{L}">{L}</a>' for L in sorted(letters)) + '</div>']
@@ -116,14 +237,35 @@ os.makedirs(os.path.join(OUT, 'sites'), exist_ok=True)
 open(os.path.join(OUT, 'sites', 'index.html'), 'w').write('\n'.join(idx))
 print('sites index written')
 
+# --- blog index ---
+bidx = ['<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">',
+'<title>Video Downloader Guides &ndash; How to Download Videos from 1,000+ Sites | FastVideoDown</title>',
+'<meta name="description" content="Step-by-step guides to downloading videos from YouTube, TikTok, Instagram, Facebook, X, and 1,000+ more sites in HD and MP3, free.">',
+'<meta name="robots" content="index, follow">',
+f'<link rel="canonical" href="{BASE}/blog/">',
+'<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#1f2937;line-height:1.6}a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}header{background:#111827;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:22px;font-weight:800;color:#fff}.logo span{color:#f59e0b}nav a{color:#d1d5db;margin-left:16px;font-size:14px}main{max-width:900px;margin:0 auto;padding:32px 20px}h1{font-size:28px;margin-bottom:8px}h2{font-size:20px;margin:26px 0 10px;border-bottom:1px solid #e5e7eb;padding-bottom:6px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px 18px;font-size:15px}footer{background:#111827;color:#9ca3af;padding:28px 20px;text-align:center;font-size:14px}footer a{color:#d1d5db;margin:0 8px}</style></head><body>',
+'<header><a class="logo" href="/">Fast<span>VideoDown</span></a><nav><a href="/">Home</a><a href="/youtube-video-downloader/">YouTube</a><a href="/tiktok-video-downloader/">TikTok</a><a href="/sites/">All Downloaders</a></nav></header><main>',
+f'<h1>Video Downloader Guides &ndash; {len(sites)+1} Articles</h1>',
+'<p>Step-by-step guides for downloading videos from every site FastVideoDown supports. Each guide covers how to copy the link, pick a quality, and save the video in HD or MP3 &mdash; free, on phone and PC.</p>',
+'<h2>Featured Guides</h2><div class="grid">',
+'<a href="/blog/how-to-download-youtube-videos/">How to Download YouTube Videos</a>',
+'</div><h2>All Guides</h2><div class="grid">']
+for n in sites:
+    bidx.append(f'<a href="/blog/{slug(n)}-guide/">How to Download {html.escape(display(n))} Videos</a>')
+bidx.append('</div></main><footer><a href="/">FastVideoDown</a><a href="/sites/">All Downloaders</a><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Use</a><a href="/contact.html">Contact</a><a href="/sitemap.xml">Sitemap</a></footer></body></html>')
+os.makedirs(os.path.join(OUT, 'blog'), exist_ok=True)
+open(os.path.join(OUT, 'blog', 'index.html'), 'w').write('\n'.join(bidx))
+print('blog index written')
+
 # --- sitemap ---
 urls = ['', 'youtube-video-downloader/', 'tiktok-video-downloader/', 'facebook-video-downloader/',
         'instagram-video-downloader/', 'twitter-video-downloader/', 'reddit-video-downloader/',
-        'vimeo-video-downloader/', 'dailymotion-video-downloader/', 'sites/',
+        'vimeo-video-downloader/', 'dailymotion-video-downloader/', 'sites/', 'blog/',
         'thumbnail-downloader/',
         'privacy.html', 'terms.html', 'contact.html', 'blog/how-to-download-youtube-videos/']
 for n in sites:
     urls.append(slug(n) + '/')
+    urls.append('blog/' + slug(n) + '-guide/')
 sm = ['<?xml version="1.0" encoding="UTF-8"?>',
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
 for u in urls:

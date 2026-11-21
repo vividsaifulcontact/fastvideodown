@@ -280,6 +280,7 @@ facebookredirecturl
 fathom
 faulio
 faz.net
+fb
 fc2
 fczenit
 fifa
@@ -388,6 +389,7 @@ idagioplaylist
 idagiorecording
 idagiotrack
 iflix
+ig
 ign.com
 ignarticle
 ignvideo
@@ -400,6 +402,7 @@ ina
 inc
 indavideoembed
 infoq
+insta
 instagramios
 internazionale
 investigationdiscovery
@@ -919,6 +922,7 @@ trtworld
 trueid
 trunews
 truth
+tt
 ttinglive
 tubetugraz
 tubitv
@@ -1043,6 +1047,7 @@ wsj
 wwe
 wyborcza
 wykop
+x
 xboxclips
 xiaohongshu
 ximalaya
@@ -1063,6 +1068,7 @@ younowlive
 younowmoment
 youtubelivestreamembed
 youtubeytbe
+yt
 zaiko
 zaikoeticket
 zan
